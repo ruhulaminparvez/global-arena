@@ -10,8 +10,8 @@ const hindSiliguri = Hind_Siliguri({
 });
 
 export const metadata: Metadata = {
-  title: "Global Arena - Save Money Platform",
-  description: "A saving money platform for working people",
+  title: "গ্লোবাল এরিনা - সঞ্চয় প্ল্যাটফর্ম",
+  description: "কর্মজীবী মানুষের জন্য একটি সঞ্চয় প্ল্যাটফর্ম",
 };
 
 export default function RootLayout({
