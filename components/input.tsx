@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Eye, EyeOff, LucideIcon } from "lucide-react";
 import { forwardRef, useState } from "react";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onDrag" | "onDragStart" | "onDragEnd" | "onDragEnter" | "onDragExit" | "onDragLeave" | "onDragOver" | "onDrop" | "onAnimationStart" | "onAnimationEnd" | "onAnimationIteration"> {
   label?: string;
   error?: string;
   icon?: LucideIcon;
