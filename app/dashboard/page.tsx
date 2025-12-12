@@ -23,7 +23,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
       {/* Sidebar Menu */}
       <SidebarMenu
         isMenuOpen={isMenuOpen}
@@ -32,7 +32,7 @@ export default function DashboardPage() {
       />
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8 pt-20">
+      <div className="max-w-6xl mx-auto px-4 py-8 overflow-x-hidden">
         <UserDetail
           isMenuOpen={isMenuOpen}
           setIsMenuOpen={setIsMenuOpen}

@@ -32,11 +32,11 @@ export default function SidebarMenu({
 
           {/* Menu Panel */}
           <motion.div
-            initial={{ x: 300, opacity: 0 }}
+            initial={{ x: -300, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 300, opacity: 0 }}
+            exit={{ x: -300, opacity: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 overflow-y-auto"
+            className="fixed top-0 left-0 h-full w-80 bg-white shadow-2xl z-50 overflow-y-auto"
           >
             {/* Close Button */}
             <motion.button

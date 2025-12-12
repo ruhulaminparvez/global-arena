@@ -11,11 +11,11 @@ export default function MonthlySavingsGraph() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.6 }}
-      className="bg-white rounded-2xl shadow-xl p-6"
+      className="bg-white rounded-2xl shadow-xl p-6 overflow-x-hidden"
     >
       <h3 className="text-xl font-bold text-gray-900 mb-6">মাসিক সঞ্চয় গ্রাফ</h3>
-      <div className="h-80">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-80 w-full overflow-x-auto">
+        <ResponsiveContainer width="100%" height="100%" minWidth={300}>
           <LineChart data={MOCK_USER_DATA.monthlySavings}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis

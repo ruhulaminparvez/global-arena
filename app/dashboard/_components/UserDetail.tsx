@@ -51,12 +51,12 @@ export default function UserDetail({ isMenuOpen, setIsMenuOpen }: UserDetailProp
       className="bg-white rounded-2xl shadow-xl p-6 mb-6 relative"
     >
       {/* Hamburger Menu Button */}
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 left-4 md:left-auto md:right-4">
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="w-12 h-12 bg-primary-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary-700 transition-colors"
+          className="w-12 h-12 bg-primary-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary-700 transition-colors z-10"
         >
          <Menu className="w-6 h-6" />
         </motion.button>
