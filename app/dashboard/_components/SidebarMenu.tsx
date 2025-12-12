@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Dispatch, SetStateAction } from "react";
+import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { MENU_ITEMS } from "@/constants/dashboard";
 import type { MenuItem } from "@/types/dashboard";
@@ -17,6 +18,33 @@ export default function SidebarMenu({
   setIsMenuOpen,
   onMenuClick,
 }: SidebarMenuProps) {
+  const pathname = usePathname();
+
+  const isActiveRoute = (item: MenuItem): boolean => {
+    if (!item.route) return false;
+    return pathname === item.route;
+  };
+
+  // Check if user is on a sub-route (not the main dashboard)
+  const isOnSubRoute = pathname !== "/dashboard" && pathname.startsWith("/dashboard/");
+
+  // Filter and sort menu items - show dashboard option only on sub-routes
+  const visibleMenuItems = MENU_ITEMS.filter((item) => {
+    // Always show logout
+    if (item.id === 8) return true;
+    // Show dashboard option only on sub-routes
+    if (item.id === 0) return isOnSubRoute;
+    // Show all other items
+    return true;
+  }).sort((a, b) => {
+    // Keep dashboard (id: 0) at the top when visible, logout (id: 8) at the bottom
+    if (a.id === 0) return -1;
+    if (b.id === 0) return 1;
+    if (a.id === 8) return 1;
+    if (b.id === 8) return -1;
+    return a.id - b.id;
+  });
+
   return (
     <AnimatePresence>
       {isMenuOpen && (
@@ -54,8 +82,9 @@ export default function SidebarMenu({
             <div className="p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 pr-12">মেনু</h2>
               <div className="space-y-2">
-                {MENU_ITEMS.map((item, index) => {
+                {visibleMenuItems.map((item, index) => {
                   const Icon = item.icon;
+                  const isActive = isActiveRoute(item);
                   return (
                     <motion.button
                       key={item.id}
@@ -68,10 +97,12 @@ export default function SidebarMenu({
                       className={`w-full flex items-center gap-4 p-4 rounded-lg transition-colors ${
                         item.id === 8
                           ? "bg-red-50 text-red-600 hover:bg-red-100"
+                          : isActive
+                          ? "bg-primary-100 text-primary-700 border-2 border-primary-500 font-semibold"
                           : "bg-gray-50 text-gray-700 hover:bg-primary-50 hover:text-primary-600"
                       }`}
                     >
-                      <Icon className="w-5 h-5 flex-shrink-0" />
+                      <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? "text-primary-700" : ""}`} />
                       <span className="text-left font-medium">{item.label}</span>
                     </motion.button>
                   );

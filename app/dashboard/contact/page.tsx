@@ -3,20 +3,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { MenuItem } from "@/types/dashboard";
-import UserDetail from "./_components/UserDetail";
-import MonthlySavingsGraph from "./_components/MonthlySavingsGraph";
-import SidebarMenu from "./_components/SidebarMenu";
+import UserDetail from "../_components/UserDetail";
+import SidebarMenu from "../_components/SidebarMenu";
+import { Phone } from "lucide-react";
 
-export default function DashboardPage() {
+export default function ContactPage() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   const handleMenuClick = (item: MenuItem): void => {
     if (item.id === 8) {
-      // Logout
       router.push("/login");
     } else if (item.route) {
-      // Navigate to the route
       router.push(item.route);
       setIsMenuOpen(false);
     }
@@ -24,21 +22,29 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      {/* Sidebar Menu */}
       <SidebarMenu
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
         onMenuClick={handleMenuClick}
       />
 
-      {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 py-8 overflow-x-hidden">
         <UserDetail
           isMenuOpen={isMenuOpen}
           setIsMenuOpen={setIsMenuOpen}
         />
-        <MonthlySavingsGraph />
+        
+        <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <Phone className="w-8 h-8 text-primary-600" />
+            <h1 className="text-3xl font-bold text-gray-900">আমাদের সাথে যোগাযোগের তথ্য</h1>
+          </div>
+          <div className="text-center py-12">
+            <p className="text-gray-600 text-lg">যোগাযোগের তথ্য এখানে প্রদর্শিত হবে</p>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+
