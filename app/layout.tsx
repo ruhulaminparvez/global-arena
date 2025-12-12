@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import { Hind_Siliguri } from "next/font/google";
 import "./globals.css";
 
@@ -10,33 +10,21 @@ const hindSiliguri = Hind_Siliguri({
 });
 
 export const metadata: Metadata = {
-  title: "Global Arena - Savings Platform",
-  description: "Savings Platform for Farmers & Working People",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Global Arena",
-  },
-};
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 5,
-  themeColor: "#16a34a",
+  title: "Global Arena - Save Money Platform",
+  description: "A saving money platform for working people",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en" dir="ltr" suppressHydrationWarning>
-      <body suppressHydrationWarning className={`${hindSiliguri.variable} antialiased`}>
+    <html lang="bn" className={hindSiliguri.variable} suppressHydrationWarning>
+      <body className={`antialiased font-sans ${hindSiliguri.className}`} suppressHydrationWarning>
         {children}
       </body>
     </html>
   );
 }
+
