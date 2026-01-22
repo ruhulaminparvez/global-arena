@@ -10,7 +10,7 @@ const hindSiliguri = Hind_Siliguri({
 });
 
 export const metadata: Metadata = {
-  title: "গ্লোবাল এরিনা - সঞ্চয় প্ল্যাটফর্ম",
+  title: "রিটার্ন ভ্যাটেড - সঞ্চয় প্ল্যাটফর্ম",
   description: "কর্মজীবী মানুষের জন্য একটি সঞ্চয় প্ল্যাটফর্ম",
 };
 

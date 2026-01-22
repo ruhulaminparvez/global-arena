@@ -33,7 +33,7 @@ export default function CompanyHistoryPage() {
           isMenuOpen={isMenuOpen}
           setIsMenuOpen={setIsMenuOpen}
         />
-        
+
         <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-center gap-3 mb-6">
             <Building2 className="w-8 h-8 text-primary-600" />

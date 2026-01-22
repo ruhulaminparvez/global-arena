@@ -5,10 +5,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Lock, ArrowRight, PiggyBank, Phone } from "lucide-react";
+import { Lock, ArrowRight, Phone } from "lucide-react";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
-import { FadeIn, SlideIn } from "@/components/animations";
+import { SlideIn } from "@/components/animations";
+import { AuthHeader } from "@/components/common/AuthHeader";
 import Link from "next/link";
 import { loginSchema, type LoginFormData } from "@/schema/auth.schema";
 
@@ -46,24 +47,11 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary-50 via-white to-accent-50">
       <div className="w-full max-w-md">
         {/* Logo and Header */}
-        <FadeIn>
-          <div className="text-center mb-8">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl shadow-lg mb-4"
-            >
-              <PiggyBank className="w-10 h-10 text-white" />
-            </motion.div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              গ্লোবাল অ্যারেনা
-            </h1>
-            <p className="text-gray-600 text-sm">
-              আবার স্বাগতম! স্মার্ট সেভ করুন, ভালো থাকুন।
-            </p>
-          </div>
-        </FadeIn>
+        <AuthHeader
+          title="রিটার্ন ভ্যাটেড"
+          subtitle="আবার স্বাগতম! স্মার্ট সেভ করুন, ভালো থাকুন।"
+          className="mb-8"
+        />
 
         {/* Login Form */}
         <SlideIn direction="up" delay={0.3}>
