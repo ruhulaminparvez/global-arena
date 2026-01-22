@@ -215,7 +215,7 @@ export default function RegisterPage() {
                   placeholder="ফোন নম্বর বা ইমেইল ঠিকানা দিন"
                   {...register("phoneOrEmail")}
                   error={errors.phoneOrEmail?.message}
-                  className="md:col-span-2"
+                  className="col-span-1"
                 />
               </div>
 
