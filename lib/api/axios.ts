@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.returnvetted.com";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -12,11 +12,8 @@ export const apiClient = axios.create({
 // Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
-    // Add auth token if available
-    const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // Add auth token if available (from context state, not localStorage)
+    // Token will be passed via config if needed
     return config;
   },
   (error) => {
@@ -30,15 +27,8 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Handle common errors
-    if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("auth_user");
-        window.location.href = "/login";
-      }
-    }
+    // Handle common errors without page reload
+    // Errors are handled in the component/callback
     return Promise.reject(error);
   }
 );

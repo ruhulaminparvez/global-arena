@@ -48,6 +48,9 @@ export interface RegistrationResponse {
   reference: number;
   registration_fee_paid: boolean;
   registration_fee_amount: string;
+  nominee_name: string | null;
+  nominee_nid: string | null;
+  nominee_photo: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -60,8 +63,9 @@ export interface RegistrationPayload {
   email: string;
   reference: number;
   reference_username: string;
-  registration_fee_paid: boolean;
-  registration_fee_amount: string;
+  nominee_name?: string;
+  nominee_nid?: string;
+  nominee_photo?: string;
 }
 
 /**
@@ -87,6 +91,9 @@ export interface Profile {
   reference: number;
   registration_fee_paid: boolean;
   registration_fee_amount: string;
+  nominee_name: string | null;
+  nominee_nid: string | null;
+  nominee_photo: string | null;
   created_at: string;
   updated_at: string;
 }

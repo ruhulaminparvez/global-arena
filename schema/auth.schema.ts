@@ -56,31 +56,14 @@ const nidSchema = z
     }
   );
 
-// Optional NID validation - if provided, must be exactly 10 digits
-const optionalNidSchema = z.preprocess(
-  (val) => (val === "" || val === undefined ? undefined : val),
-  z.union([
-    z.string().trim().refine(
-      (value) => /^[0-9]{10}$/.test(value),
-      {
-        message: "এনআইডি অবশ্যই ১০ সংখ্যার হতে হবে",
-      }
-    ),
-    z.undefined(),
-  ])
-).optional();
-
 // Registration Schema
 export const registrationSchema = z.object({
   name: z.string().min(1, "নাম আবশ্যক").trim(),
   nid: nidSchema,
   photo: fileSchema,
-  nomineeName: z.preprocess(
-    (val) => (val === "" || val === undefined ? undefined : val),
-    z.string().trim().optional()
-  ),
-  nomineeNid: optionalNidSchema,
-  nomineePhoto: fileSchema.optional(),
+  nomineeName: z.string().min(1, "নমিনির নাম আবশ্যক").trim(),
+  nomineeNid: nidSchema,
+  nomineePhoto: fileSchema,
   referenceName: z.string().min(1, "রেফারেন্সের নাম আবশ্যক").trim(),
   phoneOrEmail: phoneOrEmailSchema,
   termsAccepted: z.boolean().refine((val) => val === true, {

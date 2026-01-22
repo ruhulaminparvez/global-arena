@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 import { apiClient } from "@/lib/api/axios";
 import { fileToBase64, isEmail } from "@/helpers/auth.helpers";
 import type {
@@ -21,28 +21,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<Profile | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Initialize auth state from localStorage
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedToken = localStorage.getItem("auth_token");
-      const storedUser = localStorage.getItem("auth_user");
-
-      if (storedToken && storedUser) {
-        try {
-          setToken(storedToken);
-          setUser(JSON.parse(storedUser));
-          setIsAuthenticated(true);
-        } catch (error) {
-          console.error("Error parsing stored user data:", error);
-          localStorage.removeItem("auth_token");
-          localStorage.removeItem("auth_user");
-        }
-      }
-      setIsLoading(false);
-    }
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
 
   /**
    * Register a new user
@@ -53,6 +32,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // Convert files to base64
       const photoBase64 = await fileToBase64(data.photo);
+      const nomineePhotoBase64 = await fileToBase64(data.nomineePhoto);
 
       // Determine if phoneOrEmail is email or phone
       const isEmailValue = isEmail(data.phoneOrEmail);
@@ -61,15 +41,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // Prepare payload
       const payload = {
-        role: "ADMIN", // Default role, can be made configurable
+        role: "USER", // Default role, can be made configurable
+        username: data.name,
         nid: data.nid,
         photo: photoBase64,
         mobile: mobile,
         email: email,
         reference: 0, // TODO: Get reference ID from referenceName if needed
         reference_username: data.referenceName,
-        registration_fee_paid: false, // TODO: Handle registration fee payment
-        registration_fee_amount: "0", // TODO: Set actual registration fee amount
+        nominee_name: data.nomineeName,
+        nominee_nid: data.nomineeNid,
+        nominee_photo: nomineePhotoBase64,
       };
 
       // Make API call
@@ -80,19 +62,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       const profileData = response.data;
 
-      // Store auth data
-      if (typeof window !== "undefined") {
-        // Store token if provided in response (adjust based on actual API response)
-        const authToken = response.headers.authorization?.replace("Bearer ", "") || "";
-        if (authToken) {
-          localStorage.setItem("auth_token", authToken);
-          setToken(authToken);
-        }
-
-        localStorage.setItem("auth_user", JSON.stringify(profileData));
-        setUser(profileData);
-        setIsAuthenticated(true);
+      // Update auth state (no localStorage storage)
+      const authToken = response.headers.authorization?.replace("Bearer ", "") || "";
+      if (authToken) {
+        setToken(authToken);
       }
+      setUser(profileData);
+      setIsAuthenticated(true);
 
       return profileData;
     } catch (error: any) {
@@ -137,10 +113,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Logout user
    */
   const logout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("auth_token");
-      localStorage.removeItem("auth_user");
-    }
     setToken(null);
     setUser(null);
     setIsAuthenticated(false);
