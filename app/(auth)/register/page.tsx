@@ -13,11 +13,14 @@ import {
   Phone,
   Upload,
   X,
+  AlertCircle,
+  CheckCircle,
 } from "lucide-react";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { SlideIn } from "@/components/animations";
 import { AuthHeader } from "@/components/common/AuthHeader";
+import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import {
   registrationSchema,
@@ -26,7 +29,9 @@ import {
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const { register: registerUser, isLoading: authLoading } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const {
     register,
@@ -40,8 +45,9 @@ export default function RegisterPage() {
     defaultValues: {
       name: "",
       nid: "",
-      nomineeName: "",
-      nomineeNid: "",
+      nomineeName: undefined,
+      nomineeNid: undefined,
+      nomineePhoto: undefined,
       referenceName: "",
       phoneOrEmail: "",
       termsAccepted: false,
@@ -50,11 +56,10 @@ export default function RegisterPage() {
 
   const photo = watch("photo");
   const nomineePhoto = watch("nomineePhoto");
-  const referenceIdCard = watch("referenceIdCard");
 
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    fieldName: "photo" | "nomineePhoto" | "referenceIdCard"
+    fieldName: "photo" | "nomineePhoto"
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -63,21 +68,24 @@ export default function RegisterPage() {
     }
   };
 
-  const removeFile = (fieldName: "photo" | "nomineePhoto" | "referenceIdCard") => {
+  const removeFile = (fieldName: "photo" | "nomineePhoto") => {
     setValue(fieldName, undefined as any, { shouldValidate: true });
   };
 
   const onSubmit = async (data: RegistrationFormData) => {
-    setIsLoading(true);
+    setError(null);
+    setSuccess(false);
+
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      // In real app, handle registration here
-      router.push("/dashboard");
-    } catch (error) {
+      await registerUser(data);
+      setSuccess(true);
+      // Redirect to dashboard after successful registration
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1500);
+    } catch (error: any) {
+      setError(error.message || "Registration failed. Please try again.");
       console.error("Registration error:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -120,7 +128,7 @@ export default function RegisterPage() {
                   label="এনআইডি"
                   type="text"
                   icon={CreditCard}
-                  placeholder="আপনার জাতীয় পরিচয়পত্র নম্বর দিন"
+                  placeholder="আপনার জাতীয় পরিচয়পত্র নম্বর দিন (১০ সংখ্যা)"
                   {...register("nid")}
                   error={errors.nid?.message}
                 />
@@ -132,7 +140,13 @@ export default function RegisterPage() {
                   </label>
                   {photo ? (
                     <div className="relative">
-                      <div className="flex items-center space-x-3 p-3 border-2 border-primary-300 rounded-lg bg-primary-50">
+                      <div
+                        className={`flex items-center space-x-3 p-3 border-2 rounded-lg transition-colors ${
+                          errors.photo
+                            ? "border-red-500 bg-red-50"
+                            : "border-primary-300 bg-primary-50"
+                        }`}
+                      >
                         <Image className="h-8 w-8 text-primary-600" />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-700 truncate">
@@ -152,9 +166,19 @@ export default function RegisterPage() {
                       </div>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <label
+                      className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                        errors.photo
+                          ? "border-red-500 bg-red-50 hover:bg-red-100"
+                          : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+                      }`}
+                    >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <Upload className="w-8 h-8 mb-2 text-gray-400" />
+                        <Upload
+                          className={`w-8 h-8 mb-2 ${
+                            errors.photo ? "text-red-400" : "text-gray-400"
+                          }`}
+                        />
                         <p className="mb-2 text-sm text-gray-500">
                           <span className="font-semibold">ক্লিক করুন</span> অথবা ফাইল টেনে আনুন
                         </p>
@@ -194,7 +218,7 @@ export default function RegisterPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t">
                 <div className="space-y-4 md:col-span-2">
                   <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
-                    নমিনির তথ্য
+                    নমিনির তথ্য <span className="text-sm font-normal text-gray-500">(ঐচ্ছিক)</span>
                   </h2>
                 </div>
 
@@ -202,7 +226,7 @@ export default function RegisterPage() {
                   label="নমিনির নাম"
                   type="text"
                   icon={User}
-                  placeholder="নমিনির পূর্ণ নাম দিন"
+                  placeholder="নমিনির পূর্ণ নাম দিন (ঐচ্ছিক)"
                   {...register("nomineeName")}
                   error={errors.nomineeName?.message}
                 />
@@ -211,7 +235,7 @@ export default function RegisterPage() {
                   label="নমিনির এনআইডি"
                   type="text"
                   icon={CreditCard}
-                  placeholder="নমিনির জাতীয় পরিচয়পত্র নম্বর দিন"
+                  placeholder="নমিনির জাতীয় পরিচয়পত্র নম্বর দিন (ঐচ্ছিক)"
                   {...register("nomineeNid")}
                   error={errors.nomineeNid?.message}
                 />
@@ -219,7 +243,7 @@ export default function RegisterPage() {
                 {/* Nominee Photo Upload */}
                 <div className="w-full md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    নমিনির ছবি <span className="text-red-500">*</span>
+                    নমিনির ছবি <span className="text-gray-500 text-xs">(ঐচ্ছিক)</span>
                   </label>
                   {nomineePhoto ? (
                     <div className="relative">
@@ -272,8 +296,8 @@ export default function RegisterPage() {
               </div>
 
               {/* Reference Information Section */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t">
-                <div className="space-y-4 md:col-span-2">
+              <div className="grid grid-cols-1 gap-6 pt-6 border-t">
+                <div className="space-y-4">
                   <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
                     রেফারেন্সের তথ্য
                   </h2>
@@ -288,60 +312,6 @@ export default function RegisterPage() {
                   error={errors.referenceName?.message}
                   className="md:col-span-2"
                 />
-
-                {/* Reference ID Card Upload */}
-                <div className="w-full md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    রেফারেন্সের জাতীয় পরিচয়পত্র <span className="text-red-500">*</span>
-                  </label>
-                  {referenceIdCard ? (
-                    <div className="relative">
-                      <div className="flex items-center space-x-3 p-3 border-2 border-primary-300 rounded-lg bg-primary-50">
-                        <Image className="h-8 w-8 text-primary-600" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-700 truncate">
-                            {referenceIdCard.name}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {(referenceIdCard.size / 1024).toFixed(2)} KB
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => removeFile("referenceIdCard")}
-                          className="p-1 hover:bg-red-100 rounded-full transition-colors"
-                        >
-                          <X className="h-5 w-5 text-red-600" />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <Upload className="w-8 h-8 mb-2 text-gray-400" />
-                        <p className="mb-2 text-sm text-gray-500">
-                          <span className="font-semibold">ক্লিক করুন</span> অথবা ফাইল টেনে আনুন
-                        </p>
-                        <p className="text-xs text-gray-500">PNG, JPG, JPEG (সর্বোচ্চ ৫ এমবি)</p>
-                      </div>
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={(e) => handleFileChange(e, "referenceIdCard")}
-                      />
-                    </label>
-                  )}
-                  {errors.referenceIdCard && (
-                    <motion.p
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mt-1 text-sm text-red-600"
-                    >
-                      {errors.referenceIdCard.message as string}
-                    </motion.p>
-                  )}
-                </div>
               </div>
 
               <div className="flex items-start pt-6 border-t">
@@ -378,13 +348,38 @@ export default function RegisterPage() {
                 </motion.p>
               )}
 
+              {/* Error Message */}
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+                >
+                  <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                  <span>{error}</span>
+                </motion.div>
+              )}
+
+              {/* Success Message */}
+              {success && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm"
+                >
+                  <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                  <span>Registration successful! Redirecting to dashboard...</span>
+                </motion.div>
+              )}
+
               <Button
                 type="submit"
                 variant="primary"
                 size="lg"
                 className="w-full"
-                isLoading={isLoading}
+                isLoading={authLoading}
                 icon={ArrowRight}
+                disabled={authLoading || success}
               >
                 অ্যাকাউন্ট তৈরি করুন
               </Button>

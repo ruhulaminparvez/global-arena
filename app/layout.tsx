@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Hind_Siliguri } from "next/font/google";
+import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.css";
 
 const hindSiliguri = Hind_Siliguri({
@@ -22,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="bn" className={hindSiliguri.variable} suppressHydrationWarning>
       <body className={`antialiased font-sans ${hindSiliguri.className}`} suppressHydrationWarning>
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

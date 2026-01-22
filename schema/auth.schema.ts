@@ -44,16 +44,44 @@ export const loginSchema = z.object({
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
+// NID validation - must be exactly 10 digits
+const nidSchema = z
+  .string()
+  .min(1, "এনআইডি আবশ্যক")
+  .trim()
+  .refine(
+    (value) => /^[0-9]{10}$/.test(value),
+    {
+      message: "এনআইডি অবশ্যই ১০ সংখ্যার হতে হবে",
+    }
+  );
+
+// Optional NID validation - if provided, must be exactly 10 digits
+const optionalNidSchema = z.preprocess(
+  (val) => (val === "" || val === undefined ? undefined : val),
+  z.union([
+    z.string().trim().refine(
+      (value) => /^[0-9]{10}$/.test(value),
+      {
+        message: "এনআইডি অবশ্যই ১০ সংখ্যার হতে হবে",
+      }
+    ),
+    z.undefined(),
+  ])
+).optional();
+
 // Registration Schema
 export const registrationSchema = z.object({
   name: z.string().min(1, "নাম আবশ্যক").trim(),
-  nid: z.string().min(1, "এনআইডি আবশ্যক").trim(),
+  nid: nidSchema,
   photo: fileSchema,
-  nomineeName: z.string().min(1, "নমিনির নাম আবশ্যক").trim(),
-  nomineeNid: z.string().min(1, "নমিনির এনআইডি আবশ্যক").trim(),
-  nomineePhoto: fileSchema,
+  nomineeName: z.preprocess(
+    (val) => (val === "" || val === undefined ? undefined : val),
+    z.string().trim().optional()
+  ),
+  nomineeNid: optionalNidSchema,
+  nomineePhoto: fileSchema.optional(),
   referenceName: z.string().min(1, "রেফারেন্সের নাম আবশ্যক").trim(),
-  referenceIdCard: fileSchema,
   phoneOrEmail: phoneOrEmailSchema,
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: "শর্তাবলী এবং গোপনীয়তা নীতির সাথে সম্মত হতে হবে",
