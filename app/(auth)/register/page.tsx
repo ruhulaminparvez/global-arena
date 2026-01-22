@@ -345,14 +345,16 @@ export default function RegisterPage() {
                   আমি{" "}
                   <Link
                     href="/terms"
-                    className="text-primary-600 hover:text-primary-700 font-medium"
+                    rel="noopener noreferrer"
+                    className="text-primary-600 hover:text-primary-700 font-medium underline"
                   >
                     শর্তাবলী
                   </Link>{" "}
                   এবং{" "}
                   <Link
                     href="/privacy"
-                    className="text-primary-600 hover:text-primary-700 font-medium"
+                    rel="noopener noreferrer"
+                    className="text-primary-600 hover:text-primary-700 font-medium underline"
                   >
                     গোপনীয়তা নীতি
                   </Link>{" "}
