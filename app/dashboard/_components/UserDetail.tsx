@@ -2,7 +2,9 @@
 
 import { motion } from "framer-motion";
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
-import { User, CreditCard, Menu, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { User, CreditCard, Menu, Shield } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { MOCK_USER_DATA } from "@/constants/dashboard";
 import type { UserDashboardData } from "@/types/dashboard";
 
@@ -42,7 +44,16 @@ interface UserDetailProps {
 }
 
 export default function UserDetail({ isMenuOpen, setIsMenuOpen }: UserDetailProps) {
+  const router = useRouter();
+  const { user } = useAuth();
   const animatedBalance = useCounterAnimation(MOCK_USER_DATA.totalBalance);
+
+  // Check if user is admin
+  const isAdmin = user && (user.role === "ADMIN" || user.role === "admin");
+
+  const handleAdminClick = () => {
+    router.push("/admin");
+  };
 
   return (
     <motion.div
@@ -50,15 +61,30 @@ export default function UserDetail({ isMenuOpen, setIsMenuOpen }: UserDetailProp
       animate={{ opacity: 1, y: 0 }}
       className="bg-white rounded-2xl shadow-xl p-6 mb-6 relative"
     >
-      {/* Hamburger Menu Button */}
-      <div className="absolute top-4 left-4 md:left-auto md:right-4">
+      {/* Button Container */}
+      <div className="absolute top-4 left-4 md:left-auto md:right-4 flex gap-2">
+        {/* Admin Button - Only show if user is admin */}
+        {isAdmin && (
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={handleAdminClick}
+            className="w-12 h-12 md:w-auto md:px-4 md:h-auto md:py-2 bg-gradient-to-br from-purple-500 to-purple-700 text-white rounded-full md:rounded-lg shadow-lg flex items-center justify-center gap-2 hover:from-purple-600 hover:to-purple-800 transition-all z-10"
+          >
+            <Shield className="w-5 h-5 md:w-4 md:h-4 flex-shrink-0" />
+            <span className="hidden md:inline font-medium text-sm">অ্যাডমিন</span>
+          </motion.button>
+        )}
+
+        {/* Hamburger Menu Button */}
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="w-12 h-12 bg-primary-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary-700 transition-colors z-10"
+          className="w-12 h-12 md:w-auto md:px-4 md:h-auto md:py-2 bg-primary-600 text-white rounded-full md:rounded-lg shadow-lg flex items-center justify-center gap-2 hover:bg-primary-700 transition-all z-10"
         >
-         <Menu className="w-6 h-6" />
+          <Menu className="w-6 h-6 md:w-4 md:h-4 flex-shrink-0" />
+          <span className="hidden md:inline font-medium text-sm">Show Menu</span>
         </motion.button>
       </div>
       <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
