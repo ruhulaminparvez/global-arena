@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import type { MenuItem } from "@/types/dashboard";
 import UserDetail from "../_components/UserDetail";
 import SidebarMenu from "../_components/SidebarMenu";
-import { Clock } from "lucide-react";
+import { Ticket } from "lucide-react";
 
-export default function ScheduleHistoryPage() {
+export default function TicketHistoryPage() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
@@ -33,14 +33,14 @@ export default function ScheduleHistoryPage() {
           isMenuOpen={isMenuOpen}
           setIsMenuOpen={setIsMenuOpen}
         />
-        
+
         <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-center gap-3 mb-6">
-            <Clock className="w-8 h-8 text-primary-600" />
-            <h1 className="text-3xl font-bold text-gray-900">সময়সূচি ইতিহাস</h1>
+            <Ticket className="w-8 h-8 text-primary-600" />
+            <h1 className="text-3xl font-bold text-gray-900">টিকেট ইতিহাস</h1>
           </div>
           <div className="text-center py-12">
-            <p className="text-gray-600 text-lg">সময়সূচির ইতিহাস এখানে প্রদর্শিত হবে</p>
+            <p className="text-gray-600 text-lg">টিকেটর ইতিহাস এখানে প্রদর্শিত হবে</p>
           </div>
         </div>
       </div>

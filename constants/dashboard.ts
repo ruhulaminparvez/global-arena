@@ -3,11 +3,11 @@ import {
   TrendingUp,
   ArrowDownCircle,
   ArrowUpCircle,
-  Clock,
   Building2,
   Phone,
   LogOut,
   LayoutDashboard,
+  Ticket
 } from "lucide-react";
 import type { UserDashboardData, MenuItem } from "@/types/dashboard";
 
@@ -41,7 +41,7 @@ export const MENU_ITEMS: MenuItem[] = [
   { id: 2, label: "আপনার মোট বিনিয়োগ", icon: TrendingUp, route: "/dashboard/total-investment" },
   { id: 3, label: "জমা", icon: ArrowDownCircle, route: "/dashboard/deposit" },
   { id: 4, label: "উত্তোলন", icon: ArrowUpCircle, route: "/dashboard/withdrawal" },
-  { id: 5, label: "সময়সূচি ইতিহাস", icon: Clock, route: "/dashboard/schedule-history" },
+  { id: 5, label: "টিকেট ইতিহাস", icon: Ticket, route: "/dashboard/ticket-history" },
   { id: 6, label: "কোম্পানির ইতিহাস", icon: Building2, route: "/dashboard/company-history" },
   { id: 7, label: "আমাদের সাথে যোগাযোগের তথ্য", icon: Phone, route: "/dashboard/contact" },
   { id: 8, label: "লগআউট", icon: LogOut },
