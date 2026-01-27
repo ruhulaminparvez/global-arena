@@ -2,15 +2,54 @@
 
 import BottomNavigation from "../_components/BottomNavigation";
 import { Wallet, Search, Filter, Download } from "lucide-react";
+import Table, { TableColumn } from "@/components/Table";
 
 export default function SavingsManagementPage() {
-
   // Mock savings data
   const savings = [
     { id: 1, userName: "আহমেদ হাসান", amount: 15000, date: "2024-01-15", status: "সক্রিয়" },
     { id: 2, userName: "ফাতিমা খাতুন", amount: 20000, date: "2024-01-14", status: "সক্রিয়" },
     { id: 3, userName: "করিম উদ্দিন", amount: 12000, date: "2024-01-13", status: "সক্রিয়" },
     { id: 4, userName: "রোকেয়া বেগম", amount: 18000, date: "2024-01-12", status: "সক্রিয়" },
+  ];
+
+  // Table columns
+  const columns: TableColumn<typeof savings[0]>[] = [
+    { key: "id", label: "আইডি" },
+    { key: "userName", label: "ব্যবহারকারীর নাম" },
+    {
+      key: "amount",
+      label: "পরিমাণ",
+      render: (saving) => (
+        <span className="font-semibold">
+          ৳ {saving.amount.toLocaleString("bn-BD")}
+        </span>
+      ),
+    },
+    { key: "date", label: "তারিখ", className: "text-gray-600" },
+    {
+      key: "status",
+      label: "স্ট্যাটাস",
+      render: (saving) => (
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+          {saving.status}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "কার্যক্রম",
+      render: () => (
+        <div className="flex gap-2">
+          <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+            দেখুন
+          </button>
+          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            সম্পাদনা
+          </button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -52,48 +91,8 @@ export default function SavingsManagementPage() {
         </div>
 
         {/* Savings Table */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-primary-600 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">আইডি</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">ব্যবহারকারীর নাম</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">পরিমাণ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">তারিখ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">স্ট্যাটাস</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">কার্যক্রম</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {savings.map((saving) => (
-                  <tr key={saving.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-900">{saving.id}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{saving.userName}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
-                      ৳ {saving.amount.toLocaleString("bn-BD")}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{saving.date}</td>
-                    <td className="px-6 py-4">
-                      <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                        {saving.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
-                        <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-                          দেখুন
-                        </button>
-                        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                          সম্পাদনা
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="mb-6">
+          <Table data={savings} columns={columns} />
         </div>
       </div>
 

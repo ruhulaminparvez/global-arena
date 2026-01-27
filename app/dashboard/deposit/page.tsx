@@ -6,6 +6,7 @@ import BottomNavigation from "../_components/BottomNavigation";
 import { ArrowDownCircle, Search, Plus, X } from "lucide-react";
 import { MOCK_DEPOSITS } from "@/constants/dashboard";
 import type { Deposit } from "@/constants/dashboard";
+import Table, { TableColumn } from "@/components/Table";
 
 export default function DepositPage() {
   const [showDepositModal, setShowDepositModal] = useState(false);
@@ -57,6 +58,62 @@ export default function DepositPage() {
       day: "numeric",
     });
   };
+
+  // Table columns
+  const columns: TableColumn<Deposit>[] = [
+    {
+      key: "id",
+      label: "আইডি",
+      className: "font-medium",
+    },
+    {
+      key: "date",
+      label: "তারিখ",
+      render: (deposit) => formatDate(deposit.date),
+    },
+    {
+      key: "amount",
+      label: "পরিমাণ",
+      render: (deposit) => (
+        <span className="font-semibold">
+          ৳ {deposit.amount.toLocaleString("bn-BD")}
+        </span>
+      ),
+    },
+    {
+      key: "method",
+      label: "পদ্ধতি",
+      className: "text-gray-600",
+    },
+    {
+      key: "transactionId",
+      label: "ট্রান্সাকশন আইডি",
+      render: (deposit) => (
+        <span className="font-mono text-gray-600">{deposit.transactionId}</span>
+      ),
+    },
+    {
+      key: "status",
+      label: "স্ট্যাটাস",
+      render: (deposit) => (
+        <span
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${deposit.status === "অনুমোদিত"
+              ? "bg-green-100 text-green-800"
+              : "bg-yellow-100 text-yellow-800"
+            }`}
+        >
+          {deposit.status}
+        </span>
+      ),
+    },
+    {
+      key: "description",
+      label: "বিবরণ",
+      render: (deposit) => (
+        <span className="text-gray-600">{deposit.description || "-"}</span>
+      ),
+    },
+  ];
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -168,56 +225,13 @@ export default function DepositPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-xl shadow-lg overflow-hidden mb-6"
+          className="mb-6"
         >
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-primary-600 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">আইডি</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">তারিখ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">পরিমাণ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">পদ্ধতি</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">ট্রান্সাকশন আইডি</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">স্ট্যাটাস</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">বিবরণ</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredDeposits.length > 0 ? (
-                  filteredDeposits.map((deposit) => (
-                    <tr key={deposit.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 text-sm text-gray-900 font-medium">{deposit.id}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{formatDate(deposit.date)}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
-                        ৳ {deposit.amount.toLocaleString("bn-BD")}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{deposit.method}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600 font-mono">{deposit.transactionId}</td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                            deposit.status === "অনুমোদিত"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
-                        >
-                          {deposit.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{deposit.description || "-"}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
-                      কোন জমা পাওয়া যায়নি
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <Table
+            data={filteredDeposits}
+            columns={columns}
+            emptyMessage="কোন জমা পাওয়া যায়নি"
+          />
         </motion.div>
       </div>
 

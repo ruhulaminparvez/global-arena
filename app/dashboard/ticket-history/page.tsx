@@ -6,6 +6,7 @@ import BottomNavigation from "../_components/BottomNavigation";
 import { Ticket, Search, Plus, X, MessageSquare } from "lucide-react";
 import { MOCK_USER_TICKETS } from "@/constants/dashboard";
 import type { UserTicket } from "@/constants/dashboard";
+import Table, { TableColumn } from "@/components/Table";
 
 export default function TicketHistoryPage() {
   const [showTicketModal, setShowTicketModal] = useState(false);
@@ -57,6 +58,75 @@ export default function TicketHistoryPage() {
       day: "numeric",
     });
   };
+
+  // Table columns
+  const columns: TableColumn<UserTicket>[] = [
+    {
+      key: "ticketNo",
+      label: "টিকেট নম্বর",
+      render: (ticket) => (
+        <span className="font-mono font-semibold">{ticket.ticketNo}</span>
+      ),
+    },
+    {
+      key: "date",
+      label: "তারিখ",
+      render: (ticket) => formatDate(ticket.date),
+    },
+    {
+      key: "subject",
+      label: "বিষয়",
+      className: "font-medium",
+    },
+    {
+      key: "priority",
+      label: "অগ্রাধিকার",
+      render: (ticket) => (
+        <span
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${ticket.priority === "উচ্চ"
+            ? "bg-red-100 text-red-800"
+            : ticket.priority === "মধ্যম"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-green-100 text-green-800"
+            }`}
+        >
+          {ticket.priority}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      label: "স্ট্যাটাস",
+      render: (ticket) => (
+        <span
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${ticket.status === "সমাধান"
+            ? "bg-green-100 text-green-800"
+            : ticket.status === "প্রক্রিয়াধীন"
+              ? "bg-blue-100 text-blue-800"
+              : "bg-yellow-100 text-yellow-800"
+            }`}
+        >
+          {ticket.status}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "কার্যক্রম",
+      render: (ticket) => (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setSelectedTicket(ticket);
+          }}
+          className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center gap-1"
+        >
+          <MessageSquare className="w-4 h-4" />
+          বিস্তারিত
+        </button>
+      ),
+    },
+  ];
 
   // Generate ticket number
   const generateTicketNo = () => {
@@ -186,74 +256,13 @@ export default function TicketHistoryPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-xl shadow-lg overflow-hidden mb-6"
+          className="mb-6"
         >
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-primary-600 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">টিকেট নম্বর</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">তারিখ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">বিষয়</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">অগ্রাধিকার</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">স্ট্যাটাস</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">কার্যক্রম</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredTickets.length > 0 ? (
-                  filteredTickets.map((ticket) => (
-                    <tr key={ticket.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 text-sm text-gray-900 font-mono font-semibold">
-                        {ticket.ticketNo}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{formatDate(ticket.date)}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900 font-medium">{ticket.subject}</td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`px-3 py-1 text-xs font-semibold rounded-full ${ticket.priority === "উচ্চ"
-                              ? "bg-red-100 text-red-800"
-                              : ticket.priority === "মধ্যম"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-green-100 text-green-800"
-                            }`}
-                        >
-                          {ticket.priority}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`px-3 py-1 text-xs font-semibold rounded-full ${ticket.status === "সমাধান"
-                              ? "bg-green-100 text-green-800"
-                              : ticket.status === "প্রক্রিয়াধীন"
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-yellow-100 text-yellow-800"
-                            }`}
-                        >
-                          {ticket.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <button
-                          onClick={() => setSelectedTicket(ticket)}
-                          className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center gap-1"
-                        >
-                          <MessageSquare className="w-4 h-4" />
-                          বিস্তারিত
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                      কোন টিকেট পাওয়া যায়নি
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <Table
+            data={filteredTickets}
+            columns={columns}
+            emptyMessage="কোন টিকেট পাওয়া যায়নি"
+          />
         </motion.div>
       </div>
 
@@ -390,10 +399,10 @@ export default function TicketHistoryPage() {
                     <p className="text-sm text-gray-600 mb-1">অগ্রাধিকার</p>
                     <span
                       className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${selectedTicket.priority === "উচ্চ"
-                          ? "bg-red-100 text-red-800"
-                          : selectedTicket.priority === "মধ্যম"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-green-100 text-green-800"
+                        ? "bg-red-100 text-red-800"
+                        : selectedTicket.priority === "মধ্যম"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-green-100 text-green-800"
                         }`}
                     >
                       {selectedTicket.priority}
@@ -403,10 +412,10 @@ export default function TicketHistoryPage() {
                     <p className="text-sm text-gray-600 mb-1">স্ট্যাটাস</p>
                     <span
                       className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${selectedTicket.status === "সমাধান"
-                          ? "bg-green-100 text-green-800"
-                          : selectedTicket.status === "প্রক্রিয়াধীন"
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-yellow-100 text-yellow-800"
+                        ? "bg-green-100 text-green-800"
+                        : selectedTicket.status === "প্রক্রিয়াধীন"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-yellow-100 text-yellow-800"
                         }`}
                     >
                       {selectedTicket.status}

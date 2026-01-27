@@ -6,6 +6,7 @@ import BottomNavigation from "../_components/BottomNavigation";
 import { TrendingUp, Search, Download } from "lucide-react";
 import { MOCK_INVESTMENTS, DATE_WISE_INVESTMENTS } from "@/constants/dashboard";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import Table, { TableColumn } from "@/components/Table";
 
 export default function TotalInvestmentPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,6 +49,53 @@ export default function TotalInvestmentPage() {
       day: "numeric",
     });
   };
+
+  // Table columns
+  const columns: TableColumn<typeof MOCK_INVESTMENTS[0]>[] = [
+    {
+      key: "id",
+      label: "আইডি",
+      className: "font-medium",
+    },
+    {
+      key: "date",
+      label: "তারিখ",
+      render: (investment) => formatDate(investment.date),
+    },
+    {
+      key: "amount",
+      label: "পরিমাণ",
+      render: (investment) => (
+        <span className="font-semibold">
+          ৳ {investment.amount.toLocaleString("bn-BD")}
+        </span>
+      ),
+    },
+    {
+      key: "type",
+      label: "ধরন",
+      className: "text-gray-600",
+    },
+    {
+      key: "status",
+      label: "স্ট্যাটাস",
+      render: (investment) => (
+        <span
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${investment.status === "সক্রিয়"
+              ? "bg-green-100 text-green-800"
+              : "bg-blue-100 text-blue-800"
+            }`}
+        >
+          {investment.status}
+        </span>
+      ),
+    },
+    {
+      key: "description",
+      label: "বিবরণ",
+      className: "text-gray-600",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
@@ -176,62 +224,21 @@ export default function TotalInvestmentPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-xl shadow-lg overflow-hidden mb-6"
+          className="mb-6"
         >
-          <div className="p-6 border-b border-gray-200 flex items-center justify-between flex-wrap gap-4">
+          <div className="p-6 border-b border-gray-200 flex items-center justify-between flex-wrap gap-4 bg-white rounded-t-xl">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900">বিনিয়োগ তালিকা</h2>
             <button className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg flex items-center gap-2 transition-colors">
               <Download className="w-4 h-4" />
               রিপোর্ট ডাউনলোড
             </button>
           </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-primary-600 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">আইডি</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">তারিখ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">পরিমাণ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">ধরন</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">স্ট্যাটাস</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">বিবরণ</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredInvestments.length > 0 ? (
-                  filteredInvestments.map((investment) => (
-                    <tr key={investment.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 text-sm text-gray-900 font-medium">{investment.id}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{formatDate(investment.date)}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
-                        ৳ {investment.amount.toLocaleString("bn-BD")}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{investment.type}</td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                            investment.status === "সক্রিয়"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-blue-100 text-blue-800"
-                          }`}
-                        >
-                          {investment.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{investment.description}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                      কোন বিনিয়োগ পাওয়া যায়নি
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <Table
+            data={filteredInvestments}
+            columns={columns}
+            emptyMessage="কোন বিনিয়োগ পাওয়া যায়নি"
+            className="rounded-t-none"
+          />
         </motion.div>
       </div>
 

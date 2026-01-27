@@ -2,15 +2,82 @@
 
 import BottomNavigation from "../_components/BottomNavigation";
 import { Ticket, Search, Filter, Download } from "lucide-react";
+import Table, { TableColumn } from "@/components/Table";
 
 export default function TicketManagementPage() {
-
   // Mock ticket data
   const tickets = [
     { id: 1, ticketNo: "TKT-001", userName: "আহমেদ হাসান", subject: "সঞ্চয় সম্পর্কে প্রশ্ন", priority: "উচ্চ", date: "2024-01-15", status: "খোলা" },
     { id: 2, ticketNo: "TKT-002", userName: "ফাতিমা খাতুন", subject: "বিনিয়োগ তথ্য", priority: "মধ্যম", date: "2024-01-14", status: "প্রক্রিয়াধীন" },
     { id: 3, ticketNo: "TKT-003", userName: "করিম উদ্দিন", subject: "অ্যাকাউন্ট সমস্যা", priority: "উচ্চ", date: "2024-01-13", status: "খোলা" },
     { id: 4, ticketNo: "TKT-004", userName: "রোকেয়া বেগম", subject: "পাসওয়ার্ড রিসেট", priority: "নিম্ন", date: "2024-01-12", status: "সমাধান" },
+  ];
+
+  // Table columns
+  const columns: TableColumn<typeof tickets[0]>[] = [
+    {
+      key: "ticketNo",
+      label: "টিকেট নম্বর",
+      render: (ticket) => <span className="font-mono font-semibold">{ticket.ticketNo}</span>,
+    },
+    {
+      key: "userName",
+      label: "ব্যবহারকারীর নাম",
+    },
+    {
+      key: "subject",
+      label: "বিষয়",
+    },
+    {
+      key: "priority",
+      label: "অগ্রাধিকার",
+      render: (ticket) => (
+        <span
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${ticket.priority === "উচ্চ"
+              ? "bg-red-100 text-red-800"
+              : ticket.priority === "মধ্যম"
+                ? "bg-yellow-100 text-yellow-800"
+                : "bg-green-100 text-green-800"
+            }`}
+        >
+          {ticket.priority}
+        </span>
+      ),
+    },
+    {
+      key: "date",
+      label: "তারিখ",
+    },
+    {
+      key: "status",
+      label: "স্ট্যাটাস",
+      render: (ticket) => (
+        <span
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${ticket.status === "সমাধান"
+              ? "bg-green-100 text-green-800"
+              : ticket.status === "প্রক্রিয়াধীন"
+                ? "bg-blue-100 text-blue-800"
+                : "bg-yellow-100 text-yellow-800"
+            }`}
+        >
+          {ticket.status}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "কার্যক্রম",
+      render: () => (
+        <div className="flex gap-2">
+          <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+            দেখুন
+          </button>
+          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            উত্তর দিন
+          </button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -52,72 +119,11 @@ export default function TicketManagementPage() {
         </div>
 
         {/* Tickets Table */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-primary-600 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">টিকেট নম্বর</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">ব্যবহারকারীর নাম</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">বিষয়</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">অগ্রাধিকার</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">তারিখ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">স্ট্যাটাস</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">কার্যক্রম</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {tickets.map((ticket) => (
-                  <tr key={ticket.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-900 font-mono font-semibold">{ticket.ticketNo}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{ticket.userName}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{ticket.subject}</td>
-                    <td className="px-6 py-4">
-                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        ticket.priority === "উচ্চ" 
-                          ? "bg-red-100 text-red-800" 
-                          : ticket.priority === "মধ্যম"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-green-100 text-green-800"
-                      }`}>
-                        {ticket.priority}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{ticket.date}</td>
-                    <td className="px-6 py-4">
-                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        ticket.status === "সমাধান" 
-                          ? "bg-green-100 text-green-800" 
-                          : ticket.status === "প্রক্রিয়াধীন"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}>
-                        {ticket.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
-                        <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-                          দেখুন
-                        </button>
-                        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                          উত্তর দিন
-                        </button>
-                        {ticket.status !== "সমাধান" && (
-                          <button className="text-green-600 hover:text-green-700 text-sm font-medium">
-                            সমাধান
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="mb-6">
+          <Table data={tickets} columns={columns} />
         </div>
       </div>
-      
+
       <BottomNavigation />
     </div>
   );

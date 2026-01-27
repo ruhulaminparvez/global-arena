@@ -2,15 +2,53 @@
 
 import BottomNavigation from "../_components/BottomNavigation";
 import { Users, Search, Filter, Download, Plus, UserPlus } from "lucide-react";
+import Table, { TableColumn } from "@/components/Table";
 
 export default function UserManagementPage() {
-
   // Mock user data
   const users = [
     { id: 1, name: "আহমেদ হাসান", email: "ahmed@example.com", phone: "01712345678", role: "ব্যবহারকারী", status: "সক্রিয়", joinDate: "2024-01-01" },
     { id: 2, name: "ফাতিমা খাতুন", email: "fatima@example.com", phone: "01712345679", role: "ব্যবহারকারী", status: "সক্রিয়", joinDate: "2024-01-02" },
     { id: 3, name: "করিম উদ্দিন", email: "karim@example.com", phone: "01712345680", role: "ব্যবহারকারী", status: "নিষ্ক্রিয়", joinDate: "2024-01-03" },
     { id: 4, name: "রোকেয়া বেগম", email: "rokeya@example.com", phone: "01712345681", role: "ব্যবহারকারী", status: "সক্রিয়", joinDate: "2024-01-04" },
+  ];
+
+  // Table columns
+  const columns: TableColumn<typeof users[0]>[] = [
+    { key: "id", label: "আইডি" },
+    { key: "name", label: "নাম", className: "font-medium" },
+    { key: "email", label: "ইমেইল", className: "text-gray-600" },
+    { key: "phone", label: "ফোন", className: "text-gray-600" },
+    { key: "role", label: "ভূমিকা", className: "text-gray-600" },
+    {
+      key: "status",
+      label: "স্ট্যাটাস",
+      render: (user) => (
+        <span
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${user.status === "সক্রিয়"
+              ? "bg-green-100 text-green-800"
+              : "bg-gray-100 text-gray-800"
+            }`}
+        >
+          {user.status}
+        </span>
+      ),
+    },
+    { key: "joinDate", label: "যোগদান তারিখ", className: "text-gray-600" },
+    {
+      key: "actions",
+      label: "কার্যক্রম",
+      render: () => (
+        <div className="flex gap-2">
+          <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+            দেখুন
+          </button>
+          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            সম্পাদনা
+          </button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -56,64 +94,11 @@ export default function UserManagementPage() {
         </div>
 
         {/* Users Table */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-primary-600 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">আইডি</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">নাম</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">ইমেইল</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">ফোন</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">ভূমিকা</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">স্ট্যাটাস</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">যোগদান তারিখ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">কার্যক্রম</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {users.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-900">{user.id}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900 font-medium">{user.name}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{user.email}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{user.phone}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{user.role}</td>
-                    <td className="px-6 py-4">
-                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        user.status === "সক্রিয়" 
-                          ? "bg-green-100 text-green-800" 
-                          : "bg-gray-100 text-gray-800"
-                      }`}>
-                        {user.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{user.joinDate}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
-                        <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-                          দেখুন
-                        </button>
-                        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                          সম্পাদনা
-                        </button>
-                        <button className={`text-sm font-medium ${
-                          user.status === "সক্রিয়"
-                            ? "text-red-600 hover:text-red-700"
-                            : "text-green-600 hover:text-green-700"
-                        }`}>
-                          {user.status === "সক্রিয়" ? "নিষ্ক্রিয় করুন" : "সক্রিয় করুন"}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="mb-6">
+          <Table data={users} columns={columns} />
         </div>
       </div>
-      
+
       <BottomNavigation />
     </div>
   );

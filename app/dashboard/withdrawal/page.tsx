@@ -6,6 +6,7 @@ import BottomNavigation from "../_components/BottomNavigation";
 import { ArrowUpCircle, Search, Plus, X } from "lucide-react";
 import { MOCK_WITHDRAWALS } from "@/constants/dashboard";
 import type { Withdrawal } from "@/constants/dashboard";
+import Table, { TableColumn } from "@/components/Table";
 
 export default function WithdrawalPage() {
   const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
@@ -57,6 +58,64 @@ export default function WithdrawalPage() {
       day: "numeric",
     });
   };
+
+  // Table columns
+  const columns: TableColumn<Withdrawal>[] = [
+    {
+      key: "id",
+      label: "আইডি",
+      className: "font-medium",
+    },
+    {
+      key: "date",
+      label: "তারিখ",
+      render: (withdrawal) => formatDate(withdrawal.date),
+    },
+    {
+      key: "amount",
+      label: "পরিমাণ",
+      render: (withdrawal) => (
+        <span className="font-semibold">
+          ৳ {withdrawal.amount.toLocaleString("bn-BD")}
+        </span>
+      ),
+    },
+    {
+      key: "method",
+      label: "পদ্ধতি",
+      className: "text-gray-600",
+    },
+    {
+      key: "accountNumber",
+      label: "অ্যাকাউন্ট নম্বর",
+      render: (withdrawal) => (
+        <span className="font-mono text-gray-600">{withdrawal.accountNumber}</span>
+      ),
+    },
+    {
+      key: "status",
+      label: "স্ট্যাটাস",
+      render: (withdrawal) => (
+        <span
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${withdrawal.status === "অনুমোদিত"
+              ? "bg-green-100 text-green-800"
+              : withdrawal.status === "প্রত্যাখ্যান"
+                ? "bg-red-100 text-red-800"
+                : "bg-yellow-100 text-yellow-800"
+            }`}
+        >
+          {withdrawal.status}
+        </span>
+      ),
+    },
+    {
+      key: "description",
+      label: "বিবরণ",
+      render: (withdrawal) => (
+        <span className="text-gray-600">{withdrawal.description || "-"}</span>
+      ),
+    },
+  ];
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -168,57 +227,13 @@ export default function WithdrawalPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-xl shadow-lg overflow-hidden mb-6"
+          className="mb-6"
         >
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-primary-600 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">আইডি</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">তারিখ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">পরিমাণ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">পদ্ধতি</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">অ্যাকাউন্ট নম্বর</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">স্ট্যাটাস</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">বিবরণ</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredWithdrawals.length > 0 ? (
-                  filteredWithdrawals.map((withdrawal) => (
-                    <tr key={withdrawal.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 text-sm text-gray-900 font-medium">{withdrawal.id}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{formatDate(withdrawal.date)}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
-                        ৳ {withdrawal.amount.toLocaleString("bn-BD")}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{withdrawal.method}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600 font-mono">{withdrawal.accountNumber}</td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`px-3 py-1 text-xs font-semibold rounded-full ${withdrawal.status === "অনুমোদিত"
-                              ? "bg-green-100 text-green-800"
-                              : withdrawal.status === "প্রত্যাখ্যান"
-                                ? "bg-red-100 text-red-800"
-                                : "bg-yellow-100 text-yellow-800"
-                            }`}
-                        >
-                          {withdrawal.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{withdrawal.description || "-"}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
-                      কোন উত্তোলন পাওয়া যায়নি
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <Table
+            data={filteredWithdrawals}
+            columns={columns}
+            emptyMessage="কোন উত্তোলন পাওয়া যায়নি"
+          />
         </motion.div>
       </div>
 

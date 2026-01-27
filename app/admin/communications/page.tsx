@@ -2,15 +2,59 @@
 
 import BottomNavigation from "../_components/BottomNavigation";
 import { MessageSquare, Search, Filter, Download, Plus, Send } from "lucide-react";
+import Table, { TableColumn } from "@/components/Table";
 
 export default function CommunicationManagementPage() {
-
   // Mock communication data
   const communications = [
     { id: 1, title: "নতুন সঞ্চয় স্কিম", type: "ঘোষণা", recipients: "সকল", date: "2024-01-15", status: "প্রেরিত" },
     { id: 2, title: "সিস্টেম রক্ষণাবেক্ষণ", type: "সতর্কতা", recipients: "সকল", date: "2024-01-14", status: "প্রেরিত" },
     { id: 3, title: "মাসিক রিপোর্ট", type: "রিপোর্ট", recipients: "অ্যাডমিন", date: "2024-01-13", status: "খসড়া" },
     { id: 4, title: "বিনিয়োগ সুযোগ", type: "ঘোষণা", recipients: "সক্রিয় ব্যবহারকারী", date: "2024-01-12", status: "প্রেরিত" },
+  ];
+
+  // Table columns
+  const columns: TableColumn<typeof communications[0]>[] = [
+    { key: "id", label: "আইডি" },
+    { key: "title", label: "শিরোনাম", className: "font-medium" },
+    { key: "type", label: "ধরন", className: "text-gray-600" },
+    { key: "recipients", label: "প্রাপক", className: "text-gray-600" },
+    { key: "date", label: "তারিখ", className: "text-gray-600" },
+    {
+      key: "status",
+      label: "স্ট্যাটাস",
+      render: (comm) => (
+        <span
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${
+            comm.status === "প্রেরিত"
+              ? "bg-green-100 text-green-800"
+              : "bg-yellow-100 text-yellow-800"
+          }`}
+        >
+          {comm.status}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "কার্যক্রম",
+      render: (comm) => (
+        <div className="flex gap-2">
+          <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+            দেখুন
+          </button>
+          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            সম্পাদনা
+          </button>
+          {comm.status === "খসড়া" && (
+            <button className="text-green-600 hover:text-green-700 text-sm font-medium flex items-center gap-1">
+              <Send className="w-3 h-3" />
+              প্রেরণ
+            </button>
+          )}
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -56,57 +100,8 @@ export default function CommunicationManagementPage() {
         </div>
 
         {/* Communications Table */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-primary-600 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">আইডি</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">শিরোনাম</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">ধরন</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">প্রাপক</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">তারিখ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">স্ট্যাটাস</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">কার্যক্রম</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {communications.map((comm) => (
-                  <tr key={comm.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-900">{comm.id}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900 font-medium">{comm.title}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{comm.type}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{comm.recipients}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{comm.date}</td>
-                    <td className="px-6 py-4">
-                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${comm.status === "প্রেরিত"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
-                        }`}>
-                        {comm.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
-                        <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-                          দেখুন
-                        </button>
-                        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                          সম্পাদনা
-                        </button>
-                        {comm.status === "খসড়া" && (
-                          <button className="text-green-600 hover:text-green-700 text-sm font-medium flex items-center gap-1">
-                            <Send className="w-3 h-3" />
-                            প্রেরণ
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="mb-6">
+          <Table data={communications} columns={columns} />
         </div>
       </div>
 

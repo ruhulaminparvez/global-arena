@@ -2,15 +2,64 @@
 
 import BottomNavigation from "../_components/BottomNavigation";
 import { ArrowDownCircle, Search, Filter, Download, Plus } from "lucide-react";
+import Table, { TableColumn } from "@/components/Table";
 
 export default function DepositManagementPage() {
-
   // Mock deposit data
   const deposits = [
     { id: 1, userName: "আহমেদ হাসান", amount: 10000, method: "ব্যাংক", date: "2024-01-15", status: "অনুমোদিত" },
     { id: 2, userName: "ফাতিমা খাতুন", amount: 15000, method: "মোবাইল", date: "2024-01-14", status: "অনুমোদিত" },
     { id: 3, userName: "করিম উদ্দিন", amount: 8000, method: "ব্যাংক", date: "2024-01-13", status: "বিবেচনাধীন" },
     { id: 4, userName: "রোকেয়া বেগম", amount: 12000, method: "মোবাইল", date: "2024-01-12", status: "অনুমোদিত" },
+  ];
+
+  // Table columns
+  const columns: TableColumn<typeof deposits[0]>[] = [
+    { key: "id", label: "আইডি" },
+    { key: "userName", label: "ব্যবহারকারীর নাম" },
+    {
+      key: "amount",
+      label: "পরিমাণ",
+      render: (deposit) => (
+        <span className="font-semibold">
+          ৳ {deposit.amount.toLocaleString("bn-BD")}
+        </span>
+      ),
+    },
+    { key: "method", label: "পদ্ধতি", className: "text-gray-600" },
+    { key: "date", label: "তারিখ", className: "text-gray-600" },
+    {
+      key: "status",
+      label: "স্ট্যাটাস",
+      render: (deposit) => (
+        <span
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${
+            deposit.status === "অনুমোদিত"
+              ? "bg-green-100 text-green-800"
+              : "bg-yellow-100 text-yellow-800"
+          }`}
+        >
+          {deposit.status}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "কার্যক্রম",
+      render: () => (
+        <div className="flex gap-2">
+          <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+            দেখুন
+          </button>
+          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            অনুমোদন
+          </button>
+          <button className="text-red-600 hover:text-red-700 text-sm font-medium">
+            প্রত্যাখ্যান
+          </button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -56,56 +105,8 @@ export default function DepositManagementPage() {
         </div>
 
         {/* Deposits Table */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-primary-600 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">আইডি</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">ব্যবহারকারীর নাম</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">পরিমাণ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">পদ্ধতি</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">তারিখ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">স্ট্যাটাস</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">কার্যক্রম</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {deposits.map((deposit) => (
-                  <tr key={deposit.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-900">{deposit.id}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{deposit.userName}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
-                      ৳ {deposit.amount.toLocaleString("bn-BD")}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{deposit.method}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{deposit.date}</td>
-                    <td className="px-6 py-4">
-                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${deposit.status === "অনুমোদিত"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
-                        }`}>
-                        {deposit.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
-                        <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-                          দেখুন
-                        </button>
-                        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                          অনুমোদন
-                        </button>
-                        <button className="text-red-600 hover:text-red-700 text-sm font-medium">
-                          প্রত্যাখ্যান
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="mb-6">
+          <Table data={deposits} columns={columns} />
         </div>
       </div>
 

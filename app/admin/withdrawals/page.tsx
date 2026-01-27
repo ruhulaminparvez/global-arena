@@ -2,15 +2,63 @@
 
 import BottomNavigation from "../_components/BottomNavigation";
 import { ArrowUpCircle, Search, Filter, Download } from "lucide-react";
+import Table, { TableColumn } from "@/components/Table";
 
 export default function WithdrawalManagementPage() {
-
   // Mock withdrawal data
   const withdrawals = [
     { id: 1, userName: "আহমেদ হাসান", amount: 5000, method: "ব্যাংক", date: "2024-01-15", status: "বিবেচনাধীন" },
     { id: 2, userName: "ফাতিমা খাতুন", amount: 8000, method: "মোবাইল", date: "2024-01-14", status: "অনুমোদিত" },
     { id: 3, userName: "করিম উদ্দিন", amount: 3000, method: "ব্যাংক", date: "2024-01-13", status: "অনুমোদিত" },
     { id: 4, userName: "রোকেয়া বেগম", amount: 6000, method: "মোবাইল", date: "2024-01-12", status: "বিবেচনাধীন" },
+  ];
+
+  // Table columns
+  const columns: TableColumn<typeof withdrawals[0]>[] = [
+    { key: "id", label: "আইডি" },
+    { key: "userName", label: "ব্যবহারকারীর নাম" },
+    {
+      key: "amount",
+      label: "পরিমাণ",
+      render: (withdrawal) => (
+        <span className="font-semibold">
+          ৳ {withdrawal.amount.toLocaleString("bn-BD")}
+        </span>
+      ),
+    },
+    { key: "method", label: "পদ্ধতি", className: "text-gray-600" },
+    { key: "date", label: "তারিখ", className: "text-gray-600" },
+    {
+      key: "status",
+      label: "স্ট্যাটাস",
+      render: (withdrawal) => (
+        <span
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${withdrawal.status === "অনুমোদিত"
+              ? "bg-green-100 text-green-800"
+              : "bg-yellow-100 text-yellow-800"
+            }`}
+        >
+          {withdrawal.status}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "কার্যক্রম",
+      render: () => (
+        <div className="flex gap-2">
+          <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+            দেখুন
+          </button>
+          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            অনুমোদন
+          </button>
+          <button className="text-red-600 hover:text-red-700 text-sm font-medium">
+            প্রত্যাখ্যান
+          </button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -52,60 +100,11 @@ export default function WithdrawalManagementPage() {
         </div>
 
         {/* Withdrawals Table */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-primary-600 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">আইডি</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">ব্যবহারকারীর নাম</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">পরিমাণ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">পদ্ধতি</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">তারিখ</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">স্ট্যাটাস</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">কার্যক্রম</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {withdrawals.map((withdrawal) => (
-                  <tr key={withdrawal.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-900">{withdrawal.id}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{withdrawal.userName}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
-                      ৳ {withdrawal.amount.toLocaleString("bn-BD")}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{withdrawal.method}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{withdrawal.date}</td>
-                    <td className="px-6 py-4">
-                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        withdrawal.status === "অনুমোদিত" 
-                          ? "bg-green-100 text-green-800" 
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}>
-                        {withdrawal.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
-                        <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-                          দেখুন
-                        </button>
-                        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                          অনুমোদন
-                        </button>
-                        <button className="text-red-600 hover:text-red-700 text-sm font-medium">
-                          প্রত্যাখ্যান
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="mb-6">
+          <Table data={withdrawals} columns={columns} />
         </div>
       </div>
-      
+
       <BottomNavigation />
     </div>
   );
