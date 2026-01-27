@@ -6,7 +6,7 @@ import { ArrowDownCircle } from "lucide-react";
 export default function DepositPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <div className="max-w-6xl mx-auto px-4 py-8 pb-[15.5rem] sm:pb-[10.5rem] overflow-x-hidden">
+      <div className="max-w-6xl mx-auto px-4 py-8 pb-[13rem] sm:pb-[8rem] overflow-x-hidden">
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center gap-3 mb-6">
             <ArrowDownCircle className="w-8 h-8 text-primary-600" />

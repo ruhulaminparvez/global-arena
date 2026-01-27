@@ -31,6 +31,25 @@ export default function BottomNavigation() {
     setShowLogoutModal(false);
   };
 
+  // Get color classes for each menu item based on ID
+  const getItemColorClasses = (itemId: number, isActive: boolean) => {
+    if (isActive) {
+      return "bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30";
+    }
+
+    const colorMap: Record<number, string> = {
+      0: "bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-700", // Wallet - Blue
+      1: "bg-purple-100 text-purple-600 hover:bg-purple-200 hover:text-purple-700", // TrendingUp - Purple
+      2: "bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700", // ArrowDownCircle - Green
+      3: "bg-orange-100 text-orange-600 hover:bg-orange-200 hover:text-orange-700", // ArrowUpCircle - Orange
+      4: "bg-pink-100 text-pink-600 hover:bg-pink-200 hover:text-pink-700", // Ticket - Pink
+      5: "bg-indigo-100 text-indigo-600 hover:bg-indigo-200 hover:text-indigo-700", // Building2 - Indigo
+      6: "bg-cyan-100 text-cyan-600 hover:bg-cyan-200 hover:text-cyan-700", // Phone - Cyan
+    };
+
+    return colorMap[itemId] || "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700";
+  };
+
   return (
     <>
       {/* Bottom Navigation */}
@@ -42,7 +61,7 @@ export default function BottomNavigation() {
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
       >
         <div className="max-w-6xl mx-auto px-3 py-3">
-          <div className="grid grid-cols-3 sm:flex sm:items-stretch gap-2">
+          <div className="grid grid-cols-4 sm:flex sm:items-stretch gap-2">
             {MENU_ITEMS.map((item: MenuItem) => {
               const Icon: React.ElementType = item.icon;
               const isActive = isActiveRoute(item);
@@ -53,11 +72,7 @@ export default function BottomNavigation() {
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleItemClick(item)}
-                  className={`flex flex-col items-center justify-center gap-1.5 px-2 py-3 rounded-xl transition-all relative sm:flex-1 ${
-                    isActive
-                      ? "bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30"
-                      : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-primary-600"
-                  }`}
+                  className={`flex flex-col items-center justify-center gap-1.5 px-2 py-3 rounded-xl transition-all relative sm:flex-1 ${getItemColorClasses(item.id, isActive)}`}
                 >
                   <div className="relative z-10">
                     <Icon
@@ -89,7 +104,7 @@ export default function BottomNavigation() {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setShowLogoutModal(true)}
-              className="flex flex-col col-span-2 sm:col-span-1 items-center justify-center gap-1.5 px-2 py-3 rounded-xl transition-all bg-gray-50 text-red-500 hover:bg-red-50 hover:text-red-600 sm:flex-1"
+              className="flex flex-col items-center justify-center gap-1.5 px-2 py-3 rounded-xl transition-all bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700"
             >
               <LogOut className="w-5 h-5 sm:w-6 sm:h-6" />
               <span className="text-[10px] sm:text-xs font-semibold text-center leading-tight">লগআউট</span>

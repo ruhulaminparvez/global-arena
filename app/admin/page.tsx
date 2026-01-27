@@ -37,7 +37,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8 pb-[15.5rem] sm:pb-[10.5rem] overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-4 py-8 pb-[18rem] sm:pb-[12rem] overflow-x-hidden">
         <AdminHeader />
 
         {/* Page Title */}
@@ -84,7 +84,7 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       </div>
-      
+
       {/* Bottom Navigation */}
       <BottomNavigation />
     </div>

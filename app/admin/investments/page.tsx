@@ -15,7 +15,7 @@ export default function InvestmentManagementPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <div className="max-w-7xl mx-auto px-4 py-8 pb-[15.5rem] sm:pb-[10.5rem] overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-4 py-8 pb-[18rem] sm:pb-[12rem] overflow-x-hidden">
         {/* Page Header */}
         <div className="mb-8 bg-white rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
