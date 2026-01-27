@@ -5,9 +5,9 @@ import { ArrowUpCircle } from "lucide-react";
 
 export default function WithdrawalPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden pb-20">
-      <div className="max-w-6xl mx-auto px-4 py-8 overflow-x-hidden">
-        <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
+      <div className="max-w-6xl mx-auto px-4 py-8 pb-[15.5rem] sm:pb-[10.5rem] overflow-x-hidden">
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center gap-3 mb-6">
             <ArrowUpCircle className="w-8 h-8 text-primary-600" />
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">উত্তোলন</h1>
