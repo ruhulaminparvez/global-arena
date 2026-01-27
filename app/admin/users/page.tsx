@@ -2,7 +2,8 @@
 
 import BottomNavigation from "../_components/BottomNavigation";
 import { Users, Search, Filter, Download, Plus, UserPlus } from "lucide-react";
-import Table, { TableColumn } from "@/components/Table";
+import Table from "@/components/Table";
+import { getUsersColumns } from "@/columns/admin/users";
 
 export default function UserManagementPage() {
   // Mock user data
@@ -14,42 +15,7 @@ export default function UserManagementPage() {
   ];
 
   // Table columns
-  const columns: TableColumn<typeof users[0]>[] = [
-    { key: "id", label: "আইডি" },
-    { key: "name", label: "নাম", className: "font-medium" },
-    { key: "email", label: "ইমেইল", className: "text-gray-600" },
-    { key: "phone", label: "ফোন", className: "text-gray-600" },
-    { key: "role", label: "ভূমিকা", className: "text-gray-600" },
-    {
-      key: "status",
-      label: "স্ট্যাটাস",
-      render: (user) => (
-        <span
-          className={`px-3 py-1 text-xs font-semibold rounded-full ${user.status === "সক্রিয়"
-              ? "bg-green-100 text-green-800"
-              : "bg-gray-100 text-gray-800"
-            }`}
-        >
-          {user.status}
-        </span>
-      ),
-    },
-    { key: "joinDate", label: "যোগদান তারিখ", className: "text-gray-600" },
-    {
-      key: "actions",
-      label: "কার্যক্রম",
-      render: () => (
-        <div className="flex gap-2">
-          <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-            দেখুন
-          </button>
-          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-            সম্পাদনা
-          </button>
-        </div>
-      ),
-    },
-  ];
+  const columns = getUsersColumns();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">

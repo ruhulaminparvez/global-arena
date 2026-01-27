@@ -2,7 +2,8 @@
 
 import BottomNavigation from "../_components/BottomNavigation";
 import { ArrowDownCircle, Search, Filter, Download, Plus } from "lucide-react";
-import Table, { TableColumn } from "@/components/Table";
+import Table from "@/components/Table";
+import { getDepositsColumns } from "@/columns/admin/deposits";
 
 export default function DepositManagementPage() {
   // Mock deposit data
@@ -14,53 +15,7 @@ export default function DepositManagementPage() {
   ];
 
   // Table columns
-  const columns: TableColumn<typeof deposits[0]>[] = [
-    { key: "id", label: "আইডি" },
-    { key: "userName", label: "ব্যবহারকারীর নাম" },
-    {
-      key: "amount",
-      label: "পরিমাণ",
-      render: (deposit) => (
-        <span className="font-semibold">
-          ৳ {deposit.amount.toLocaleString("bn-BD")}
-        </span>
-      ),
-    },
-    { key: "method", label: "পদ্ধতি", className: "text-gray-600" },
-    { key: "date", label: "তারিখ", className: "text-gray-600" },
-    {
-      key: "status",
-      label: "স্ট্যাটাস",
-      render: (deposit) => (
-        <span
-          className={`px-3 py-1 text-xs font-semibold rounded-full ${
-            deposit.status === "অনুমোদিত"
-              ? "bg-green-100 text-green-800"
-              : "bg-yellow-100 text-yellow-800"
-          }`}
-        >
-          {deposit.status}
-        </span>
-      ),
-    },
-    {
-      key: "actions",
-      label: "কার্যক্রম",
-      render: () => (
-        <div className="flex gap-2">
-          <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-            দেখুন
-          </button>
-          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-            অনুমোদন
-          </button>
-          <button className="text-red-600 hover:text-red-700 text-sm font-medium">
-            প্রত্যাখ্যান
-          </button>
-        </div>
-      ),
-    },
-  ];
+  const columns = getDepositsColumns();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">

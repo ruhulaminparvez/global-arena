@@ -6,7 +6,8 @@ import BottomNavigation from "../_components/BottomNavigation";
 import { ArrowUpCircle, Search, Plus, X } from "lucide-react";
 import { MOCK_WITHDRAWALS } from "@/constants/dashboard";
 import type { Withdrawal } from "@/constants/dashboard";
-import Table, { TableColumn } from "@/components/Table";
+import Table from "@/components/Table";
+import { getWithdrawalColumns } from "@/columns/dashboard/withdrawal";
 
 export default function WithdrawalPage() {
   const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
@@ -60,62 +61,7 @@ export default function WithdrawalPage() {
   };
 
   // Table columns
-  const columns: TableColumn<Withdrawal>[] = [
-    {
-      key: "id",
-      label: "আইডি",
-      className: "font-medium",
-    },
-    {
-      key: "date",
-      label: "তারিখ",
-      render: (withdrawal) => formatDate(withdrawal.date),
-    },
-    {
-      key: "amount",
-      label: "পরিমাণ",
-      render: (withdrawal) => (
-        <span className="font-semibold">
-          ৳ {withdrawal.amount.toLocaleString("bn-BD")}
-        </span>
-      ),
-    },
-    {
-      key: "method",
-      label: "পদ্ধতি",
-      className: "text-gray-600",
-    },
-    {
-      key: "accountNumber",
-      label: "অ্যাকাউন্ট নম্বর",
-      render: (withdrawal) => (
-        <span className="font-mono text-gray-600">{withdrawal.accountNumber}</span>
-      ),
-    },
-    {
-      key: "status",
-      label: "স্ট্যাটাস",
-      render: (withdrawal) => (
-        <span
-          className={`px-3 py-1 text-xs font-semibold rounded-full ${withdrawal.status === "অনুমোদিত"
-              ? "bg-green-100 text-green-800"
-              : withdrawal.status === "প্রত্যাখ্যান"
-                ? "bg-red-100 text-red-800"
-                : "bg-yellow-100 text-yellow-800"
-            }`}
-        >
-          {withdrawal.status}
-        </span>
-      ),
-    },
-    {
-      key: "description",
-      label: "বিবরণ",
-      render: (withdrawal) => (
-        <span className="text-gray-600">{withdrawal.description || "-"}</span>
-      ),
-    },
-  ];
+  const columns = getWithdrawalColumns({ formatDate });
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {

@@ -6,7 +6,8 @@ import BottomNavigation from "../_components/BottomNavigation";
 import { TrendingUp, Search, Download } from "lucide-react";
 import { MOCK_INVESTMENTS, DATE_WISE_INVESTMENTS } from "@/constants/dashboard";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import Table, { TableColumn } from "@/components/Table";
+import Table from "@/components/Table";
+import { getTotalInvestmentColumns } from "@/columns/dashboard/total-investment";
 
 export default function TotalInvestmentPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,51 +52,7 @@ export default function TotalInvestmentPage() {
   };
 
   // Table columns
-  const columns: TableColumn<typeof MOCK_INVESTMENTS[0]>[] = [
-    {
-      key: "id",
-      label: "আইডি",
-      className: "font-medium",
-    },
-    {
-      key: "date",
-      label: "তারিখ",
-      render: (investment) => formatDate(investment.date),
-    },
-    {
-      key: "amount",
-      label: "পরিমাণ",
-      render: (investment) => (
-        <span className="font-semibold">
-          ৳ {investment.amount.toLocaleString("bn-BD")}
-        </span>
-      ),
-    },
-    {
-      key: "type",
-      label: "ধরন",
-      className: "text-gray-600",
-    },
-    {
-      key: "status",
-      label: "স্ট্যাটাস",
-      render: (investment) => (
-        <span
-          className={`px-3 py-1 text-xs font-semibold rounded-full ${investment.status === "সক্রিয়"
-              ? "bg-green-100 text-green-800"
-              : "bg-blue-100 text-blue-800"
-            }`}
-        >
-          {investment.status}
-        </span>
-      ),
-    },
-    {
-      key: "description",
-      label: "বিবরণ",
-      className: "text-gray-600",
-    },
-  ];
+  const columns = getTotalInvestmentColumns({ formatDate });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">

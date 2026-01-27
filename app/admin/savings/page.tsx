@@ -2,7 +2,8 @@
 
 import BottomNavigation from "../_components/BottomNavigation";
 import { Wallet, Search, Filter, Download } from "lucide-react";
-import Table, { TableColumn } from "@/components/Table";
+import Table from "@/components/Table";
+import { getSavingsColumns } from "@/columns/admin/savings";
 
 export default function SavingsManagementPage() {
   // Mock savings data
@@ -14,43 +15,7 @@ export default function SavingsManagementPage() {
   ];
 
   // Table columns
-  const columns: TableColumn<typeof savings[0]>[] = [
-    { key: "id", label: "আইডি" },
-    { key: "userName", label: "ব্যবহারকারীর নাম" },
-    {
-      key: "amount",
-      label: "পরিমাণ",
-      render: (saving) => (
-        <span className="font-semibold">
-          ৳ {saving.amount.toLocaleString("bn-BD")}
-        </span>
-      ),
-    },
-    { key: "date", label: "তারিখ", className: "text-gray-600" },
-    {
-      key: "status",
-      label: "স্ট্যাটাস",
-      render: (saving) => (
-        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-          {saving.status}
-        </span>
-      ),
-    },
-    {
-      key: "actions",
-      label: "কার্যক্রম",
-      render: () => (
-        <div className="flex gap-2">
-          <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-            দেখুন
-          </button>
-          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-            সম্পাদনা
-          </button>
-        </div>
-      ),
-    },
-  ];
+  const columns = getSavingsColumns();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
