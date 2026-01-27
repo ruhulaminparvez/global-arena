@@ -5,7 +5,6 @@ import {
   ArrowUpCircle,
   Building2,
   Phone,
-  LogOut,
   Ticket
 } from "lucide-react";
 import type { UserDashboardData, MenuItem } from "@/types/dashboard";

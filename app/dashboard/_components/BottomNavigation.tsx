@@ -14,13 +14,6 @@ export default function BottomNavigation() {
   const { logout } = useAuth();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const visibleMenuItems = MENU_ITEMS.filter((item: MenuItem) => {
-    // Exclude logout (id: 8)
-    if (item.id === 8) return false;
-    // Show all other items
-    return true;
-  });
-
   const isActiveRoute = (item: MenuItem): boolean => {
     if (!item.route) return false;
     return pathname === item.route;
@@ -50,7 +43,7 @@ export default function BottomNavigation() {
       >
         <div className="max-w-6xl mx-auto px-3 py-3">
           <div className="grid grid-cols-3 sm:flex sm:items-stretch gap-2">
-            {visibleMenuItems.map((item: MenuItem) => {
+            {MENU_ITEMS.map((item: MenuItem) => {
               const Icon: React.ElementType = item.icon;
               const isActive = isActiveRoute(item);
 
@@ -96,7 +89,7 @@ export default function BottomNavigation() {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setShowLogoutModal(true)}
-              className="flex flex-col items-center justify-center gap-1.5 px-2 py-3 rounded-xl transition-all bg-gray-50 text-red-500 hover:bg-red-50 hover:text-red-600 sm:flex-1"
+              className="flex flex-col col-span-2 sm:col-span-1 items-center justify-center gap-1.5 px-2 py-3 rounded-xl transition-all bg-gray-50 text-red-500 hover:bg-red-50 hover:text-red-600 sm:flex-1"
             >
               <LogOut className="w-5 h-5 sm:w-6 sm:h-6" />
               <span className="text-[10px] sm:text-xs font-semibold text-center leading-tight">লগআউট</span>

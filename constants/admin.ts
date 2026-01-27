@@ -7,7 +7,6 @@ import {
   MessageSquare,
   Ticket,
   Users,
-  LogOut,
 } from "lucide-react";
 import type { MenuItem } from "@/types/dashboard";
 
@@ -20,5 +19,4 @@ export const ADMIN_MENU_ITEMS: MenuItem[] = [
   { id: 6, label: "যোগাযোগ ম্যানেজমেন্ট", icon: MessageSquare, route: "/admin/communications" },
   { id: 7, label: "টিকেট ম্যানেজমেন্ট", icon: Ticket, route: "/admin/tickets" },
   { id: 8, label: "ইউজার ম্যানেজমেন্ট", icon: Users, route: "/admin/users" },
-  { id: 9, label: "লগআউট", icon: LogOut },
 ];
