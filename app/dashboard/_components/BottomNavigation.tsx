@@ -14,15 +14,12 @@ export default function BottomNavigation() {
   const { logout } = useAuth();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const visibleMenuItems = MENU_ITEMS.filter((item) => {
+  const visibleMenuItems = MENU_ITEMS.filter((item: MenuItem) => {
     // Exclude logout (id: 8)
     if (item.id === 8) return false;
     // Show all other items
     return true;
   });
-
-  // Limit to 5 items for bottom nav (most important ones)
-  const mainNavItems = visibleMenuItems.slice(0, 5);
 
   const isActiveRoute = (item: MenuItem): boolean => {
     if (!item.route) return false;
@@ -53,8 +50,8 @@ export default function BottomNavigation() {
       >
         <div className="max-w-6xl mx-auto px-3 py-3">
           <div className="grid grid-cols-3 sm:flex sm:items-stretch gap-2">
-            {mainNavItems.map((item) => {
-              const Icon = item.icon;
+            {visibleMenuItems.map((item: MenuItem) => {
+              const Icon: React.ElementType = item.icon;
               const isActive = isActiveRoute(item);
 
               return (

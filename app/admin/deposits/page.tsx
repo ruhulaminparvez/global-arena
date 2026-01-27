@@ -1,6 +1,5 @@
 "use client";
 
-import AdminHeader from "../_components/AdminHeader";
 import BottomNavigation from "../_components/BottomNavigation";
 import { ArrowDownCircle, Search, Filter, Download, Plus } from "lucide-react";
 
@@ -16,29 +15,18 @@ export default function DepositManagementPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <AdminSidebarMenu
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-        onMenuClick={handleMenuClick}
-      />
-
       <div className="max-w-7xl mx-auto px-4 py-8 overflow-x-hidden">
-        <AdminHeader
-          isMenuOpen={isMenuOpen}
-          setIsMenuOpen={setIsMenuOpen}
-        />
-
         {/* Page Header */}
         <div className="mb-8 bg-white rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
               <ArrowDownCircle className="w-8 h-8 text-primary-600" />
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">জমা ম্যানেজমেন্ট</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">জমা ম্যানেজমেন্ট</h1>
                 <p className="text-gray-600 mt-1">সমস্ত জমা লেনদেন পরিচালনা করুন</p>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <button className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg flex items-center gap-2 transition-colors">
                 <Plus className="w-4 h-4" />
                 নতুন জমা
@@ -93,11 +81,10 @@ export default function DepositManagementPage() {
                     <td className="px-6 py-4 text-sm text-gray-600">{deposit.method}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{deposit.date}</td>
                     <td className="px-6 py-4">
-                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        deposit.status === "অনুমোদিত" 
-                          ? "bg-green-100 text-green-800" 
+                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${deposit.status === "অনুমোদিত"
+                          ? "bg-green-100 text-green-800"
                           : "bg-yellow-100 text-yellow-800"
-                      }`}>
+                        }`}>
                         {deposit.status}
                       </span>
                     </td>
@@ -121,7 +108,7 @@ export default function DepositManagementPage() {
           </div>
         </div>
       </div>
-      
+
       <BottomNavigation />
     </div>
   );

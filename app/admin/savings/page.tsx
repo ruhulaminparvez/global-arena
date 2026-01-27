@@ -1,6 +1,5 @@
 "use client";
 
-import AdminHeader from "../_components/AdminHeader";
 import BottomNavigation from "../_components/BottomNavigation";
 import { Wallet, Search, Filter, Download } from "lucide-react";
 
@@ -17,19 +16,17 @@ export default function SavingsManagementPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden pb-20">
       <div className="max-w-7xl mx-auto px-4 py-8 overflow-x-hidden">
-        <AdminHeader />
-
         {/* Page Header */}
         <div className="mb-8 bg-white rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
               <Wallet className="w-8 h-8 text-primary-600" />
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">সঞ্চয় ম্যানেজমেন্ট</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">সঞ্চয় ম্যানেজমেন্ট</h1>
                 <p className="text-gray-600 mt-1">সমস্ত সঞ্চয় লেনদেন পরিচালনা করুন</p>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg flex items-center gap-2 transition-colors">
                 <Filter className="w-4 h-4" />
                 ফিল্টার
@@ -99,7 +96,7 @@ export default function SavingsManagementPage() {
           </div>
         </div>
       </div>
-      
+
       <BottomNavigation />
     </div>
   );

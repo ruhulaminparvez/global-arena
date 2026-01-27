@@ -12,7 +12,7 @@ export default function DashboardPage() {
         <UserDetail />
         <MonthlySavingsGraph />
       </div>
-      
+
       {/* Bottom Navigation */}
       <BottomNavigation />
     </div>

@@ -42,7 +42,7 @@ export default function AdminDashboardPage() {
 
         {/* Page Title */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">ড্যাশবোর্ড অ্যান্ড রিপোর্টস</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">ড্যাশবোর্ড অ্যান্ড রিপোর্টস</h1>
           <p className="text-gray-600">সিস্টেমের সামগ্রিক পরিসংখ্যান এবং রিপোর্ট</p>
         </div>
 
