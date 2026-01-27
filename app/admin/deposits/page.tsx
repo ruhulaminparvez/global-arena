@@ -1,27 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import type { MenuItem } from "@/types/dashboard";
-import { useAuth } from "@/contexts/AuthContext";
 import AdminHeader from "../_components/AdminHeader";
-import AdminSidebarMenu from "../_components/AdminSidebarMenu";
+import BottomNavigation from "../_components/BottomNavigation";
 import { ArrowDownCircle, Search, Filter, Download, Plus } from "lucide-react";
 
 export default function DepositManagementPage() {
-  const router = useRouter();
-  const { logout } = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-
-  const handleMenuClick = (item: MenuItem): void => {
-    if (item.id === 9) {
-      logout();
-      router.push("/login");
-    } else if (item.route) {
-      router.push(item.route);
-      setIsMenuOpen(false);
-    }
-  };
 
   // Mock deposit data
   const deposits = [
@@ -138,6 +121,8 @@ export default function DepositManagementPage() {
           </div>
         </div>
       </div>
+      
+      <BottomNavigation />
     </div>
   );
 }

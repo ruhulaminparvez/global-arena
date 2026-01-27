@@ -1,38 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import type { MenuItem } from "@/types/dashboard";
 import UserDetail from "../_components/UserDetail";
-import SidebarMenu from "../_components/SidebarMenu";
+import BottomNavigation from "../_components/BottomNavigation";
 import { TrendingUp } from "lucide-react";
 
 export default function TotalInvestmentPage() {
-  const router = useRouter();
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-
-  const handleMenuClick = (item: MenuItem): void => {
-    if (item.id === 8) {
-      router.push("/login");
-    } else if (item.route) {
-      router.push(item.route);
-      setIsMenuOpen(false);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <SidebarMenu
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-        onMenuClick={handleMenuClick}
-      />
-
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden pb-20">
       <div className="max-w-6xl mx-auto px-4 py-8 overflow-x-hidden">
-        <UserDetail
-          isMenuOpen={isMenuOpen}
-          setIsMenuOpen={setIsMenuOpen}
-        />
+        <UserDetail />
         
         <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-center gap-3 mb-6">
@@ -44,6 +20,8 @@ export default function TotalInvestmentPage() {
           </div>
         </div>
       </div>
+      
+      <BottomNavigation />
     </div>
   );
 }

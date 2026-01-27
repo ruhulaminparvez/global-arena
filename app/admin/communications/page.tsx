@@ -1,27 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import type { MenuItem } from "@/types/dashboard";
-import { useAuth } from "@/contexts/AuthContext";
 import AdminHeader from "../_components/AdminHeader";
-import AdminSidebarMenu from "../_components/AdminSidebarMenu";
+import BottomNavigation from "../_components/BottomNavigation";
 import { MessageSquare, Search, Filter, Download, Plus, Send } from "lucide-react";
 
 export default function CommunicationManagementPage() {
-  const router = useRouter();
-  const { logout } = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-
-  const handleMenuClick = (item: MenuItem): void => {
-    if (item.id === 9) {
-      logout();
-      router.push("/login");
-    } else if (item.route) {
-      router.push(item.route);
-      setIsMenuOpen(false);
-    }
-  };
 
   // Mock communication data
   const communications = [
@@ -32,18 +15,9 @@ export default function CommunicationManagementPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <AdminSidebarMenu
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-        onMenuClick={handleMenuClick}
-      />
-
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden pb-20">
       <div className="max-w-7xl mx-auto px-4 py-8 overflow-x-hidden">
-        <AdminHeader
-          isMenuOpen={isMenuOpen}
-          setIsMenuOpen={setIsMenuOpen}
-        />
+        <AdminHeader />
 
         {/* Page Header */}
         <div className="mb-8 bg-white rounded-xl shadow-lg p-6">
@@ -139,6 +113,8 @@ export default function CommunicationManagementPage() {
           </div>
         </div>
       </div>
+      
+      <BottomNavigation />
     </div>
   );
 }

@@ -1,17 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/navigation";
-import { Menu, Shield, LayoutDashboard } from "lucide-react";
+import { Shield, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
-interface AdminHeaderProps {
-  isMenuOpen: boolean;
-  setIsMenuOpen: Dispatch<SetStateAction<boolean>>;
-}
+interface AdminHeaderProps {}
 
-export default function AdminHeader({ isMenuOpen, setIsMenuOpen }: AdminHeaderProps) {
+export default function AdminHeader({}: AdminHeaderProps = {}) {
   const { user } = useAuth();
   const router = useRouter();
 
@@ -26,27 +22,14 @@ export default function AdminHeader({ isMenuOpen, setIsMenuOpen }: AdminHeaderPr
       className="bg-white rounded-2xl shadow-xl p-6 mb-6 relative"
     >
       {/* Button Container */}
-      <div className="absolute top-4 left-4 md:left-auto md:right-4 flex gap-2">
-        {/* Dashboard Button */}
+      <div className="absolute top-4 right-4">
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={handleDashboardClick}
-          className="w-12 h-12 md:w-auto md:px-4 md:h-auto md:py-2 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-full md:rounded-lg shadow-lg flex items-center justify-center gap-2 hover:from-blue-600 hover:to-blue-800 transition-all z-10"
+          className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-full shadow-lg flex items-center justify-center hover:from-blue-600 hover:to-blue-800 transition-all z-10"
         >
-          <LayoutDashboard className="w-5 h-5 md:w-4 md:h-4 flex-shrink-0" />
-          <span className="hidden md:inline font-medium text-sm">ড্যাশবোর্ড</span>
-        </motion.button>
-
-        {/* Hamburger Menu Button */}
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="w-12 h-12 md:w-auto md:px-4 md:h-auto md:py-2 bg-primary-600 text-white rounded-full md:rounded-lg shadow-lg flex items-center justify-center gap-2 hover:bg-primary-700 transition-all z-10"
-        >
-          <Menu className="w-6 h-6 md:w-4 md:h-4 flex-shrink-0" />
-          <span className="hidden md:inline font-medium text-sm">Show Menu</span>
+          <LayoutDashboard className="w-5 h-5 flex-shrink-0" />
         </motion.button>
       </div>
 

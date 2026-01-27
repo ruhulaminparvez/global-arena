@@ -1,44 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import type { MenuItem } from "@/types/dashboard";
 import UserDetail from "./_components/UserDetail";
 import MonthlySavingsGraph from "./_components/MonthlySavingsGraph";
-import SidebarMenu from "./_components/SidebarMenu";
+import BottomNavigation from "./_components/BottomNavigation";
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-
-  const handleMenuClick = (item: MenuItem): void => {
-    if (item.id === 8) {
-      // Logout
-      router.push("/login");
-    } else if (item.route) {
-      // Navigate to the route
-      router.push(item.route);
-      setIsMenuOpen(false);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      {/* Sidebar Menu */}
-      <SidebarMenu
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-        onMenuClick={handleMenuClick}
-      />
-
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden pb-20">
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 py-8 overflow-x-hidden">
-        <UserDetail
-          isMenuOpen={isMenuOpen}
-          setIsMenuOpen={setIsMenuOpen}
-        />
+        <UserDetail />
         <MonthlySavingsGraph />
       </div>
+      
+      {/* Bottom Navigation */}
+      <BottomNavigation />
     </div>
   );
 }

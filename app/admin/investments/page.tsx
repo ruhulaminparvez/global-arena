@@ -1,27 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import type { MenuItem } from "@/types/dashboard";
-import { useAuth } from "@/contexts/AuthContext";
 import AdminHeader from "../_components/AdminHeader";
-import AdminSidebarMenu from "../_components/AdminSidebarMenu";
+import BottomNavigation from "../_components/BottomNavigation";
 import { TrendingUp, Search, Filter, Download } from "lucide-react";
 
 export default function InvestmentManagementPage() {
-  const router = useRouter();
-  const { logout } = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-
-  const handleMenuClick = (item: MenuItem): void => {
-    if (item.id === 9) {
-      logout();
-      router.push("/login");
-    } else if (item.route) {
-      router.push(item.route);
-      setIsMenuOpen(false);
-    }
-  };
 
   // Mock investment data
   const investments = [
@@ -131,6 +114,8 @@ export default function InvestmentManagementPage() {
           </div>
         </div>
       </div>
+      
+      <BottomNavigation />
     </div>
   );
 }
