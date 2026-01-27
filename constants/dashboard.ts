@@ -7,7 +7,7 @@ import {
   Phone,
   Ticket
 } from "lucide-react";
-import type { UserDashboardData, MenuItem } from "@/types/dashboard";
+import type { UserDashboardData, MenuItem, CompanyHistory, ContactInfo } from "@/types/dashboard";
 
 const USER_PHOTO = "/images/ruhul.jpg";
 
@@ -175,4 +175,97 @@ export const MOCK_USER_TICKETS: UserTicket[] = [
   { id: 7, ticketNo: "TKT-007", date: "2024-04-08", subject: "সাধারণ প্রশ্ন", priority: "নিম্ন", status: "সমাধান", description: "সেবা সম্পর্কে সাধারণ তথ্য", response: "আমাদের সেবা সম্পর্কে বিস্তারিত তথ্য আপনার ইমেইলে পাঠানো হয়েছে" },
   { id: 8, ticketNo: "TKT-008", date: "2024-04-20", subject: "ট্রান্সাকশন সমস্যা", priority: "উচ্চ", status: "প্রক্রিয়াধীন", description: "ট্রান্সাকশন সম্পন্ন হয়নি" },
 ];
+
+// Company history data for company history page
+export const MOCK_COMPANY_HISTORY: CompanyHistory[] = [
+  {
+    id: "1",
+    name: "নতুন মোবাইল অ্যাপ চালু",
+    description: "আমাদের নতুন মোবাইল অ্যাপ্লিকেশন এখন iOS এবং Android উভয় প্ল্যাটফর্মে উপলব্ধ। এখন থেকে আপনি যেকোনো সময়, যেকোনো জায়গা থেকে আপনার সঞ্চয় এবং বিনিয়োগ পরিচালনা করতে পারবেন।",
+    date: "2024-04-15",
+    type: "announcement",
+  },
+  {
+    id: "2",
+    name: "সিস্টেম আপডেট",
+    description: "আমরা আমাদের সিস্টেমের নিরাপত্তা এবং কার্যকারিতা উন্নত করেছি। নতুন আপডেটে আরও দ্রুত লেনদেন প্রক্রিয়াকরণ এবং উন্নত নিরাপত্তা বৈশিষ্ট্য রয়েছে।",
+    date: "2024-04-10",
+    type: "update",
+  },
+  {
+    id: "3",
+    name: "বছর শেষ অনুষ্ঠান",
+    description: "আমাদের বার্ষিক গ্রাহক সম্মেলন ২০২৪ সালের ৩০শে এপ্রিল অনুষ্ঠিত হবে। এই অনুষ্ঠানে আমাদের নতুন পরিষেবা এবং ভবিষ্যত পরিকল্পনা নিয়ে আলোচনা করা হবে।",
+    date: "2024-03-25",
+    type: "event",
+  },
+  {
+    id: "4",
+    name: "নতুন বিনিয়োগ পরিকল্পনা",
+    description: "আমরা নতুন মাসিক এবং বার্ষিক বিনিয়োগ পরিকল্পনা চালু করেছি। এই পরিকল্পনাগুলোতে আরও বেশি সুবিধা এবং নমনীয়তা রয়েছে।",
+    date: "2024-03-15",
+    type: "announcement",
+  },
+  {
+    id: "5",
+    name: "ওয়েবসাইট রিডিজাইন",
+    description: "আমাদের ওয়েবসাইট সম্পূর্ণ নতুন ডিজাইনে আপডেট করা হয়েছে। নতুন ডিজাইনে ব্যবহার করা আরও সহজ এবং আরও সুন্দর হয়েছে।",
+    date: "2024-03-05",
+    type: "update",
+  },
+  {
+    id: "6",
+    name: "গ্রাহক সেবা উন্নতি",
+    description: "আমরা আমাদের গ্রাহক সেবা দলকে প্রসারিত করেছি এবং ২৪/৭ সাপোর্ট চালু করেছি। এখন আপনি যেকোনো সময় আমাদের সাথে যোগাযোগ করতে পারবেন।",
+    date: "2024-02-20",
+    type: "update",
+  },
+  {
+    id: "7",
+    name: "সফলতা উদযাপন",
+    description: "আমরা আনন্দের সাথে ঘোষণা করছি যে আমাদের প্ল্যাটফর্মে ১০,০০০+ সক্রিয় ব্যবহারকারী পৌঁছেছে। আপনার সমর্থনের জন্য ধন্যবাদ!",
+    date: "2024-02-10",
+    type: "event",
+  },
+  {
+    id: "8",
+    name: "নতুন পেমেন্ট মেথড",
+    description: "এখন থেকে আপনি বিকাশ, নগদ, রকেট এবং ব্যাংক ট্রান্সফারের মাধ্যমে সহজেই জমা এবং উত্তোলন করতে পারবেন।",
+    date: "2024-01-28",
+    type: "announcement",
+  },
+  {
+    id: "9",
+    name: "নিরাপত্তা আপডেট",
+    description: "আমরা আমাদের প্ল্যাটফর্মের নিরাপত্তা ব্যবস্থা আরও শক্তিশালী করেছি। এখন দুই-ফ্যাক্টর প্রমাণীকরণ (2FA) বৈশিষ্ট্য চালু করা হয়েছে।",
+    date: "2024-01-15",
+    type: "update",
+  },
+  {
+    id: "10",
+    name: "কোম্পানি প্রতিষ্ঠা",
+    description: "Global Arena ২০২০ সালে প্রতিষ্ঠিত হয়েছিল কাজের মানুষের জন্য একটি আধুনিক সঞ্চয় এবং বিনিয়োগ প্ল্যাটফর্ম হিসেবে।",
+    date: "2020-01-01",
+    type: "event",
+  },
+];
+
+// Contact information for contact page
+export const CONTACT_INFO: ContactInfo = {
+  phone: "+880 17**-******",
+  email: "support@returnvetted.com",
+  address: "১২৩, বিজয় সরণি, ঢাকা-১২১২, বাংলাদেশ",
+  website: "https://returnvetted.com",
+  socialMedia: {
+    facebook: "https://www.facebook.com/returnvetted",
+    twitter: "https://www.twitter.com/returnvetted",
+    linkedin: "https://www.linkedin.com/company/returnvetted",
+  },
+};
+
+export const SUPPORT_HOURS = {
+  weekdays: "সকাল ৯:০০ - সন্ধ্যা ৬:০০",
+  weekends: "সকাল ১০:০০ - বিকাল ৪:০০",
+  emergency: "২৪/৭ ইমেইল সাপোর্ট",
+};
 
