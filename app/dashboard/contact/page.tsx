@@ -6,7 +6,7 @@ import { Phone } from "lucide-react";
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <div className="max-w-6xl mx-auto px-4 py-8 pb-[13rem] sm:pb-[8rem] overflow-x-hidden">
+      <div className="max-w-6xl mx-auto px-4 py-8 pb-[12rem] sm:pb-[7rem] overflow-x-hidden">
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center gap-3 mb-6">
             <Phone className="w-8 h-8 text-primary-600" />

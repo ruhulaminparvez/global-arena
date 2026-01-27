@@ -104,7 +104,7 @@ export default function BottomNavigation() {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setShowLogoutModal(true)}
-              className="flex flex-col items-center justify-center gap-1.5 px-2 py-3 rounded-xl transition-all bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700"
+              className="flex flex-col items-center justify-center gap-1.5 px-2 py-3 rounded-xl transition-all bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 sm:flex-1"
             >
               <LogOut className="w-5 h-5 sm:w-6 sm:h-6" />
               <span className="text-[10px] sm:text-xs font-semibold text-center leading-tight">লগআউট</span>
