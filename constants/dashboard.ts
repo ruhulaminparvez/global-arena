@@ -109,3 +109,25 @@ export const DATE_WISE_INVESTMENTS: DateWiseInvestment[] = [
   { date: "2024-04-20", amount: 22000 },
 ];
 
+// Deposit data for deposit page
+export interface Deposit {
+  id: number;
+  date: string;
+  amount: number;
+  method: string;
+  transactionId: string;
+  status: string;
+  description?: string;
+}
+
+export const MOCK_DEPOSITS: Deposit[] = [
+  { id: 1, date: "2024-01-10", amount: 5000, method: "ব্যাংক", transactionId: "TXN-001", status: "অনুমোদিত", description: "ব্যাংক ট্রান্সফার" },
+  { id: 2, date: "2024-01-18", amount: 8000, method: "মোবাইল", transactionId: "TXN-002", status: "অনুমোদিত", description: "বিকাশ" },
+  { id: 3, date: "2024-02-05", amount: 10000, method: "ব্যাংক", transactionId: "TXN-003", status: "বিবেচনাধীন", description: "ব্যাংক ট্রান্সফার" },
+  { id: 4, date: "2024-02-15", amount: 6000, method: "মোবাইল", transactionId: "TXN-004", status: "অনুমোদিত", description: "নগদ" },
+  { id: 5, date: "2024-03-02", amount: 12000, method: "ব্যাংক", transactionId: "TXN-005", status: "অনুমোদিত", description: "ব্যাংক ট্রান্সফার" },
+  { id: 6, date: "2024-03-20", amount: 7000, method: "মোবাইল", transactionId: "TXN-006", status: "বিবেচনাধীন", description: "রকেট" },
+  { id: 7, date: "2024-04-08", amount: 9000, method: "ব্যাংক", transactionId: "TXN-007", status: "অনুমোদিত", description: "ব্যাংক ট্রান্সফার" },
+  { id: 8, date: "2024-04-25", amount: 15000, method: "মোবাইল", transactionId: "TXN-008", status: "অনুমোদিত", description: "নগদ" },
+];
+
