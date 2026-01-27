@@ -1,6 +1,7 @@
 "use client";
 
 import AdminHeader from "./_components/AdminHeader";
+import AdminStatsCards from "./_components/AdminStatsCards";
 import BottomNavigation from "./_components/BottomNavigation";
 import { LayoutDashboard, TrendingUp, Users, Wallet } from "lucide-react";
 
@@ -47,23 +48,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={index}
-                className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-              >
-                <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4`}>
-                  <Icon className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-gray-600 text-sm mb-2">{stat.label}</h3>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              </div>
-            );
-          })}
-        </div>
+        <AdminStatsCards stats={stats} />
 
         {/* Reports Section */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
