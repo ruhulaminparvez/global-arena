@@ -43,3 +43,31 @@ export const MENU_ITEMS: MenuItem[] = [
   { id: 6, label: "যোগাযোগের তথ্য", icon: Phone, route: "/dashboard/contact" }
 ];
 
+// Dashboard statistics cards data
+export const DASHBOARD_STATS = [
+  {
+    label: "টোটাল বিনিয়োগ",
+    value: "৳ 85,000",
+    icon: TrendingUp,
+    color: "from-purple-500 to-purple-700",
+  },
+  {
+    label: "টোটাল জমা",
+    value: "৳ 1,25,000",
+    icon: ArrowDownCircle,
+    color: "from-green-500 to-green-700",
+  },
+  {
+    label: "টোটাল উত্তোলন",
+    value: "৳ 40,000",
+    icon: ArrowUpCircle,
+    color: "from-blue-500 to-blue-700",
+  },
+  {
+    label: "টোটাল টিকেট",
+    value: "12",
+    icon: Ticket,
+    color: "from-orange-500 to-orange-700",
+  },
+];
+
