@@ -71,3 +71,41 @@ export const DASHBOARD_STATS = [
   },
 ];
 
+// Investment data for total investment page
+export interface Investment {
+  id: number;
+  date: string;
+  amount: number;
+  type: string;
+  status: string;
+  description: string;
+}
+
+export const MOCK_INVESTMENTS: Investment[] = [
+  { id: 1, date: "2024-01-15", amount: 15000, type: "মাসিক", status: "সক্রিয়", description: "মাসিক বিনিয়োগ পরিকল্পনা" },
+  { id: 2, date: "2024-01-20", amount: 20000, type: "বার্ষিক", status: "সক্রিয়", description: "বার্ষিক বিনিয়োগ পরিকল্পনা" },
+  { id: 3, date: "2024-02-10", amount: 12000, type: "মাসিক", status: "সক্রিয়", description: "মাসিক বিনিয়োগ পরিকল্পনা" },
+  { id: 4, date: "2024-02-25", amount: 18000, type: "মাসিক", status: "সম্পন্ন", description: "মাসিক বিনিয়োগ পরিকল্পনা" },
+  { id: 5, date: "2024-03-05", amount: 25000, type: "বার্ষিক", status: "সক্রিয়", description: "বার্ষিক বিনিয়োগ পরিকল্পনা" },
+  { id: 6, date: "2024-03-18", amount: 10000, type: "মাসিক", status: "সক্রিয়", description: "মাসিক বিনিয়োগ পরিকল্পনা" },
+  { id: 7, date: "2024-04-02", amount: 15000, type: "মাসিক", status: "সম্পন্ন", description: "মাসিক বিনিয়োগ পরিকল্পনা" },
+  { id: 8, date: "2024-04-20", amount: 22000, type: "বার্ষিক", status: "সক্রিয়", description: "বার্ষিক বিনিয়োগ পরিকল্পনা" },
+];
+
+// Date-wise investment data for bar graph
+export interface DateWiseInvestment {
+  date: string;
+  amount: number;
+}
+
+export const DATE_WISE_INVESTMENTS: DateWiseInvestment[] = [
+  { date: "2024-01-15", amount: 15000 },
+  { date: "2024-01-20", amount: 20000 },
+  { date: "2024-02-10", amount: 12000 },
+  { date: "2024-02-25", amount: 18000 },
+  { date: "2024-03-05", amount: 25000 },
+  { date: "2024-03-18", amount: 10000 },
+  { date: "2024-04-02", amount: 15000 },
+  { date: "2024-04-20", amount: 22000 },
+];
+
