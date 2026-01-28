@@ -144,17 +144,24 @@ export default function UserDetail({ }: UserDetailProps = {}) {
             transition={{ delay: 0.3 }}
             className="text-2xl font-bold text-gray-900 mb-2"
           >
-            {profile?.user.username || "User"}
+            {profile?.user.first_name + " " + profile?.user.last_name || "User"}
           </motion.h2>
 
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="flex items-center justify-center md:justify-start gap-2 text-gray-600 mb-4"
+            className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-gray-600 mb-4"
           >
-            <CreditCard className="w-4 h-4" />
-            <span className="text-sm">জাতীয় পরিচয়পত্র: {profile?.nid || "N/A"}</span>
+            <div className="flex items-center gap-2">
+              <CreditCard className="w-4 h-4" />
+              <span className="text-sm">জাতীয় পরিচয়পত্র: {profile?.nid || "N/A"}</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <User className="w-4 h-4" />
+              <span className="text-sm">ইউজারনেম: {profile?.user.username || "N/A"}</span>
+            </div>
           </motion.div>
 
           {/* Total Balance with Counter Animation */}

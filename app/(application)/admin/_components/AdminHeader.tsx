@@ -138,7 +138,7 @@ export default function AdminHeader({ }: AdminHeaderProps = {}) {
             className="flex items-center justify-center md:justify-start gap-2 text-gray-600 mb-4"
           >
             <span className="text-sm font-medium">
-              {profile?.user.username || "অ্যাডমিন"}
+              {profile?.user.first_name + " " + profile?.user.last_name || profile?.user.username || "অ্যাডমিন"}
             </span>
           </motion.div>
 

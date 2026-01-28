@@ -83,10 +83,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const formData = new FormData();
 
       // Append text fields
+      formData.append("first_name", data.firstName);
+      formData.append("last_name", data.lastName);
       formData.append("role", "USER");
       formData.append("username", data.username);
       formData.append("password", data.password);
-      formData.append("password2", data.password2);
+      formData.append("password2", data.password);
       formData.append("nid", data.nid);
       formData.append("mobile", mobile);
       formData.append("email", email);
