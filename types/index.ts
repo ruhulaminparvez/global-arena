@@ -13,6 +13,7 @@ export type {
   RegistrationResponse,
   User,
   AuthState,
+  AuthContextType,
 } from "./auth";
 
 // Dashboard types

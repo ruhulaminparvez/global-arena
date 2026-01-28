@@ -7,15 +7,13 @@ import { loginSchema, registrationSchema } from "@/schema/auth.schema";
 export type LoginFormData = z.infer<typeof loginSchema>;
 
 export interface LoginRequest {
-  emailOrPhone: string;
+  username: string;
   password: string;
 }
 
 export interface LoginResponse {
-  success: boolean;
-  message?: string;
-  token?: string;
-  user?: User;
+  access: string;
+  refresh: string;
 }
 
 /**
@@ -36,25 +34,6 @@ export interface RegistrationRequest {
   termsAccepted: boolean;
 }
 
-export interface RegistrationResponse {
-  id: number;
-  user: User;
-  role: string;
-  profile_id: string;
-  nid: string;
-  photo: string;
-  mobile: string;
-  email: string;
-  reference: number;
-  registration_fee_paid: boolean;
-  registration_fee_amount: string;
-  nominee_name: string | null;
-  nominee_nid: string | null;
-  nominee_photo: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface RegistrationPayload {
   role: string;
   nid: string;
@@ -72,7 +51,18 @@ export interface RegistrationPayload {
  * User type (used across authentication and dashboard)
  */
 export interface User {
-  id: number;
+  id?: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+}
+
+/**
+ * Registration API response
+ * Backend currently returns only basic user fields.
+ */
+export interface RegistrationResponse {
   username: string;
   email: string;
   first_name: string;
@@ -103,7 +93,7 @@ export interface Profile {
  */
 export interface AuthState {
   isAuthenticated: boolean;
-  user: Profile | null;
+  user: User | null;
   token: string | null;
   isLoading: boolean;
 }
@@ -113,7 +103,7 @@ export interface AuthState {
  */
 export interface AuthContextType {
   isAuthenticated: boolean;
-  user: Profile | null;
+  user: User | null;
   token: string | null;
   isLoading: boolean;
   register: (data: RegistrationFormData) => Promise<RegistrationResponse>;

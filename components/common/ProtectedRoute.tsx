@@ -4,17 +4,16 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
-interface AdminProtectedRouteProps {
+interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 /**
- * Protected route component for admin pages
- * Checks if user is authenticated.
- * TODO: Re-add role-based gating when backend provides role in auth state.
+ * Protected route component for authenticated pages
+ * Checks if user has valid access token, redirects to login if not
  */
-export default function AdminProtectedRoute({ children }: AdminProtectedRouteProps) {
-  const { isAuthenticated, user, isLoading } = useAuth();
+export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -39,7 +38,7 @@ export default function AdminProtectedRoute({ children }: AdminProtectedRoutePro
     );
   }
 
-  // Don't render children if not authenticated or not admin
+  // Don't render children if not authenticated
   if (!isAuthenticated) {
     return null;
   }

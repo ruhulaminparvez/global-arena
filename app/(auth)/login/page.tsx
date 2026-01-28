@@ -1,21 +1,30 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Lock, ArrowRight, Phone } from "lucide-react";
+import { Lock, ArrowRight, User } from "lucide-react";
+import toast from "react-hot-toast";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { SlideIn } from "@/components/animations";
 import { AuthHeader } from "@/components/common/AuthHeader";
+import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { loginSchema, type LoginFormData } from "@/schema/auth.schema";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, isLoading: authLoading, isAuthenticated } = useAuth();
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, authLoading, router]);
 
   const {
     register,
@@ -24,22 +33,27 @@ export default function LoginPage() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      emailOrPhone: "",
+      username: "",
       password: "",
     },
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
+    const loadingToast = toast.loading("লগইন করা হচ্ছে...");
+
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      // In real app, handle authentication here
-      router.push("/dashboard");
-    } catch (error) {
+      await login(data);
+      toast.dismiss(loadingToast);
+      toast.success("সফলভাবে লগইন করা হয়েছে!");
+      // Redirect to dashboard after successful login
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1000);
+    } catch (error: any) {
+      toast.dismiss(loadingToast);
+      const errorMessage = error.message || "লগইন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।";
+      toast.error(errorMessage);
       console.error("Login error:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -63,12 +77,12 @@ export default function LoginPage() {
           >
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <Input
-                label="ইমেইল বা ফোন নম্বর"
+                label="ইউজারনেম"
                 type="text"
-                icon={Phone}
-                placeholder="ইমেইল বা ফোন নম্বর দিন"
-                {...register("emailOrPhone")}
-                error={errors.emailOrPhone?.message}
+                icon={User}
+                placeholder="আপনার ইউজারনেম দিন"
+                {...register("username")}
+                error={errors.username?.message}
               />
 
               <Input
@@ -103,8 +117,9 @@ export default function LoginPage() {
                 variant="primary"
                 size="lg"
                 className="w-full"
-                isLoading={isLoading}
+                isLoading={authLoading}
                 icon={ArrowRight}
+                disabled={authLoading}
               >
                 সাইন ইন করুন
               </Button>

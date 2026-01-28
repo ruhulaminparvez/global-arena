@@ -35,7 +35,10 @@ const fileSchema: z.ZodType<File> = z
 
 // Login Schema
 export const loginSchema = z.object({
-  emailOrPhone: phoneOrEmailSchema,
+  username: z
+    .string()
+    .min(1, "ইউজারনেম আবশ্যক")
+    .trim(),
   password: z
     .string()
     .min(1, "পাসওয়ার্ড আবশ্যক")
@@ -56,9 +59,32 @@ const nidSchema = z
     }
   );
 
+// Username validation - only letters, numbers, and @/./+/-/_ characters
+const usernameSchema = z
+  .string()
+  .min(1, "ইউজারনেম আবশ্যক")
+  .trim()
+  .refine(
+    (value) => /^[a-zA-Z0-9@.+\-_]+$/.test(value),
+    {
+      message: "ইউজারনেমে শুধুমাত্র অক্ষর, সংখ্যা এবং @/./+/-/_ ব্যবহার করা যাবে",
+    }
+  );
+
+// Password validation
+const passwordSchema = z
+  .string()
+  .min(1, "পাসওয়ার্ড আবশ্যক")
+  .min(6, "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে");
+
 // Registration Schema
 export const registrationSchema = z.object({
   name: z.string().min(1, "নাম আবশ্যক").trim(),
+  username: usernameSchema,
+  password: passwordSchema,
+  password2: z
+    .string()
+    .min(1, "পাসওয়ার্ড নিশ্চিতকরণ আবশ্যক"),
   nid: nidSchema,
   photo: fileSchema,
   nomineeName: z.string().min(1, "নমিনির নাম আবশ্যক").trim(),
@@ -69,6 +95,9 @@ export const registrationSchema = z.object({
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: "শর্তাবলী এবং গোপনীয়তা নীতির সাথে সম্মত হতে হবে",
   }),
+}).refine((data) => data.password === data.password2, {
+  message: "পাসওয়ার্ড মিলছে না। দয়া করে একই পাসওয়ার্ড দিন।",
+  path: ["password2"],
 });
 
 export type RegistrationFormData = z.infer<typeof registrationSchema>;
