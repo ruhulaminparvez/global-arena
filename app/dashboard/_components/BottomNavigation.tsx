@@ -1,8 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { MENU_ITEMS } from "@/constants/dashboard";
 import type { MenuItem } from "@/types/dashboard";
 import { LogOut, X } from "lucide-react";
@@ -13,6 +14,7 @@ export default function BottomNavigation() {
   const router = useRouter();
   const { logout } = useAuth();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const isActiveRoute = (item: MenuItem): boolean => {
     if (!item.route) return false;
@@ -25,10 +27,26 @@ export default function BottomNavigation() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    router.push("/login");
-    setShowLogoutModal(false);
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+
+      // Clear auth state and cookies
+      logout();
+
+      // Show success toast
+      toast.success("সফলভাবে লগআউট করা হয়েছে");
+
+      // Close modal
+      setShowLogoutModal(false);
+
+      // Redirect to login page (use replace to prevent going back)
+      router.replace("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("লগআউট করতে সমস্যা হয়েছে");
+      setIsLoggingOut(false);
+    }
   };
 
   // Get color classes for each menu item based on ID
@@ -76,15 +94,13 @@ export default function BottomNavigation() {
                 >
                   <div className="relative z-10">
                     <Icon
-                      className={`w-5 h-5 sm:w-6 sm:h-6 transition-colors ${
-                        isActive ? "text-white" : "text-current"
-                      }`}
+                      className={`w-5 h-5 sm:w-6 sm:h-6 transition-colors ${isActive ? "text-white" : "text-current"
+                        }`}
                     />
                   </div>
                   <span
-                    className={`text-[10px] sm:text-xs font-semibold relative z-10 text-center leading-tight transition-colors ${
-                      isActive ? "text-white" : "text-current"
-                    }`}
+                    className={`text-[10px] sm:text-xs font-semibold relative z-10 text-center leading-tight transition-colors ${isActive ? "text-white" : "text-current"
+                      }`}
                   >
                     {item.label}
                   </span>
@@ -114,50 +130,64 @@ export default function BottomNavigation() {
       </motion.div>
 
       {/* Logout Confirmation Modal */}
-      {showLogoutModal && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4"
-          onClick={() => setShowLogoutModal(false)}
-        >
+      <AnimatePresence>
+        {showLogoutModal && (
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4"
+            onClick={() => !isLoggingOut && setShowLogoutModal(false)}
           >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-900">লগআউট</h3>
-              <button
-                onClick={() => setShowLogoutModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <p className="text-gray-600 mb-6">
-              আপনি কি নিশ্চিত যে আপনি লগআউট করতে চান?
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowLogoutModal(false)}
-                className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-              >
-                বাতিল
-              </button>
-              <button
-                onClick={handleLogout}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
-              >
-                লগআউট
-              </button>
-            </div>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-gray-900">লগআউট</h3>
+                {!isLoggingOut && (
+                  <button
+                    onClick={() => setShowLogoutModal(false)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    disabled={isLoggingOut}
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+              <p className="text-gray-600 mb-6">
+                আপনি কি নিশ্চিত যে আপনি লগআউট করতে চান?
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowLogoutModal(false)}
+                  disabled={isLoggingOut}
+                  className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  বাতিল
+                </button>
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isLoggingOut ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>লগআউট হচ্ছে...</span>
+                    </>
+                  ) : (
+                    "লগআউট"
+                  )}
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
+        )}
+      </AnimatePresence>
     </>
   );
 }

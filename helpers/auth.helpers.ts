@@ -30,15 +30,15 @@ export const isEmail = (value: string): boolean => {
  */
 export const validatePasswordMatch = (
   password: string,
-  password2: string
+  password2: string,
 ): string | null => {
   if (!password2) {
     return "পাসওয়ার্ড নিশ্চিতকরণ আবশ্যক";
   }
-  
+
   if (password !== password2) {
     return "পাসওয়ার্ড মিলছে না। দয়া করে একই পাসওয়ার্ড দিন।";
   }
-  
+
   return null;
 };
