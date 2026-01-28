@@ -5,6 +5,5 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // return <AdminProtectedRoute>{children}</AdminProtectedRoute>;
-  return <>{children}</>;
+  return <AdminProtectedRoute>{children}</AdminProtectedRoute>;
 }

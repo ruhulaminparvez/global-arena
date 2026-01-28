@@ -11,6 +11,7 @@ import type {
   RegistrationResponse,
   LoginResponse,
   User,
+  Profile,
 } from "@/types/auth";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,8 +23,29 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Start with true to check cookies
+
+  /**
+   * Fetch user profile from API
+   */
+  const fetchProfile = async (): Promise<void> => {
+    try {
+      const response = await apiClient.get<Profile>("/api/accounts/users/profile");
+      const profileData = response.data;
+      setProfile(profileData);
+      setUser(profileData.user);
+    } catch (error: any) {
+      // Token might be invalid, clear it
+      cookieHelpers.clearAuthTokens();
+      setIsAuthenticated(false);
+      setToken(null);
+      setProfile(null);
+      setUser(null);
+      throw error;
+    }
+  };
 
   // Check for existing token in cookies on mount
   useEffect(() => {
@@ -32,16 +54,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (accessToken) {
         setToken(accessToken);
         setIsAuthenticated(true);
-        // Optionally fetch user data here if you have a /me endpoint
-        // try {
-        //   const response = await apiClient.get<User>("/api/accounts/users/me/");
-        //   setUser(response.data);
-        // } catch (error) {
-        //   // Token might be invalid, clear it
-        //   cookieHelpers.clearAuthTokens();
-        //   setIsAuthenticated(false);
-        //   setToken(null);
-        // }
+        // Fetch user profile
+        try {
+          await fetchProfile();
+        } catch (error) {
+          console.error("Failed to fetch user profile:", error);
+        }
       }
       setIsLoading(false);
     };
@@ -133,13 +151,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setToken(access);
       setIsAuthenticated(true);
 
-      // Optionally fetch user data if you have a /me endpoint
-      // try {
-      //   const userResponse = await apiClient.get<User>("/api/accounts/users/me/");
-      //   setUser(userResponse.data);
-      // } catch (error) {
-      //   console.error("Failed to fetch user data:", error);
-      // }
+      // Fetch user profile
+      try {
+        await fetchProfile();
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+      }
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||
@@ -162,12 +179,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Clear auth state
     setToken(null);
     setUser(null);
+    setProfile(null);
     setIsAuthenticated(false);
   };
 
   const value: AuthContextType = {
     isAuthenticated,
     user,
+    profile,
     token,
     isLoading,
     register,

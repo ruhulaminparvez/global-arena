@@ -109,6 +109,7 @@ export interface AuthState {
 export interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
+  profile: Profile | null;
   token: string | null;
   isLoading: boolean;
   register: (data: RegistrationFormData) => Promise<RegistrationResponse>;
