@@ -1,78 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
 import { DASHBOARD_STATS } from "@/constants/dashboard";
 import { LucideIcon } from "lucide-react";
-
-// Counter animation hook with smooth, realistic increment
-function useCounterAnimation(targetValue: number, duration: number = 4500) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    let startTime: number;
-    let animationFrame: number;
-    const delay = 400; // Longer delay before starting for better UX
-
-    const animate = (currentTime: number) => {
-      if (!startTime) startTime = currentTime;
-      const elapsed = currentTime - startTime;
-
-      // Wait for delay before starting
-      if (elapsed < delay) {
-        animationFrame = requestAnimationFrame(animate);
-        return;
-      }
-
-      const adjustedElapsed = elapsed - delay;
-      const progress = Math.min(adjustedElapsed / duration, 1);
-
-      // Use easeOutCubic for smoother, more natural deceleration
-      // This creates a cleaner, more realistic counting effect
-      const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-
-      // Calculate the current count value
-      const currentCount = targetValue * easeOutCubic;
-
-      // Use Math.round for smoother increments
-      setCount(Math.round(currentCount));
-
-      if (progress < 1) {
-        animationFrame = requestAnimationFrame(animate);
-      } else {
-        // Ensure we end exactly at target value
-        setCount(targetValue);
-      }
-    };
-
-    // Reset to 0 when target changes
-    setCount(0);
-    animationFrame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrame);
-  }, [targetValue, duration]);
-
-  return count;
-}
-
-// Extract numeric value from string like "৳ 85,000" or "12"
-function extractNumericValue(value: string): number {
-  // Remove currency symbol, spaces, and commas, then parse
-  const numericString = value.replace(/[৳,\s]/g, "");
-  return parseInt(numericString, 10) || 0;
-}
-
-// Format number with currency symbol for display
-function formatValue(value: string, animatedCount: number): string {
-  const originalValue = value.trim();
-
-  // Check if it's a currency value (starts with ৳)
-  if (originalValue.startsWith("৳")) {
-    return `৳ ${animatedCount.toLocaleString("bn-BD")}`;
-  }
-
-  // For non-currency values (like ticket count)
-  return animatedCount.toString();
-}
+import { useCounterAnimation } from "@/hooks/useCounterAnimation";
+import { extractNumericValue, formatValue } from "@/helpers/format.helpers";
 
 interface StatCardProps {
   label: string;
