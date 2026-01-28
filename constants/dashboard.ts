@@ -9,7 +9,8 @@ import {
 } from "lucide-react";
 import type { UserDashboardData, MenuItem, CompanyHistory, ContactInfo } from "@/types/dashboard";
 
-const USER_PHOTO = "/images/saium.jpg";
+export const USER_PHOTO = "/images/saium.jpg";
+export const DEFAULT_USER_PHOTO = "/images/user-dummy.jpeg";
 
 // Mock user data - replace with actual data from your API/context
 export const MOCK_USER_DATA: UserDashboardData = {

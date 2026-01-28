@@ -1,73 +1,23 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { User, CreditCard, Shield, Wallet, TrendingUp } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { MOCK_USER_DATA } from "@/constants/dashboard";
-import type { UserDashboardData } from "@/types/dashboard";
-
-// Counter animation hook with smooth, realistic increment
-function useCounterAnimation(targetValue: number, duration: number = 4000) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    let startTime: number;
-    let animationFrame: number;
-    const delay = 500; // Delay before starting for better UX
-
-    const animate = (currentTime: number) => {
-      if (!startTime) startTime = currentTime;
-      const elapsed = currentTime - startTime;
-
-      // Wait for delay before starting
-      if (elapsed < delay) {
-        animationFrame = requestAnimationFrame(animate);
-        return;
-      }
-
-      const adjustedElapsed = elapsed - delay;
-      const progress = Math.min(adjustedElapsed / duration, 1);
-
-      // Use easeOutExpo for very smooth, natural deceleration
-      // This creates a realistic counting effect that slows down as it approaches the target
-      const easeOutExpo = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-
-      // Calculate the current count value
-      const currentCount = targetValue * easeOutExpo;
-
-      // Use Math.round for smoother increments (better than Math.floor for visual effect)
-      setCount(Math.round(currentCount));
-
-      if (progress < 1) {
-        animationFrame = requestAnimationFrame(animate);
-      } else {
-        // Ensure we end exactly at target value
-        setCount(targetValue);
-      }
-    };
-
-    // Reset to 0 when target changes
-    setCount(0);
-    animationFrame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrame);
-  }, [targetValue, duration]);
-
-  return count;
-}
+import { DEFAULT_USER_PHOTO, MOCK_USER_DATA } from "@/constants/dashboard";
+import { useCounterAnimation } from "@/hooks/useCounterAnimation";
 
 interface UserDetailProps { }
 
 export default function UserDetail({ }: UserDetailProps = {}) {
   const router = useRouter();
-  const { user } = useAuth();
+  const { profile } = useAuth();
   const animatedBalance = useCounterAnimation(MOCK_USER_DATA.totalBalance);
   const [isHovered, setIsHovered] = useState(false);
 
   // Check if user is admin
-  // const isAdmin = user && (user.role === "ADMIN" || user.role === "admin");
-  const isAdmin = true;
+  const isAdmin = profile && (profile.role === "ADMIN" || profile.role === "admin");
 
   const handleAdminClick = () => {
     router.push("/admin");
@@ -159,10 +109,10 @@ export default function UserDetail({ }: UserDetailProps = {}) {
           {/* Main image container */}
           <div className="relative w-28 h-28 rounded-full bg-gradient-to-br from-primary-50 to-white p-[2px] shadow-2xl">
             <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden ring-4 ring-white/50">
-              {MOCK_USER_DATA.photo ? (
+              {profile?.photo ? (
                 <motion.img
-                  src={MOCK_USER_DATA.photo}
-                  alt={MOCK_USER_DATA.name}
+                  src={profile?.photo ? profile?.photo : DEFAULT_USER_PHOTO}
+                  alt={profile?.user.first_name + " " + profile?.user.last_name || profile?.user.username || "User"}
                   className="w-full h-full object-cover"
                   whileHover={{ scale: 1.1 }}
                   transition={{ duration: 0.3 }}
@@ -194,7 +144,7 @@ export default function UserDetail({ }: UserDetailProps = {}) {
             transition={{ delay: 0.3 }}
             className="text-2xl font-bold text-gray-900 mb-2"
           >
-            {MOCK_USER_DATA.name}
+            {profile?.user.username || "User"}
           </motion.h2>
 
           <motion.div
@@ -204,7 +154,7 @@ export default function UserDetail({ }: UserDetailProps = {}) {
             className="flex items-center justify-center md:justify-start gap-2 text-gray-600 mb-4"
           >
             <CreditCard className="w-4 h-4" />
-            <span className="text-sm">জাতীয় পরিচয়পত্র: {MOCK_USER_DATA.nid}</span>
+            <span className="text-sm">জাতীয় পরিচয়পত্র: {profile?.nid || "N/A"}</span>
           </motion.div>
 
           {/* Total Balance with Counter Animation */}
