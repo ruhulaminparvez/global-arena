@@ -16,6 +16,11 @@ export interface LoginResponse {
   refresh: string;
 }
 
+export interface RefreshTokenResponse {
+  access: string;
+  refresh: string;
+}
+
 /**
  * Registration related types
  */
