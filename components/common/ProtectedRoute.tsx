@@ -20,7 +20,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     if (!isLoading) {
       // Check if user is authenticated
       if (!isAuthenticated) {
-        router.push("/login");
+        router.replace("/login");
         return;
       }
     }
