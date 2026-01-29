@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import Pagination from "./Pagination";
+import { cn } from "@/lib/utils";
 
 export interface TableColumn<T> {
   key: string;
@@ -53,7 +54,7 @@ export default function Table<T extends Record<string, any>>({
   };
 
   return (
-    <div className={`bg-white rounded-xl shadow-lg overflow-hidden ${className}`}>
+    <div className={cn("bg-white rounded-xl shadow-lg overflow-hidden", className)}>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-primary-600 text-white">
@@ -61,8 +62,10 @@ export default function Table<T extends Record<string, any>>({
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={`px-6 py-4 text-left text-sm font-semibold ${column.headerClassName || ""
-                    }`}
+                  className={cn(
+                    "px-6 py-4 text-left text-sm font-semibold",
+                    column.headerClassName
+                  )}
                 >
                   {column.label}
                 </th>
@@ -75,14 +78,18 @@ export default function Table<T extends Record<string, any>>({
                 <tr
                   key={getRowKey(item, index)}
                   onClick={() => onRowClick?.(item)}
-                  className={`hover:bg-gray-50 transition-colors ${onRowClick ? "cursor-pointer" : ""
-                    }`}
+                  className={cn(
+                    "hover:bg-gray-50 transition-colors",
+                    onRowClick && "cursor-pointer"
+                  )}
                 >
                   {columns.map((column) => (
                     <td
                       key={column.key}
-                      className={`px-6 py-4 text-sm ${column.className || "text-gray-900"
-                        }`}
+                      className={cn(
+                        "px-6 py-4 text-sm",
+                        column.className ?? "text-gray-900"
+                      )}
                     >
                       {column.render
                         ? column.render(item, index)
