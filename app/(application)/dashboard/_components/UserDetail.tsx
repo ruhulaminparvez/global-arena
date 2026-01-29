@@ -156,7 +156,7 @@ export default function UserDetail({ }: UserDetailProps = {}) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="flex items-center gap-2 mb-2"
+              className="flex items-center justify-center md:justify-start gap-2 mb-2"
             >
               <h2 className="text-2xl font-bold text-gray-900">{displayName}</h2>
               <motion.button
