@@ -34,7 +34,7 @@ export function ProfileDetailModal({ profile, onClose }: ProfileDetailModalProps
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-start justify-center p-4 bg-black/50 backdrop-blur-sm"
       onClick={onClose}
     >
       <motion.div
@@ -43,7 +43,7 @@ export function ProfileDetailModal({ profile, onClose }: ProfileDetailModalProps
         exit={{ scale: 0.95, opacity: 0 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg max-h-[90vh] overflow-hidden rounded-2xl bg-white shadow-2xl flex flex-col"
+        className="w-full max-w-lg max-h-[68vh] md:max-h-[80vh] overflow-hidden rounded-2xl bg-white shadow-2xl flex flex-col"
       >
         {/* Header */}
         <div className="shrink-0 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 px-6 py-4 flex items-center justify-between">
