@@ -1,51 +1,43 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import BottomNavigation from "../_components/BottomNavigation";
 import {
-  Phone,
-  Mail,
-  MapPin,
-  Globe,
-  Facebook,
-  Twitter,
-  Linkedin,
-  Clock,
-  Send,
   MessageSquare,
+  MessageCircle,
 } from "lucide-react";
-import { CONTACT_INFO, SUPPORT_HOURS } from "@/constants/dashboard";
+import { getMyChatRoom } from "@/api/dashboard/chats.api";
+import type { MyChatRoom } from "@/api/dashboard/types/dashboard.api";
+import { formatDate } from "@/helpers/format.helpers";
+import { ChatRoomMessagesModal } from "./_components/ChatRoomMessagesModal";
+
+function getRoomDisplayName(room: MyChatRoom): string {
+  const u = room.user;
+  const name = [u.first_name, u.last_name].filter(Boolean).join(" ");
+  return name || u.username || "সাপোর্ট";
+}
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [chatRoom, setChatRoom] = useState<MyChatRoom | null>(null);
+  const [chatRoomLoading, setChatRoomLoading] = useState(true);
+  const [selectedRoom, setSelectedRoom] = useState<MyChatRoom | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const fetchChatRoom = useCallback(async () => {
+    setChatRoomLoading(true);
+    try {
+      const room = await getMyChatRoom();
+      setChatRoom(room);
+    } catch {
+      setChatRoom(null);
+    } finally {
+      setChatRoomLoading(false);
+    }
+  }, []);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    setIsSubmitting(false);
-    setSubmitSuccess(true);
-    setFormData({ name: "", email: "", subject: "", message: "" });
-
-    setTimeout(() => setSubmitSuccess(false), 5000);
-  };
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  useEffect(() => {
+    fetchChatRoom();
+  }, [fetchChatRoom]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
@@ -61,282 +53,76 @@ export default function ContactPage() {
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">যোগাযোগ</h1>
           </div>
           <p className="text-gray-600">
-            আমাদের সাথে যোগাযোগ করুন। আমরা আপনার প্রশ্ন, পরামর্শ এবং সহায়তার জন্য এখানে আছি।
+            আপনার চ্যাট রুম দেখুন এবং বার্তা পাঠান।
           </p>
         </motion.div>
 
-        {/* Contact Information Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          {/* Phone */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-          >
-            <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
-              <Phone className="w-6 h-6 text-blue-600" />
-            </div>
-            <h3 className="text-sm font-medium text-gray-600 mb-2">ফোন</h3>
-            <a
-              href={`tel:${CONTACT_INFO.phone?.replace(/\s/g, "")}`}
-              className="text-lg font-semibold text-gray-900 hover:text-primary-600 transition-colors"
-            >
-              {CONTACT_INFO.phone}
-            </a>
-          </motion.div>
-
-          {/* Email */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-          >
-            <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mb-4">
-              <Mail className="w-6 h-6 text-green-600" />
-            </div>
-            <h3 className="text-sm font-medium text-gray-600 mb-2">ইমেইল</h3>
-            <a
-              href={`mailto:${CONTACT_INFO.email}`}
-              className="text-lg font-semibold text-gray-900 hover:text-primary-600 transition-colors break-all"
-            >
-              {CONTACT_INFO.email}
-            </a>
-          </motion.div>
-
-          {/* Address */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-          >
-            <div className="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center mb-4">
-              <MapPin className="w-6 h-6 text-purple-600" />
-            </div>
-            <h3 className="text-sm font-medium text-gray-600 mb-2">ঠিকানা</h3>
-            <p className="text-lg font-semibold text-gray-900">{CONTACT_INFO.address}</p>
-          </motion.div>
-
-          {/* Website */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-          >
-            <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center mb-4">
-              <Globe className="w-6 h-6 text-orange-600" />
-            </div>
-            <h3 className="text-sm font-medium text-gray-600 mb-2">ওয়েবসাইট</h3>
-            <a
-              href={CONTACT_INFO.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-lg font-semibold text-gray-900 hover:text-primary-600 transition-colors break-all"
-            >
-              {CONTACT_INFO.website?.replace("https://", "")}
-            </a>
-          </motion.div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* Support Hours */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-            className="bg-white rounded-xl shadow-lg p-6"
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <Clock className="w-6 h-6 text-primary-600" />
-              <h2 className="text-xl font-bold text-gray-900">সাপোর্ট সময়</h2>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="w-2 h-2 rounded-full bg-primary-600 mt-2"></div>
-                <div>
-                  <p className="font-semibold text-gray-900">সপ্তাহের দিন (সোম-শুক্র)</p>
-                  <p className="text-gray-600">{SUPPORT_HOURS.weekdays}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-2 h-2 rounded-full bg-primary-600 mt-2"></div>
-                <div>
-                  <p className="font-semibold text-gray-900">সাপ্তাহিক ছুটি (শনি-রবি)</p>
-                  <p className="text-gray-600">{SUPPORT_HOURS.weekends}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-2 h-2 rounded-full bg-green-600 mt-2"></div>
-                <div>
-                  <p className="font-semibold text-gray-900">জরুরী সাপোর্ট</p>
-                  <p className="text-gray-600">{SUPPORT_HOURS.emergency}</p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Social Media */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6 }}
-            className="bg-white rounded-xl shadow-lg p-6"
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <MessageSquare className="w-6 h-6 text-primary-600" />
-              <h2 className="text-xl font-bold text-gray-900">সোশ্যাল মিডিয়া</h2>
-            </div>
-            <div className="space-y-4">
-              {CONTACT_INFO.socialMedia?.facebook && (
-                <a
-                  href={CONTACT_INFO.socialMedia.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors group"
-                >
-                  <Facebook className="w-6 h-6 text-blue-600 group-hover:scale-110 transition-transform" />
-                  <span className="font-semibold text-gray-900">Facebook</span>
-                </a>
-              )}
-              {CONTACT_INFO.socialMedia?.twitter && (
-                <a
-                  href={CONTACT_INFO.socialMedia.twitter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 bg-sky-50 rounded-lg hover:bg-sky-100 transition-colors group"
-                >
-                  <Twitter className="w-6 h-6 text-sky-600 group-hover:scale-110 transition-transform" />
-                  <span className="font-semibold text-gray-900">Twitter</span>
-                </a>
-              )}
-              {CONTACT_INFO.socialMedia?.linkedin && (
-                <a
-                  href={CONTACT_INFO.socialMedia.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors group"
-                >
-                  <Linkedin className="w-6 h-6 text-blue-700 group-hover:scale-110 transition-transform" />
-                  <span className="font-semibold text-gray-900">LinkedIn</span>
-                </a>
-              )}
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Contact Form */}
+        {/* My Chat Room - Conversation channel card(s) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="bg-white rounded-xl shadow-lg p-6"
+          transition={{ delay: 0.05 }}
+          className="mb-6"
         >
-          <div className="flex items-center gap-3 mb-6">
-            <Send className="w-6 h-6 text-primary-600" />
-            <h2 className="text-xl font-bold text-gray-900">আমাদের কাছে বার্তা পাঠান</h2>
-          </div>
-
-          {submitSuccess && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg"
-            >
-              <p className="text-green-800 font-medium">
-                আপনার বার্তা সফলভাবে পাঠানো হয়েছে! আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।
-              </p>
-            </motion.div>
+          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <MessageCircle className="w-5 h-5 text-primary-600" />
+            আমার চ্যাট
+          </h2>
+          {chatRoomLoading && (
+            <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
+              চ্যাট রুম লোড হচ্ছে...
+            </div>
           )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  আপনার নাম *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="আপনার নাম লিখুন"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  ইমেইল *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="your@email.com"
-                />
-              </div>
+          {!chatRoomLoading && !chatRoom && (
+            <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
+              আপনার কোনো চ্যাট রুম নেই। সাপোর্টের সাথে যোগাযোগ করতে নিচের ফর্ম ব্যবহার করুন।
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                বিষয় *
-              </label>
-              <input
-                type="text"
-                name="subject"
-                required
-                value={formData.subject}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                placeholder="বার্তার বিষয় লিখুন"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                বার্তা *
-              </label>
-              <textarea
-                name="message"
-                required
-                rows={6}
-                value={formData.message}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
-                placeholder="আপনার বার্তা লিখুন..."
-              />
-            </div>
-
+          )}
+          {!chatRoomLoading && chatRoom && (
             <motion.button
-              type="submit"
-              disabled={isSubmitting}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              type="button"
+              onClick={() => setSelectedRoom(chatRoom)}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              className="w-full bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow text-left flex items-center gap-4 border border-gray-100"
             >
-              {isSubmitting ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  পাঠানো হচ্ছে...
-                </>
-              ) : (
-                <>
-                  <Send className="w-5 h-5" />
-                  বার্তা পাঠান
-                </>
-              )}
+              <div className="w-14 h-14 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
+                <MessageSquare className="w-7 h-7 text-primary-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <span className="font-semibold text-gray-900 truncate">
+                    {getRoomDisplayName(chatRoom)}
+                  </span>
+                  {chatRoom.unread_count > 0 && (
+                    <span className="shrink-0 px-2 py-0.5 text-xs font-bold rounded-full bg-primary-600 text-white">
+                      {chatRoom.unread_count}
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-gray-600 truncate">
+                  {chatRoom.last_message ?? "কোন বার্তা নেই"}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">
+                  {formatDate(chatRoom.updated_at)}
+                </p>
+              </div>
+              <span className="text-primary-600 text-sm font-medium shrink-0">বার্তা দেখুন</span>
             </motion.button>
-          </form>
+          )}
         </motion.div>
       </div>
 
       <BottomNavigation />
+
+      <AnimatePresence>
+        {selectedRoom && (
+          <ChatRoomMessagesModal
+            room={selectedRoom}
+            onClose={() => setSelectedRoom(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -35,3 +35,33 @@ export interface TicketScheduleListResponse {
   previous: string | null;
   results: TicketSchedule[];
 }
+
+/**
+ * Chat room & message types for dashboard
+ */
+
+export interface ChatRoomUser {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+}
+
+export interface MyChatRoom {
+  id: number;
+  user: ChatRoomUser;
+  last_message: string | null;
+  unread_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ChatMessage {
+  id: number;
+  content?: string;
+  sender?: number | string;
+  sender_username?: string;
+  created_at?: string;
+  is_read?: boolean;
+  [key: string]: unknown;
+}
