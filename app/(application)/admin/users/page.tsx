@@ -1,21 +1,75 @@
 "use client";
 
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import BottomNavigation from "../_components/BottomNavigation";
-import { Users, Search, Filter, Download, Plus, UserPlus } from "lucide-react";
+import { Users, Search, UserPlus } from "lucide-react";
 import Table from "@/components/Table";
+import { Button } from "@/components/button";
 import { getUsersColumns } from "@/columns/admin/users";
+import { UserDetailModal } from "./_components/UserDetailModal";
+import { CreateSupportUserModal } from "./_components/CreateSupportUserModal";
+import { getUsers } from "@/api/admin/users.manage.api";
+import type { User } from "@/api/admin/types/admin.api";
+
+function filterUsers(
+  list: User[],
+  search: string
+): User[] {
+  if (!search.trim()) return list;
+  const q = search.trim().toLowerCase();
+  return list.filter(
+    (u) =>
+      u.username.toLowerCase().includes(q) ||
+      (u.email && u.email.toLowerCase().includes(q)) ||
+      (u.first_name && u.first_name.toLowerCase().includes(q)) ||
+      (u.last_name && u.last_name.toLowerCase().includes(q)) ||
+      `${(u.first_name || "").toLowerCase()} ${(u.last_name || "").toLowerCase()}`.includes(q) ||
+      `${(u.last_name || "").toLowerCase()} ${(u.first_name || "").toLowerCase()}`.includes(q)
+  );
+}
 
 export default function UserManagementPage() {
-  // Mock user data
-  const users = [
-    { id: 1, name: "আহমেদ হাসান", email: "ahmed@example.com", phone: "01712345678", role: "ব্যবহারকারী", status: "সক্রিয়", joinDate: "2024-01-01" },
-    { id: 2, name: "ফাতিমা খাতুন", email: "fatima@example.com", phone: "01712345679", role: "ব্যবহারকারী", status: "সক্রিয়", joinDate: "2024-01-02" },
-    { id: 3, name: "করিম উদ্দিন", email: "karim@example.com", phone: "01712345680", role: "ব্যবহারকারী", status: "নিষ্ক্রিয়", joinDate: "2024-01-03" },
-    { id: 4, name: "রোকেয়া বেগম", email: "rokeya@example.com", phone: "01712345681", role: "ব্যবহারকারী", status: "সক্রিয়", joinDate: "2024-01-04" },
-  ];
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
-  // Table columns
-  const columns = getUsersColumns();
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await getUsers();
+      setUsers(res.results ?? []);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "ডেটা লোড করতে সমস্যা হয়েছে";
+      setError(message);
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const filteredUsers = useMemo(
+    () => filterUsers(users, searchQuery),
+    [users, searchQuery]
+  );
+
+  const columns = useMemo(
+    () =>
+      getUsersColumns({
+        onViewDetail: (user) => setSelectedUser(user),
+        onEdit: (user) => setSelectedUser(user),
+      }),
+    []
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
@@ -26,23 +80,21 @@ export default function UserManagementPage() {
             <div className="flex items-center gap-3">
               <Users className="w-8 h-8 text-primary-600" />
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">ইউজার ম্যানেজমেন্ট</h1>
-                <p className="text-gray-600 mt-1">সমস্ত ব্যবহারকারী পরিচালনা করুন</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                  ইউজার ম্যানেজমেন্ট
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  সমস্ত ব্যবহারকারী পরিচালনা করুন
+                </p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <button className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg flex items-center gap-2 transition-colors">
-                <UserPlus className="w-4 h-4" />
-                নতুন ব্যবহারকারী
-              </button>
-              <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg flex items-center gap-2 transition-colors">
-                <Filter className="w-4 h-4" />
-                ফিল্টার
-              </button>
-              <button className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg flex items-center gap-2 transition-colors">
-                <Download className="w-4 h-4" />
-                রিপোর্ট
-              </button>
+              <Button
+                icon={UserPlus}
+                onClick={() => setCreateModalOpen(true)}
+              >
+                নতুন সাপোর্ট ব্যবহারকারী
+              </Button>
             </div>
           </div>
         </div>
@@ -50,10 +102,12 @@ export default function UserManagementPage() {
         {/* Search Bar */}
         <div className="mb-6 bg-white rounded-xl shadow-lg p-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="নাম, ইমেইল বা ফোন নম্বর দিয়ে অনুসন্ধান করুন..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="নাম, ইমেইল বা ইউজারনেম দিয়ে অনুসন্ধান করুন..."
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
@@ -61,11 +115,52 @@ export default function UserManagementPage() {
 
         {/* Users Table */}
         <div className="mb-6">
-          <Table data={users} columns={columns} />
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              {error}
+            </div>
+          )}
+          {loading ? (
+            <div className="bg-white rounded-xl shadow-lg p-12 text-center text-gray-500">
+              লোড হচ্ছে...
+            </div>
+          ) : (
+            <Table
+              data={filteredUsers}
+              columns={columns}
+              emptyMessage="কোন ব্যবহারকারী পাওয়া যায়নি"
+              itemsPerPage={10}
+            />
+          )}
         </div>
       </div>
 
       <BottomNavigation />
+
+      <AnimatePresence>
+        {selectedUser && (
+          <UserDetailModal
+            user={selectedUser}
+            onClose={() => setSelectedUser(null)}
+            onUpdated={() => {
+              fetchUsers();
+              setSelectedUser(null);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {createModalOpen && (
+          <CreateSupportUserModal
+            onClose={() => setCreateModalOpen(false)}
+            onCreated={() => {
+              fetchUsers();
+              setCreateModalOpen(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

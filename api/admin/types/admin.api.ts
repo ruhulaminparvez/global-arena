@@ -52,3 +52,50 @@ export interface TicketScheduleListResponse {
   previous: string | null;
   results: TicketSchedule[];
 }
+
+/**
+ * User & Profile types for admin API
+ */
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+}
+
+export interface UserListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: User[];
+}
+
+export type UserRole = "SUPPORT" | "ADMIN" | "USER" | string;
+
+export interface Profile {
+  id: number;
+  user: User;
+  role?: UserRole;
+  mobile?: string;
+  nid?: string;
+  [key: string]: unknown;
+}
+
+export interface UpdateProfilePayload {
+  role?: UserRole;
+  mobile?: string;
+}
+
+export interface CreateSupportUserPayload {
+  username: string;
+  password: string;
+  password2: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  nid: string;
+  mobile: string;
+  reference_username: string;
+}

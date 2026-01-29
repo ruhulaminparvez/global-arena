@@ -1,50 +1,80 @@
 "use client";
 
 import { TableColumn } from "@/components/Table";
+import type { User } from "@/api/admin/types/admin.api";
+import { Eye, Pencil } from "lucide-react";
 
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  status: string;
-  joinDate: string;
-};
+function getDisplayName(user: User): string {
+  const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
+  return name || user.username || "—";
+}
 
-export const getUsersColumns = (): TableColumn<User>[] => [
-  { key: "id", label: "আইডি" },
-  { key: "name", label: "নাম", className: "font-medium" },
-  { key: "email", label: "ইমেইল", className: "text-gray-600" },
-  { key: "phone", label: "ফোন", className: "text-gray-600" },
-  { key: "role", label: "ভূমিকা", className: "text-gray-600" },
+export interface UsersColumnsOptions {
+  onViewDetail?: (user: User) => void;
+  onEdit?: (user: User) => void;
+}
+
+export const getUsersColumns = (
+  options?: UsersColumnsOptions
+): TableColumn<User>[] => [
+  { key: "id", label: "আইডি", className: "font-mono text-gray-600" },
   {
-    key: "status",
-    label: "স্ট্যাটাস",
+    key: "username",
+    label: "ব্যবহারকারীর নাম",
     render: (user) => (
-      <span
-        className={`px-3 py-1 text-xs font-semibold rounded-full ${user.status === "সক্রিয়"
-          ? "bg-green-100 text-green-800"
-          : "bg-gray-100 text-gray-800"
-          }`}
-      >
-        {user.status}
-      </span>
+      <span className="font-medium text-gray-900">{user.username}</span>
     ),
   },
-  { key: "joinDate", label: "যোগদান তারিখ", className: "text-gray-600" },
   {
-    key: "actions",
-    label: "কার্যক্রম",
-    render: () => (
-      <div className="flex gap-2">
-        <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-          দেখুন
-        </button>
-        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-          সম্পাদনা
-        </button>
-      </div>
+    key: "name",
+    label: "নাম",
+    render: (user) => (
+      <span className="text-gray-700">{getDisplayName(user)}</span>
     ),
   },
+  {
+    key: "email",
+    label: "ইমেইল",
+    render: (user) => (
+      <span className="text-gray-600">{user.email || "—"}</span>
+    ),
+  },
+  ...(options?.onViewDetail || options?.onEdit
+    ? [
+        {
+          key: "actions",
+          label: "কার্যক্রম",
+          render: (user: User) => (
+            <div className="flex gap-2">
+              {options?.onViewDetail && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    options.onViewDetail?.(user);
+                  }}
+                  className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                  title="বিস্তারিত"
+                >
+                  <Eye className="w-4 h-4" />
+                </button>
+              )}
+              {options?.onEdit && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    options.onEdit?.(user);
+                  }}
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  title="সম্পাদনা"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          ),
+        } as TableColumn<User>,
+      ]
+    : []),
 ];
