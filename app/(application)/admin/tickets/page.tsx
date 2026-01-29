@@ -1,21 +1,153 @@
 "use client";
 
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import BottomNavigation from "../_components/BottomNavigation";
-import { Ticket, Search, Filter, Download } from "lucide-react";
+import { Ticket, Search, Filter, Plus, Calendar, Activity, Megaphone, ShoppingBag } from "lucide-react";
 import Table from "@/components/Table";
-import { getTicketsColumns } from "@/columns/admin/tickets";
+import { Button } from "@/components/button";
+import { getScheduleColumns } from "@/columns/admin/schedule";
+import { ScheduleFormModal } from "./_components/ScheduleFormModal";
+import { DeleteScheduleModal } from "./_components/DeleteScheduleModal";
+import {
+  createTicketSchedule,
+  getAllTicketSchedules,
+  updateTicketSchedule,
+  deleteTicketSchedule,
+  getActiveTicketSchedules,
+  getAnnouncedTicketSchedules,
+  getAllTicketPurchases,
+} from "@/api/admin/tickets.mange.api";
+import type {
+  TicketSchedule,
+  TicketSchedulePayload,
+  AgreementType,
+} from "@/api/admin/types/admin.api";
+
+type TabId = "all" | "active" | "announced" | "purchases";
+
+const TABS: { id: TabId; label: string; icon: typeof Calendar }[] = [
+  { id: "all", label: "সমস্ত সিডিউল", icon: Calendar },
+  { id: "active", label: "সক্রিয় টিকেট", icon: Activity },
+  { id: "announced", label: "ঘোষিত টিকেট", icon: Megaphone },
+  { id: "purchases", label: "সমস্ত ক্রয়", icon: ShoppingBag },
+];
+
+function filterSchedules(
+  list: TicketSchedule[],
+  search: string,
+  agreementFilter: AgreementType | ""
+): TicketSchedule[] {
+  let result = list;
+  const q = search.trim().toLowerCase();
+  if (q) {
+    result = result.filter(
+      (s) =>
+        s.title.toLowerCase().includes(q) ||
+        s.description.toLowerCase().includes(q) ||
+        s.announcement_text.toLowerCase().includes(q) ||
+        String(s.id).includes(q)
+    );
+  }
+  if (agreementFilter) {
+    result = result.filter((s) => s.agreement_type === agreementFilter);
+  }
+  return result;
+}
 
 export default function TicketManagementPage() {
-  // Mock ticket data
-  const tickets = [
-    { id: 1, ticketNo: "TKT-001", userName: "আহমেদ হাসান", subject: "সঞ্চয় সম্পর্কে প্রশ্ন", priority: "উচ্চ", date: "2024-01-15", status: "খোলা" },
-    { id: 2, ticketNo: "TKT-002", userName: "ফাতিমা খাতুন", subject: "বিনিয়োগ তথ্য", priority: "মধ্যম", date: "2024-01-14", status: "প্রক্রিয়াধীন" },
-    { id: 3, ticketNo: "TKT-003", userName: "করিম উদ্দিন", subject: "অ্যাকাউন্ট সমস্যা", priority: "উচ্চ", date: "2024-01-13", status: "খোলা" },
-    { id: 4, ticketNo: "TKT-004", userName: "রোকেয়া বেগম", subject: "পাসওয়ার্ড রিসেট", priority: "নিম্ন", date: "2024-01-12", status: "সমাধান" },
-  ];
+  const [activeTab, setActiveTab] = useState<TabId>("all");
+  const [schedules, setSchedules] = useState<TicketSchedule[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [agreementFilter, setAgreementFilter] = useState<AgreementType | "">("");
+  const [formModal, setFormModal] = useState<"create" | "update" | null>(null);
+  const [editingSchedule, setEditingSchedule] = useState<TicketSchedule | null>(null);
+  const [deleteSchedule, setDeleteSchedule] = useState<TicketSchedule | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
 
-  // Table columns
-  const columns = getTicketsColumns();
+  const fetchSchedules = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      let res;
+      switch (activeTab) {
+        case "all":
+          res = await getAllTicketSchedules();
+          break;
+        case "active":
+          res = await getActiveTicketSchedules();
+          break;
+        case "announced":
+          res = await getAnnouncedTicketSchedules();
+          break;
+        case "purchases":
+          res = await getAllTicketPurchases();
+          break;
+        default:
+          res = await getAllTicketSchedules();
+      }
+      setSchedules(res.results ?? []);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "ডেটা লোড করতে সমস্যা হয়েছে";
+      setError(message);
+      setSchedules([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    fetchSchedules();
+  }, [fetchSchedules]);
+
+  const filteredSchedules = useMemo(
+    () => filterSchedules(schedules, searchQuery, agreementFilter),
+    [schedules, searchQuery, agreementFilter]
+  );
+
+  const columns = useMemo(
+    () =>
+      getScheduleColumns(
+        activeTab === "all"
+          ? {
+              onEdit: (schedule) => {
+                setEditingSchedule(schedule);
+                setFormModal("update");
+              },
+              onDelete: (schedule) => setDeleteSchedule(schedule),
+            }
+          : undefined
+      ),
+    [activeTab]
+  );
+
+  const handleCreateSchedule = async (payload: TicketSchedulePayload) => {
+    await createTicketSchedule(payload);
+    await fetchSchedules();
+  };
+
+  const handleUpdateSchedule = async (payload: TicketSchedulePayload) => {
+    if (!editingSchedule) return;
+    await updateTicketSchedule(editingSchedule.id, payload);
+    setEditingSchedule(null);
+    setFormModal(null);
+    await fetchSchedules();
+  };
+
+  const handleDeleteSchedule = async () => {
+    if (!deleteSchedule) return;
+    setIsDeleting(true);
+    try {
+      await deleteTicketSchedule(deleteSchedule.id);
+      setDeleteSchedule(null);
+      await fetchSchedules();
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
@@ -26,42 +158,177 @@ export default function TicketManagementPage() {
             <div className="flex items-center gap-3">
               <Ticket className="w-8 h-8 text-primary-600" />
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">টিকেট ম্যানেজমেন্ট</h1>
-                <p className="text-gray-600 mt-1">সমস্ত সহায়তা টিকেট পরিচালনা করুন</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                  টিকেট সিডিউল ম্যানেজমেন্ট
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  সিডিউল তৈরি, আপডেট ও পরিচালনা করুন
+                </p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg flex items-center gap-2 transition-colors">
-                <Filter className="w-4 h-4" />
-                ফিল্টার
-              </button>
-              <button className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg flex items-center gap-2 transition-colors">
-                <Download className="w-4 h-4" />
-                রিপোর্ট
-              </button>
+              <Button
+                icon={Plus}
+                onClick={() => {
+                  setEditingSchedule(null);
+                  setFormModal("create");
+                }}
+              >
+                সিডিউল তৈরি
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* Search Bar */}
+        {/* Tabs */}
+        <div className="mb-6 bg-white rounded-xl shadow-lg p-2 flex flex-wrap gap-1">
+          {TABS.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-4 py-3 rounded-lg font-medium transition-colors ${
+                  isActive
+                    ? "bg-primary-600 text-white shadow-md"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Search & Filter */}
         <div className="mb-6 bg-white rounded-xl shadow-lg p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="টিকেট নম্বর, ব্যবহারকারীর নাম বা বিষয় দিয়ে অনুসন্ধান করুন..."
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            />
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="শিরোনাম, বিবরণ বা আইডি দিয়ে অনুসন্ধান করুন..."
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setFilterDropdownOpen((o) => !o)}
+                className="w-full sm:w-auto px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg flex items-center gap-2 transition-colors border border-gray-300"
+              >
+                <Filter className="w-4 h-4" />
+                ফিল্টার
+                {agreementFilter ? ` (${agreementFilter})` : ""}
+              </button>
+              {filterDropdownOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    aria-hidden
+                    onClick={() => setFilterDropdownOpen(false)}
+                  />
+                  <div className="absolute right-0 top-full mt-1 z-20 w-48 py-2 bg-white rounded-lg shadow-lg border border-gray-200">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAgreementFilter("");
+                        setFilterDropdownOpen(false);
+                      }}
+                      className={`block w-full text-left px-4 py-2 text-sm ${
+                        agreementFilter === "" ? "bg-primary-50 text-primary-700 font-medium" : "text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      সব ধরন
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAgreementFilter("LONG");
+                        setFilterDropdownOpen(false);
+                      }}
+                      className={`block w-full text-left px-4 py-2 text-sm ${
+                        agreementFilter === "LONG" ? "bg-primary-50 text-primary-700 font-medium" : "text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      Long Term
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAgreementFilter("SHORT");
+                        setFilterDropdownOpen(false);
+                      }}
+                      className={`block w-full text-left px-4 py-2 text-sm ${
+                        agreementFilter === "SHORT" ? "bg-primary-50 text-primary-700 font-medium" : "text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      Short Term
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Tickets Table */}
+        {/* Table */}
         <div className="mb-6">
-          <Table data={tickets} columns={columns} />
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              {error}
+            </div>
+          )}
+          {loading ? (
+            <div className="bg-white rounded-xl shadow-lg p-12 text-center text-gray-500">
+              লোড হচ্ছে...
+            </div>
+          ) : (
+            <Table
+              data={filteredSchedules}
+              columns={columns}
+              emptyMessage="কোন সিডিউল পাওয়া যায়নি"
+              itemsPerPage={10}
+            />
+          )}
         </div>
       </div>
 
       <BottomNavigation />
+
+      {/* Create / Update Modal */}
+      <AnimatePresence>
+        {formModal && (
+          <ScheduleFormModal
+            mode={formModal}
+            schedule={editingSchedule}
+            onClose={() => {
+              setFormModal(null);
+              setEditingSchedule(null);
+            }}
+            onSubmit={
+              formModal === "create" ? handleCreateSchedule : handleUpdateSchedule
+            }
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Delete Confirm Modal */}
+      <AnimatePresence>
+        {deleteSchedule && (
+          <DeleteScheduleModal
+            schedule={deleteSchedule}
+            onClose={() => setDeleteSchedule(null)}
+            onConfirm={handleDeleteSchedule}
+            isDeleting={isDeleting}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
