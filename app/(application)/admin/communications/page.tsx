@@ -1,21 +1,78 @@
 "use client";
 
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import BottomNavigation from "../_components/BottomNavigation";
-import { MessageSquare, Search, Filter, Download, Plus, Send } from "lucide-react";
+import { MessageSquare, Search } from "lucide-react";
 import Table from "@/components/Table";
 import { getCommunicationsColumns } from "@/columns/admin/communications";
+import { RoomMessagesModal } from "./_components/RoomMessagesModal";
+import { getChatRooms, markRoomAsRead } from "@/api/admin/chats.manage.api";
+import type { ChatRoom } from "@/api/admin/types/admin.api";
+
+function filterRooms(list: ChatRoom[], search: string): ChatRoom[] {
+  if (!search.trim()) return list;
+  const q = search.trim().toLowerCase();
+  return list.filter(
+    (r) =>
+      String(r.id).includes(q) ||
+      (r.name && r.name.toLowerCase().includes(q)) ||
+      (r.last_message && r.last_message.toLowerCase().includes(q))
+  );
+}
 
 export default function CommunicationManagementPage() {
-  // Mock communication data
-  const communications = [
-    { id: 1, title: "নতুন সঞ্চয় স্কিম", type: "ঘোষণা", recipients: "সকল", date: "2024-01-15", status: "প্রেরিত" },
-    { id: 2, title: "সিস্টেম রক্ষণাবেক্ষণ", type: "সতর্কতা", recipients: "সকল", date: "2024-01-14", status: "প্রেরিত" },
-    { id: 3, title: "মাসিক রিপোর্ট", type: "রিপোর্ট", recipients: "অ্যাডমিন", date: "2024-01-13", status: "খসড়া" },
-    { id: 4, title: "বিনিয়োগ সুযোগ", type: "ঘোষণা", recipients: "সক্রিয় ব্যবহারকারী", date: "2024-01-12", status: "প্রেরিত" },
-  ];
+  const [rooms, setRooms] = useState<ChatRoom[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
 
-  // Table columns
-  const columns = getCommunicationsColumns();
+  const fetchRooms = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await getChatRooms();
+      setRooms(res.results ?? []);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "চ্যাট রুম লোড করতে সমস্যা হয়েছে";
+      setError(message);
+      setRooms([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRooms();
+  }, [fetchRooms]);
+
+  const filteredRooms = useMemo(
+    () => filterRooms(rooms, searchQuery),
+    [rooms, searchQuery]
+  );
+
+  const handleMarkAsRead = useCallback(
+    async (room: ChatRoom) => {
+      try {
+        await markRoomAsRead(room.id);
+        await fetchRooms();
+      } catch {
+        setError("পঠিত চিহ্নিত করতে ব্যর্থ");
+      }
+    },
+    [fetchRooms]
+  );
+
+  const columns = useMemo(
+    () =>
+      getCommunicationsColumns({
+        onViewMessages: (room) => setSelectedRoom(room),
+        onMarkAsRead: handleMarkAsRead,
+      }),
+    [handleMarkAsRead]
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
@@ -26,23 +83,13 @@ export default function CommunicationManagementPage() {
             <div className="flex items-center gap-3">
               <MessageSquare className="w-8 h-8 text-primary-600" />
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">যোগাযোগ ম্যানেজমেন্ট</h1>
-                <p className="text-gray-600 mt-1">ব্যবহারকারীদের সাথে যোগাযোগ পরিচালনা করুন</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                  যোগাযোগ ম্যানেজমেন্ট
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  চ্যাট রুম ও বার্তা পরিচালনা করুন
+                </p>
               </div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <button className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg flex items-center gap-2 transition-colors">
-                <Plus className="w-4 h-4" />
-                নতুন বার্তা
-              </button>
-              <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg flex items-center gap-2 transition-colors">
-                <Filter className="w-4 h-4" />
-                ফিল্টার
-              </button>
-              <button className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg flex items-center gap-2 transition-colors">
-                <Download className="w-4 h-4" />
-                রিপোর্ট
-              </button>
             </div>
           </div>
         </div>
@@ -50,22 +97,52 @@ export default function CommunicationManagementPage() {
         {/* Search Bar */}
         <div className="mb-6 bg-white rounded-xl shadow-lg p-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="শিরোনাম, ধরন বা প্রাপক দিয়ে অনুসন্ধান করুন..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="রুম আইডি, নাম বা বার্তা দিয়ে অনুসন্ধান করুন..."
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
         </div>
 
-        {/* Communications Table */}
+        {/* Chat Rooms Table */}
         <div className="mb-6">
-          <Table data={communications} columns={columns} />
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              {error}
+            </div>
+          )}
+          {loading ? (
+            <div className="bg-white rounded-xl shadow-lg p-12 text-center text-gray-500">
+              লোড হচ্ছে...
+            </div>
+          ) : (
+            <Table
+              data={filteredRooms}
+              columns={columns}
+              emptyMessage="কোন চ্যাট রুম নেই"
+              itemsPerPage={10}
+            />
+          )}
         </div>
       </div>
 
       <BottomNavigation />
+
+      <AnimatePresence>
+        {selectedRoom && (
+          <RoomMessagesModal
+            room={selectedRoom}
+            onClose={() => setSelectedRoom(null)}
+            onMarkedRead={() => {
+              fetchRooms();
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

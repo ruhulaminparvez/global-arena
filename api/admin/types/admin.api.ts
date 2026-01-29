@@ -99,3 +99,36 @@ export interface CreateSupportUserPayload {
   mobile: string;
   reference_username: string;
 }
+
+/**
+ * Chat room & message types for admin API
+ */
+
+export interface ChatRoom {
+  id: number;
+  name?: string;
+  created_at?: string;
+  updated_at?: string;
+  last_message?: string;
+  unread_count?: number;
+  [key: string]: unknown;
+}
+
+export interface ChatRoomListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ChatRoom[];
+}
+
+export interface ChatMessage {
+  id: number;
+  content?: string;
+  sender?: number | string;
+  sender_username?: string;
+  created_at?: string;
+  is_read?: boolean;
+  [key: string]: unknown;
+}
+
+export type ChatMessagesResponse = ChatMessage[] | { count: number; next: string | null; previous: string | null; results: ChatMessage[] };

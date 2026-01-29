@@ -4,8 +4,8 @@ import {
   ArrowDownCircle,
   ArrowUpCircle,
   Building2,
-  Phone,
-  Ticket
+  Ticket,
+  MessageSquare
 } from "lucide-react";
 import type { UserDashboardData, MenuItem, CompanyHistory, ContactInfo } from "@/types/dashboard";
 
@@ -41,7 +41,7 @@ export const MENU_ITEMS: MenuItem[] = [
   { id: 3, label: "উত্তোলন", icon: ArrowUpCircle, route: "/dashboard/withdrawal" },
   { id: 4, label: "টিকেট ইতিহাস", icon: Ticket, route: "/dashboard/ticket-history" },
   { id: 5, label: "কোম্পানির ইতিহাস", icon: Building2, route: "/dashboard/company-history" },
-  { id: 6, label: "যোগাযোগের তথ্য", icon: Phone, route: "/dashboard/contact" }
+  { id: 6, label: "যোগাযোগ", icon: MessageSquare, route: "/dashboard/communications" }
 ];
 
 // Dashboard statistics cards data

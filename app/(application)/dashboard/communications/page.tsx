@@ -57,8 +57,8 @@ export default function ContactPage() {
           className="bg-white rounded-xl shadow-lg p-6 mb-6"
         >
           <div className="flex items-center gap-3 mb-4">
-            <Phone className="w-8 h-8 text-primary-600" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">যোগাযোগের তথ্য</h1>
+            <MessageSquare className="w-8 h-8 text-primary-600" />
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">যোগাযোগ</h1>
           </div>
           <p className="text-gray-600">
             আমাদের সাথে যোগাযোগ করুন। আমরা আপনার প্রশ্ন, পরামর্শ এবং সহায়তার জন্য এখানে আছি।
