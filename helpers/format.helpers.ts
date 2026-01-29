@@ -30,3 +30,49 @@ export function formatValue(value: string, animatedCount: number): string {
   // For non-currency values (like user count, ticket count)
   return animatedCount.toLocaleString("bn-BD");
 }
+
+/**
+ * Format ISO date string for display
+ *
+ * @param dateStr - ISO date string or null/undefined
+ * @returns Formatted date string (e.g. "28 Jan 2026") or "N/A"
+ */
+export function formatDate(
+  dateStr: string | null | undefined
+): string {
+  if (!dateStr) return "N/A";
+  try {
+    return new Date(dateStr).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
+/**
+ * User-like shape for display name (e.g. User from auth, or profile.user)
+ */
+export interface UserDisplayInput {
+  first_name?: string | null;
+  last_name?: string | null;
+  username?: string | null;
+}
+
+/**
+ * Get display name from a user-like object (first + last name, or username, or fallback)
+ *
+ * @param user - User object with optional first_name, last_name, username
+ * @param fallback - Fallback when no name is available (default "User")
+ * @returns Display string for UI
+ */
+export function getDisplayName(
+  user: UserDisplayInput | null | undefined,
+  fallback = "User"
+): string {
+  if (!user) return fallback;
+  const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
+  return name || (user.username ?? fallback);
+}
