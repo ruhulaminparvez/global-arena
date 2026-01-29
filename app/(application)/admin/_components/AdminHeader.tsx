@@ -3,8 +3,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Shield, LayoutDashboard } from "lucide-react";
+import { Shield, LayoutDashboard, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { getDisplayName } from "@/helpers/format.helpers";
 
 interface AdminHeaderProps { }
 
@@ -12,6 +13,7 @@ export default function AdminHeader({ }: AdminHeaderProps = {}) {
   const { profile } = useAuth();
   const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
+  const displayName = getDisplayName(profile?.user);
 
   const handleDashboardClick = () => {
     router.push("/dashboard");
@@ -126,7 +128,7 @@ export default function AdminHeader({ }: AdminHeaderProps = {}) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-2xl font-bold text-gray-900 mb-2"
+            className="text-2xl font-bold text-gray-900"
           >
             অ্যাডমিন প্যানেল
           </motion.h2>
@@ -137,9 +139,9 @@ export default function AdminHeader({ }: AdminHeaderProps = {}) {
             transition={{ delay: 0.4 }}
             className="flex items-center justify-center md:justify-start gap-2 text-gray-600 mb-4"
           >
-            <span className="text-sm font-medium">
-              {profile?.user.first_name + " " + profile?.user.last_name || profile?.user.username || "অ্যাডমিন"}
-            </span>
+            <p className="text-sm font-medium">
+              {displayName || "অ্যাডমিন"}
+            </p>
           </motion.div>
 
           {/* Admin Badge */}
