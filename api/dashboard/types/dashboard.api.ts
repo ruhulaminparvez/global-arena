@@ -56,6 +56,14 @@ export interface MyChatRoom {
   updated_at: string;
 }
 
+/** List response for GET /api/chat/rooms/ (SUPPORT/ADMIN only) */
+export interface ChatRoomListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: MyChatRoom[];
+}
+
 export interface ChatMessage {
   id: number;
   content?: string;

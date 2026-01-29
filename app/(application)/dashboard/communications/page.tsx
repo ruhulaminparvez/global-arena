@@ -6,8 +6,10 @@ import BottomNavigation from "../_components/BottomNavigation";
 import {
   MessageSquare,
   MessageCircle,
+  Users,
 } from "lucide-react";
-import { getMyChatRoom } from "@/api/dashboard/chats.api";
+import { useAuth } from "@/contexts/AuthContext";
+import { getMyChatRoom, getChatRooms } from "@/api/dashboard/chats.api";
 import type { MyChatRoom } from "@/api/dashboard/types/dashboard.api";
 import { formatDate } from "@/helpers/format.helpers";
 import { ChatRoomMessagesModal } from "./_components/ChatRoomMessagesModal";
@@ -18,10 +20,19 @@ function getRoomDisplayName(room: MyChatRoom): string {
   return name || u.username || "সাপোর্ট";
 }
 
+const ALLOWED_ROLES = ["SUPPORT", "ADMIN"];
+
 export default function ContactPage() {
+  const { profile } = useAuth();
+  const canViewAllRooms =
+    !!profile?.role && ALLOWED_ROLES.includes(profile.role.toUpperCase());
+
   const [chatRoom, setChatRoom] = useState<MyChatRoom | null>(null);
   const [chatRoomLoading, setChatRoomLoading] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState<MyChatRoom | null>(null);
+
+  const [allRooms, setAllRooms] = useState<MyChatRoom[]>([]);
+  const [allRoomsLoading, setAllRoomsLoading] = useState(false);
 
   const fetchChatRoom = useCallback(async () => {
     setChatRoomLoading(true);
@@ -35,9 +46,26 @@ export default function ContactPage() {
     }
   }, []);
 
+  const fetchAllChatRooms = useCallback(async () => {
+    if (!canViewAllRooms) return;
+    setAllRoomsLoading(true);
+    try {
+      const res = await getChatRooms();
+      setAllRooms(res.results ?? []);
+    } catch {
+      setAllRooms([]);
+    } finally {
+      setAllRoomsLoading(false);
+    }
+  }, [canViewAllRooms]);
+
   useEffect(() => {
     fetchChatRoom();
   }, [fetchChatRoom]);
+
+  useEffect(() => {
+    fetchAllChatRooms();
+  }, [fetchAllChatRooms]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
@@ -111,6 +139,73 @@ export default function ContactPage() {
             </motion.button>
           )}
         </motion.div>
+
+        {/* All Chat Rooms - SUPPORT / ADMIN only */}
+        {canViewAllRooms && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="mb-6"
+          >
+            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Users className="w-5 h-5 text-primary-600" />
+              সমস্ত চ্যাট রুম
+            </h2>
+            {allRoomsLoading && (
+              <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
+                চ্যাট রুম লোড হচ্ছে...
+              </div>
+            )}
+            {!allRoomsLoading && allRooms.length === 0 && (
+              <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
+                কোন চ্যাট রুম নেই
+              </div>
+            )}
+            {!allRoomsLoading && allRooms.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {allRooms.map((room, index) => (
+                  <motion.button
+                    key={room.id}
+                    type="button"
+                    onClick={() => setSelectedRoom(room)}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.03 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full bg-white rounded-xl shadow-lg p-5 hover:shadow-xl transition-shadow text-left flex items-center gap-4 border border-gray-100"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
+                      <MessageSquare className="w-6 h-6 text-primary-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <span className="font-semibold text-gray-900 truncate">
+                          {getRoomDisplayName(room)}
+                        </span>
+                        {room.unread_count > 0 && (
+                          <span className="shrink-0 px-2 py-0.5 text-xs font-bold rounded-full bg-primary-600 text-white">
+                            {room.unread_count}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-600 truncate">
+                        {room.last_message ?? "কোন বার্তা নেই"}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {formatDate(room.updated_at)}
+                      </p>
+                    </div>
+                    <span className="text-primary-600 text-sm font-medium shrink-0">
+                      বার্তা দেখুন
+                    </span>
+                  </motion.button>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
       </div>
 
       <BottomNavigation />

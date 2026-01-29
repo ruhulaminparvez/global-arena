@@ -1,7 +1,26 @@
 import { apiClient } from "@/lib/api/axios";
-import type { MyChatRoom, ChatMessage } from "./types/dashboard.api";
+import type {
+  MyChatRoom,
+  ChatMessage,
+  ChatRoomListResponse,
+} from "./types/dashboard.api";
 
 const CHAT_BASE = "/api/chat/rooms";
+
+/**
+ * Get all chat rooms - GET /api/chat/rooms/
+ * Only available for SUPPORT and ADMIN roles.
+ */
+export async function getChatRooms(params?: {
+  search?: string;
+  [key: string]: string | number | undefined;
+}): Promise<ChatRoomListResponse> {
+  const { data } = await apiClient.get<ChatRoomListResponse>(
+    `${CHAT_BASE}/`,
+    { params }
+  );
+  return data;
+}
 
 /**
  * Get my chat room - GET /api/chat/rooms/my_room/
