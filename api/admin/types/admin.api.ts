@@ -132,3 +132,24 @@ export interface ChatMessage {
 }
 
 export type ChatMessagesResponse = ChatMessage[] | { count: number; next: string | null; previous: string | null; results: ChatMessage[] };
+
+/**
+ * Dashboard summary for admin (GET /api/dashboard/summary/)
+ */
+export interface DashboardSummary {
+  users: { total: number };
+  wallet: {
+    total_balance: number;
+    total_locked: number;
+    available_pool: number;
+  };
+  pending_requests: {
+    deposits: number;
+    withdrawals: number;
+    total: number;
+  };
+  tickets: {
+    active_schedules: number;
+    total_purchases: number;
+  };
+}

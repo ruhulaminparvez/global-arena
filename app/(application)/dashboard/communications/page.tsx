@@ -20,7 +20,7 @@ function getRoomDisplayName(room: MyChatRoom): string {
   return name || u.username || "সাপোর্ট";
 }
 
-const ALLOWED_ROLES = ["SUPPORT", "ADMIN"];
+const ALLOWED_ROLES = ["SUPPORT"];
 
 export default function ContactPage() {
   const { profile } = useAuth();

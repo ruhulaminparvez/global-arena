@@ -73,3 +73,38 @@ export interface ChatMessage {
   is_read?: boolean;
   [key: string]: unknown;
 }
+
+/**
+ * Dashboard summary (GET /api/dashboard/summary/) - SUPPORT/ADMIN
+ */
+export interface DashboardSummary {
+  users: { total: number };
+  wallet: {
+    total_balance: number;
+    total_locked: number;
+    available_pool: number;
+  };
+  pending_requests: {
+    deposits: number;
+    withdrawals: number;
+    total: number;
+  };
+  tickets: {
+    active_schedules: number;
+    total_purchases: number;
+  };
+}
+
+/**
+ * Ticket analytics item (GET /api/dashboard/tickets/) - SUPPORT/ADMIN
+ */
+export interface TicketAnalyticsItem {
+  id: number;
+  title: string;
+  price: number;
+  is_active: boolean;
+  is_confirmed: boolean;
+  max_tickets: number;
+  purchase_count: number;
+  total_revenue: number | null;
+}
