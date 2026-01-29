@@ -153,3 +153,48 @@ export interface DashboardSummary {
     total_purchases: number;
   };
 }
+
+/**
+ * Savings plan (GET /api/savings/plans/)
+ */
+export interface SavingPlan {
+  id: number;
+  user: number;
+  monthly_amount: string;
+  duration_months: number;
+  start_date: string;
+  is_completed: boolean;
+  is_mature: boolean;
+  total_saved: number;
+  months_elapsed: number;
+  months_remaining: number;
+  transactions: unknown[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SavingPlanListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: SavingPlan[];
+}
+
+/**
+ * Savings transaction (GET /api/savings/transactions/)
+ */
+export interface SavingTransaction {
+  id: number;
+  plan?: number;
+  amount?: string;
+  transaction_date?: string;
+  created_at?: string;
+  [key: string]: unknown;
+}
+
+export interface SavingTransactionListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: SavingTransaction[];
+}
