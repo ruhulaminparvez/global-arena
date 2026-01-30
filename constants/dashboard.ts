@@ -36,13 +36,13 @@ export const MOCK_USER_DATA: UserDashboardData = {
 };
 
 export const MENU_ITEMS: MenuItem[] = [
-  { id: 0, label: "ড্যাশবোর্ড", icon: LayoutDashboard, route: "/dashboard" },
-  { id: 1, label: "মোট সঞ্চয়", icon: Wallet, route: "/dashboard/total-savings" },
-  { id: 2, label: "জমা", icon: ArrowDownCircle, route: "/dashboard/deposit" },
-  { id: 3, label: "উত্তোলন", icon: ArrowUpCircle, route: "/dashboard/withdrawal" },
-  { id: 4, label: "টিকেট ইতিহাস", icon: Ticket, route: "/dashboard/ticket-history" },
-  { id: 5, label: "কোম্পানির ইতিহাস", icon: Building2, route: "/dashboard/company-history" },
-  { id: 6, label: "যোগাযোগ", icon: MessageSquare, route: "/dashboard/communications" }
+  { id: 1, label: "ড্যাশবোর্ড", icon: LayoutDashboard, route: "/dashboard" },
+  { id: 2, label: "মোট সঞ্চয়", icon: Wallet, route: "/dashboard/total-savings" },
+  { id: 3, label: "জমা", icon: ArrowDownCircle, route: "/dashboard/deposit" },
+  { id: 4, label: "উত্তোলন", icon: ArrowUpCircle, route: "/dashboard/withdrawal" },
+  { id: 5, label: "টিকেট ইতিহাস", icon: Ticket, route: "/dashboard/ticket-history" },
+  { id: 6, label: "যোগাযোগ", icon: MessageSquare, route: "/dashboard/communications" },
+  { id: 7, label: "কোম্পানির ইতিহাস", icon: Building2, route: "/dashboard/company-history" }
 ];
 
 // Dashboard statistics cards data

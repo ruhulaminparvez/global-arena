@@ -56,14 +56,14 @@ export default function AdminBottomNavigation() {
     }
 
     const colorMap: Record<number, string> = {
-      0: "bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-700", // LayoutDashboard - Blue
-      1: "bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700", // Wallet - Green
-      2: "bg-purple-100 text-purple-600 hover:bg-purple-200 hover:text-purple-700", // TrendingUp - Purple
-      3: "bg-emerald-100 text-emerald-600 hover:bg-emerald-200 hover:text-emerald-700", // ArrowDownCircle - Emerald
+      1: "bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-700", // LayoutDashboard - Blue
+      2: "bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700", // Wallet - Green
+      3: "bg-purple-100 text-purple-600 hover:bg-purple-200 hover:text-purple-700", // TrendingUp - Purple
       4: "bg-orange-100 text-orange-600 hover:bg-orange-200 hover:text-orange-700", // ArrowUpCircle - Orange
+      5: "bg-pink-100 text-pink-600 hover:bg-pink-200 hover:text-pink-700", // Ticket - Pink
       6: "bg-cyan-100 text-cyan-600 hover:bg-cyan-200 hover:text-cyan-700", // MessageSquare - Cyan
-      7: "bg-pink-100 text-pink-600 hover:bg-pink-200 hover:text-pink-700", // Ticket - Pink
-      8: "bg-indigo-100 text-indigo-600 hover:bg-indigo-200 hover:text-indigo-700", // Users - Indigo
+      7: "bg-indigo-100 text-indigo-600 hover:bg-indigo-200 hover:text-indigo-700", // Users - Indigo
+      8: "bg-emerald-100 text-emerald-600 hover:bg-emerald-200 hover:text-emerald-700", // ArrowDownCircle - Emerald
     };
 
     return colorMap[itemId] || "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700";
