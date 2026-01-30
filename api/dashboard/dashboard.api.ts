@@ -3,6 +3,7 @@ import type {
   DashboardSummary,
   TicketAnalyticsItem,
   MyWallet,
+  WalletTransaction,
 } from "./types/dashboard.api";
 
 /**
@@ -36,3 +37,14 @@ export async function getMyWallet(): Promise<MyWallet> {
   );
   return data;
 }
+
+/**
+ * Get wallet transactions - GET /api/wallet/wallets/transactions/
+ */
+export async function getWalletTransactions(): Promise<WalletTransaction[]> {
+  const { data } = await apiClient.get<WalletTransaction[]>(
+    "/api/wallet/wallets/transactions/"
+  );
+  return Array.isArray(data) ? data : [];
+}
+

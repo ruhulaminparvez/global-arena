@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import UserDetail from "./_components/UserDetail";
 import MonthlySavingsGraph from "./_components/MonthlySavingsGraph";
 import BottomNavigation from "./_components/BottomNavigation";
-import StatsCards from "./_components/StatsCards";
 import { useAuth } from "@/contexts/AuthContext";
 import { getDashboardSummary, getTicketAnalytics } from "@/api/dashboard/dashboard.api";
 import type {
@@ -131,9 +130,6 @@ export default function DashboardPage() {
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 py-8 pb-[12rem] sm:pb-[7rem] overflow-x-hidden">
         <UserDetail />
-
-        {/* Card Section */}
-        <StatsCards />
 
         {/* Summary Stats - SUPPORT / ADMIN only */}
         {canViewAdminStats && (

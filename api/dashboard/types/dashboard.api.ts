@@ -123,6 +123,19 @@ export interface MyWallet {
 }
 
 /**
+ * Wallet transaction (GET /api/wallet/wallets/transactions/)
+ */
+export type WalletTransactionType = "DEPOSIT" | "WITHDRAWAL" | string;
+
+export interface WalletTransaction {
+  id: number;
+  amount: string;
+  type: WalletTransactionType;
+  description: string;
+  created_at: string;
+}
+
+/**
  * Deposit request (GET/POST /api/wallet/deposits/)
  */
 export type DepositStatus = "PENDING" | "APPROVED" | "REJECTED";
