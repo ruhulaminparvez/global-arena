@@ -1,89 +1,147 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import BottomNavigation from "../_components/BottomNavigation";
 import { ArrowUpCircle, Search, Plus, X } from "lucide-react";
-import { MOCK_WITHDRAWALS } from "@/constants/dashboard";
-import type { Withdrawal } from "@/constants/dashboard";
 import Table from "@/components/Table";
 import { getWithdrawalColumns } from "@/columns/dashboard/withdrawal";
+import {
+  createWithdrawalRequest,
+  getWithdrawals,
+  approveWithdrawal,
+} from "@/api/dashboard/withdraw.api";
+import type { Withdrawal } from "@/api/dashboard/types/dashboard.api";
+import { useAuth } from "@/contexts/AuthContext";
 
-export default function WithdrawalPage() {
-  const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterMethod, setFilterMethod] = useState<string>("all");
-  const [filterStatus, setFilterStatus] = useState<string>("all");
-  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>(MOCK_WITHDRAWALS);
+type StatusFilter = "" | "PENDING" | "APPROVED" | "REJECTED";
 
-  // Form state
-  const [formData, setFormData] = useState({
-    amount: "",
-    method: "ব্যাংক",
-    accountNumber: "",
-    description: "",
-  });
+const STATUS_OPTIONS: { value: StatusFilter; label: string }[] = [
+  { value: "", label: "সব" },
+  { value: "PENDING", label: "বিবেচনাধীন" },
+  { value: "APPROVED", label: "অনুমোদিত" },
+  { value: "REJECTED", label: "প্রত্যাখ্যান" },
+];
 
-  // Filter withdrawals based on search and filters
-  const filteredWithdrawals = useMemo(() => {
-    return withdrawals.filter((withdrawal) => {
-      const matchesSearch =
-        searchQuery === "" ||
-        withdrawal.accountNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        withdrawal.amount.toString().includes(searchQuery) ||
-        withdrawal.date.includes(searchQuery) ||
-        (withdrawal.description && withdrawal.description.toLowerCase().includes(searchQuery.toLowerCase()));
-
-      const matchesMethod = filterMethod === "all" || withdrawal.method === filterMethod;
-      const matchesStatus = filterStatus === "all" || withdrawal.status === filterStatus;
-
-      return matchesSearch && matchesMethod && matchesStatus;
-    });
-  }, [withdrawals, searchQuery, filterMethod, filterStatus]);
-
-  // Get unique methods and statuses for filter dropdowns
-  const methods = useMemo(() => {
-    return Array.from(new Set(withdrawals.map((w) => w.method)));
-  }, [withdrawals]);
-
-  const statuses = useMemo(() => {
-    return Array.from(new Set(withdrawals.map((w) => w.status)));
-  }, [withdrawals]);
-
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("bn-BD", {
+function formatDateDisplay(dateString: string): string {
+  try {
+    const d = new Date(dateString);
+    return d.toLocaleDateString("bn-BD", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-  };
+  } catch {
+    return dateString;
+  }
+}
 
-  // Table columns
-  const columns = getWithdrawalColumns({ formatDate });
+export default function WithdrawalPage() {
+  const { profile } = useAuth();
+  const isSupport =
+    profile &&
+    (profile.role === "SUPPORT" || String(profile.role).toLowerCase() === "support");
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.amount || !formData.accountNumber) {
-      return;
+  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+
+  const [formData, setFormData] = useState({
+    amount: "",
+    bank_details: "",
+  });
+
+  const fetchList = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await getWithdrawals(
+        statusFilter ? { status: statusFilter } : undefined
+      );
+      setWithdrawals(res.results ?? []);
+    } catch {
+      setError("তালিকা লোড করতে সমস্যা হয়েছে।");
+      setWithdrawals([]);
+    } finally {
+      setLoading(false);
     }
-
-    const newWithdrawal: Withdrawal = {
-      id: withdrawals.length + 1,
-      date: new Date().toISOString().split("T")[0],
-      amount: Number(formData.amount),
-      method: formData.method,
-      accountNumber: formData.accountNumber,
-      status: "বিবেচনাধীন",
-      description: formData.description,
-    };
-
-    setWithdrawals([newWithdrawal, ...withdrawals]);
-    setFormData({ amount: "", method: "ব্যাংক", accountNumber: "", description: "" });
-    setShowWithdrawalModal(false);
   };
+
+  useEffect(() => {
+    fetchList();
+  }, [statusFilter]);
+
+  const filteredWithdrawals = useMemo(() => {
+    if (!searchQuery.trim()) return withdrawals;
+    const q = searchQuery.trim().toLowerCase();
+    return withdrawals.filter(
+      (w) =>
+        w.user?.toLowerCase().includes(q) ||
+        (w.amount && w.amount.toLowerCase().includes(q)) ||
+        (w.bank_details && w.bank_details.toLowerCase().includes(q))
+    );
+  }, [withdrawals, searchQuery]);
+
+  const totalAmount = useMemo(
+    () =>
+      filteredWithdrawals
+        .filter((w) => w.status === "APPROVED")
+        .reduce((sum, w) => sum + parseFloat(w.amount || "0"), 0),
+    [filteredWithdrawals]
+  );
+
+  const approvedCount = useMemo(
+    () => filteredWithdrawals.filter((w) => w.status === "APPROVED").length,
+    [filteredWithdrawals]
+  );
+
+  const rejectedCount = useMemo(
+    () => filteredWithdrawals.filter((w) => w.status === "REJECTED").length,
+    [filteredWithdrawals]
+  );
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const amount = parseFloat(formData.amount.trim());
+    const bank_details = formData.bank_details.trim();
+    if (Number.isNaN(amount) || amount <= 0 || !bank_details) return;
+    setSubmitLoading(true);
+    setError(null);
+    try {
+      await createWithdrawalRequest({ amount, bank_details });
+      setFormData({ amount: "", bank_details: "" });
+      setShowWithdrawalModal(false);
+      await fetchList();
+    } catch {
+      setError("উত্তোলন অনুরোধ জমা দিতে সমস্যা হয়েছে।");
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  const handleApprove = async (withdrawal: Withdrawal) => {
+    setActionLoading(true);
+    setError(null);
+    try {
+      await approveWithdrawal(withdrawal.id);
+      await fetchList();
+    } catch {
+      setError("অনুমোদন করতে সমস্যা হয়েছে।");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const columns = getWithdrawalColumns({
+    formatDate: formatDateDisplay,
+    onApprove: handleApprove,
+    isSupport: !!isSupport,
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
@@ -97,9 +155,12 @@ export default function WithdrawalPage() {
           <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
             <div className="flex items-center gap-3">
               <ArrowUpCircle className="w-8 h-8 text-primary-600" />
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">উত্তোলন</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                উত্তোলন
+              </h1>
             </div>
             <motion.button
+              type="button"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowWithdrawalModal(true)}
@@ -110,60 +171,68 @@ export default function WithdrawalPage() {
             </motion.button>
           </div>
 
-          {/* Search and Filter Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {/* Search Bar */}
+          {/* Status filter */}
+          <div className="mb-4 flex flex-wrap gap-2">
+            {STATUS_OPTIONS.map((opt) => (
+              <button
+                key={opt.value || "all"}
+                type="button"
+                onClick={() => setStatusFilter(opt.value)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === opt.value
+                    ? "bg-primary-600 text-white"
+                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                  }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Search */}
+          <div className="mb-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="অনুসন্ধান করুন..."
+                placeholder="ব্যবহারকারী, পরিমাণ বা ব্যাংক বিবরণ দিয়ে অনুসন্ধান করুন..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
-
-            {/* Method Filter */}
-            <select
-              value={filterMethod}
-              onChange={(e) => setFilterMethod(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            >
-              <option value="all">সব পদ্ধতি</option>
-              {methods.map((method) => (
-                <option key={method} value={method}>
-                  {method}
-                </option>
-              ))}
-            </select>
-
-            {/* Status Filter */}
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            >
-              <option value="all">সব স্ট্যাটাস</option>
-              {statuses.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
           </div>
+
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 text-red-800 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
 
           {/* Summary */}
           <div className="flex flex-wrap gap-4">
             <div className="bg-primary-50 rounded-lg px-4 py-2">
               <p className="text-sm text-primary-600">মোট উত্তোলন</p>
               <p className="text-xl font-bold text-primary-600">
-                ৳ {filteredWithdrawals.reduce((sum, w) => sum + w.amount, 0).toLocaleString("bn-BD")}
+                ৳ {totalAmount.toLocaleString("bn-BD")}
               </p>
             </div>
             <div className="bg-blue-50 rounded-lg px-4 py-2">
               <p className="text-sm text-blue-600">মোট সংখ্যা</p>
-              <p className="text-xl font-bold text-blue-600">{filteredWithdrawals.length}</p>
+              <p className="text-xl font-bold text-blue-600">
+                {filteredWithdrawals.length}
+              </p>
+            </div>
+            <div className="bg-green-50 rounded-lg px-4 py-2">
+              <p className="text-sm text-green-600">অনুমোদিত</p>
+              <p className="text-xl font-bold text-green-600">
+                {approvedCount}
+              </p>
+            </div>
+            <div className="bg-red-50 rounded-lg px-4 py-2">
+              <p className="text-sm text-red-600">প্রত্যাখ্যান</p>
+              <p className="text-xl font-bold text-red-600">
+                {rejectedCount}
+              </p>
             </div>
           </div>
         </motion.div>
@@ -175,15 +244,22 @@ export default function WithdrawalPage() {
           transition={{ delay: 0.2 }}
           className="mb-6"
         >
-          <Table
-            data={filteredWithdrawals}
-            columns={columns}
-            emptyMessage="কোন উত্তোলন পাওয়া যায়নি"
-          />
+          {loading ? (
+            <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
+              লোড হচ্ছে...
+            </div>
+          ) : (
+            <Table
+              data={filteredWithdrawals}
+              columns={columns}
+              emptyMessage="কোন উত্তোলন পাওয়া যায়নি"
+              rowKey={(w) => w.id}
+            />
+          )}
         </motion.div>
       </div>
 
-      {/* Withdrawal Modal */}
+      {/* Withdrawal Modal - Create request */}
       <AnimatePresence>
         {showWithdrawalModal && (
           <motion.div
@@ -201,10 +277,14 @@ export default function WithdrawalPage() {
               className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-gray-900">নতুন উত্তোলন</h3>
+                <h3 className="text-2xl font-bold text-gray-900">
+                  নতুন উত্তোলন অনুরোধ
+                </h3>
                 <button
+                  type="button"
                   onClick={() => setShowWithdrawalModal(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+                  aria-label="বন্ধ করুন"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -217,9 +297,13 @@ export default function WithdrawalPage() {
                   </label>
                   <input
                     type="number"
+                    step="0.01"
+                    min="0"
                     required
                     value={formData.amount}
-                    onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, amount: e.target.value })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="পরিমাণ লিখুন"
                   />
@@ -227,45 +311,21 @@ export default function WithdrawalPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    পদ্ধতি
-                  </label>
-                  <select
-                    required
-                    value={formData.method}
-                    onChange={(e) => setFormData({ ...formData, method: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  >
-                    <option value="ব্যাংক">ব্যাংক</option>
-                    <option value="মোবাইল">মোবাইল</option>
-                    <option value="নগদ">নগদ</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    অ্যাকাউন্ট/মোবাইল নম্বর
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.accountNumber}
-                    onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    placeholder="অ্যাকাউন্ট বা মোবাইল নম্বর লিখুন"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    বিবরণ (ঐচ্ছিক)
+                    ব্যাংক বিবরণ
                   </label>
                   <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    rows={3}
+                    required
+                    value={formData.bank_details}
+                    onChange={(e) =>
+                      setFormData({ ...formData, bank_details: e.target.value })
+                    }
+                    rows={4}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    placeholder="বিবরণ লিখুন"
+                    placeholder={'যেমন:\nব্যাংক: ABC Bank\nঅ্যাকাউন্ট: 123456789\nনাম: John Doe'}
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    ব্যাংক নাম, অ্যাকাউন্ট নম্বর ও নাম লিখুন
+                  </p>
                 </div>
 
                 <div className="flex gap-3 pt-4">
@@ -278,9 +338,10 @@ export default function WithdrawalPage() {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+                    disabled={submitLoading}
+                    className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50"
                   >
-                    উত্তোলন করুন
+                    {submitLoading ? "জমা হচ্ছে..." : "উত্তোলন করুন"}
                   </button>
                 </div>
               </form>
@@ -293,4 +354,3 @@ export default function WithdrawalPage() {
     </div>
   );
 }
-

@@ -235,3 +235,40 @@ export interface ApproveDepositResponse {
 export interface RejectDepositResponse {
   status: string;
 }
+
+/**
+ * Withdrawal request (GET /api/wallet/withdrawals/ and /api/wallet/withdrawals/:id/)
+ */
+export type WithdrawalStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export interface Withdrawal {
+  id: number;
+  user: string;
+  amount: string;
+  status: WithdrawalStatus;
+  status_display: string;
+  bank_details: string | null;
+  admin_notes: string | null;
+  approved_by: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WithdrawalListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Withdrawal[];
+}
+
+export interface RejectWithdrawalPayload {
+  reason: string;
+}
+
+export interface ApproveWithdrawalResponse {
+  status: string;
+}
+
+export interface RejectWithdrawalResponse {
+  status: string;
+}
