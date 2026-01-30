@@ -1,5 +1,9 @@
 import { apiClient } from "@/lib/api/axios";
-import type { DashboardSummary, TicketAnalyticsItem } from "./types/dashboard.api";
+import type {
+  DashboardSummary,
+  TicketAnalyticsItem,
+  MyWallet,
+} from "./types/dashboard.api";
 
 /**
  * Get dashboard summary - GET /api/dashboard/summary/
@@ -21,4 +25,14 @@ export async function getTicketAnalytics(): Promise<TicketAnalyticsItem[]> {
     "/api/dashboard/tickets/"
   );
   return Array.isArray(data) ? data : [];
+}
+
+/**
+ * Get current user's wallet - GET /api/wallet/wallets/my_wallet/
+ */
+export async function getMyWallet(): Promise<MyWallet> {
+  const { data } = await apiClient.get<MyWallet>(
+    "/api/wallet/wallets/my_wallet/"
+  );
+  return data;
 }

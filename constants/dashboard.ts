@@ -1,6 +1,5 @@
 import {
   Wallet,
-  TrendingUp,
   ArrowDownCircle,
   ArrowUpCircle,
   Building2,
@@ -48,12 +47,6 @@ export const MENU_ITEMS: MenuItem[] = [
 // Dashboard statistics cards data
 export const DASHBOARD_STATS = [
   {
-    label: "টোটাল বিনিয়োগ",
-    value: "৳ 85,000",
-    icon: TrendingUp,
-    color: "from-purple-500 to-purple-700",
-  },
-  {
     label: "টোটাল জমা",
     value: "৳ 1,25,000",
     icon: ArrowDownCircle,
@@ -70,6 +63,12 @@ export const DASHBOARD_STATS = [
     value: "12",
     icon: Ticket,
     color: "from-orange-500 to-orange-700",
+  },
+  {
+    label: "টোটাল যোগাযোগ",
+    value: "12",
+    icon: MessageSquare,
+    color: "from-cyan-500 to-cyan-700",
   },
 ];
 

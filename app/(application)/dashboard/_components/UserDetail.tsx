@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -10,12 +10,15 @@ import {
   Wallet,
   TrendingUp,
   Info,
+  Lock,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { DEFAULT_USER_PHOTO, MOCK_USER_DATA } from "@/constants/dashboard";
+import { DEFAULT_USER_PHOTO } from "@/constants/dashboard";
 import { getDisplayName } from "@/helpers/format.helpers";
 import { getMediaUrl } from "@/helpers/media.helpers";
 import { useCounterAnimation } from "@/hooks/useCounterAnimation";
+import { getMyWallet } from "@/api/dashboard/dashboard.api";
+import type { MyWallet } from "@/api/dashboard/types/dashboard.api";
 import { ProfileDetailModal } from "./ProfileDetailModal";
 
 interface UserDetailProps { }
@@ -23,9 +26,39 @@ interface UserDetailProps { }
 export default function UserDetail({ }: UserDetailProps = {}) {
   const router = useRouter();
   const { profile } = useAuth();
-  const animatedBalance = useCounterAnimation(MOCK_USER_DATA.totalBalance);
+  const [wallet, setWallet] = useState<MyWallet | null>(null);
+  const [walletLoading, setWalletLoading] = useState(true);
+
+  const balanceNum = wallet
+    ? parseFloat(wallet.balance) || 0
+    : 0;
+  const lockedNum = wallet
+    ? parseFloat(wallet.locked_amount) || 0
+    : 0;
+  const availableNum = wallet?.available_balance ?? 0;
+
+  const animatedBalance = useCounterAnimation(balanceNum);
+
   const [isHovered, setIsHovered] = useState(false);
   const [showProfileDetail, setShowProfileDetail] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setWalletLoading(true);
+    getMyWallet()
+      .then((data) => {
+        if (!cancelled) setWallet(data);
+      })
+      .catch(() => {
+        if (!cancelled) setWallet(null);
+      })
+      .finally(() => {
+        if (!cancelled) setWalletLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const displayName = getDisplayName(profile?.user);
 
@@ -250,14 +283,30 @@ export default function UserDetail({ }: UserDetailProps = {}) {
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{
                       duration: 0.5,
-                      ease: [0.16, 1, 0.3, 1] // Custom easing for smooth feel
+                      ease: [0.16, 1, 0.3, 1]
                     }}
                     className="text-5xl font-bold tracking-tight"
                   >
-                    {animatedBalance.toLocaleString("bn-BD")}
+                    {walletLoading
+                      ? "—"
+                      : animatedBalance.toLocaleString("bn-BD")}
                   </motion.span>
                   <span className="text-xl font-semibold opacity-80">৳</span>
                 </div>
+
+                {/* Available & locked breakdown */}
+                {!walletLoading && (
+                  <div className="mt-3 flex flex-wrap gap-4 text-sm">
+                    <div className="flex items-center gap-1.5 opacity-90">
+                      <TrendingUp className="w-4 h-4" />
+                      <span>প্রাপ্য: {availableNum.toLocaleString("bn-BD")} ৳</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 opacity-90">
+                      <Lock className="w-4 h-4" />
+                      <span>লকড: {lockedNum.toLocaleString("bn-BD")} ৳</span>
+                    </div>
+                  </div>
+                )}
 
                 {/* Decorative line */}
                 <div className="mt-4 flex items-center gap-2">

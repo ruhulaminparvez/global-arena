@@ -108,3 +108,16 @@ export interface TicketAnalyticsItem {
   purchase_count: number;
   total_revenue: number | null;
 }
+
+/**
+ * My wallet (GET /api/wallet/wallets/my_wallet/)
+ */
+export interface MyWallet {
+  id: number;
+  balance: string;
+  locked_amount: string;
+  available_balance: number;
+  transactions: unknown[];
+  created_at: string;
+  updated_at: string;
+}

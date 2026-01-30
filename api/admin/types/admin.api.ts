@@ -198,3 +198,40 @@ export interface SavingTransactionListResponse {
   previous: string | null;
   results: SavingTransaction[];
 }
+
+/**
+ * Deposit request (GET /api/wallet/deposits/ and /api/wallet/deposits/:id/)
+ */
+export type DepositStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export interface Deposit {
+  id: number;
+  user: string;
+  amount: string;
+  status: DepositStatus;
+  status_display: string;
+  proof_document: string | null;
+  admin_notes: string | null;
+  approved_by: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DepositListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Deposit[];
+}
+
+export interface RejectDepositPayload {
+  reason: string;
+}
+
+export interface ApproveDepositResponse {
+  status: string;
+}
+
+export interface RejectDepositResponse {
+  status: string;
+}
