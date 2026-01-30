@@ -105,6 +105,11 @@ export default function WithdrawalPage() {
     [filteredWithdrawals]
   );
 
+  const pendingCount = useMemo(
+    () => filteredWithdrawals.filter((w) => w.status === "PENDING").length,
+    [filteredWithdrawals]
+  );
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const amount = parseFloat(formData.amount.trim());
@@ -232,6 +237,12 @@ export default function WithdrawalPage() {
               <p className="text-sm text-red-600">প্রত্যাখ্যান</p>
               <p className="text-xl font-bold text-red-600">
                 {rejectedCount}
+              </p>
+            </div>
+            <div className="bg-orange-50 rounded-lg px-4 py-2">
+              <p className="text-sm text-orange-600">পেন্ডিং</p>
+              <p className="text-xl font-bold text-orange-600">
+                {pendingCount}
               </p>
             </div>
           </div>
