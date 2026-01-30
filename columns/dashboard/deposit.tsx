@@ -1,44 +1,68 @@
 "use client";
 
 import { TableColumn } from "@/components/Table";
-import type { Deposit } from "@/constants/dashboard";
+import { cn } from "@/lib/utils";
+import type { Deposit } from "@/api/dashboard/types/dashboard.api";
 
-interface DepositColumnsProps {
-  formatDate: (dateString: string) => string;
+function statusBadgeClass(status: string): string {
+  const normalized = String(status ?? "").toLowerCase().trim();
+  switch (normalized) {
+    case "pending":
+      return "bg-orange-100 text-orange-800 border border-orange-300";
+    case "approved":
+      return "bg-green-100 text-green-800 border border-green-300";
+    case "rejected":
+      return "bg-red-100 text-red-800 border border-red-300";
+    default:
+      return "bg-gray-100 text-gray-700 border border-gray-300";
+  }
 }
 
-export const getDepositColumns = ({
-  formatDate,
-}: DepositColumnsProps): TableColumn<Deposit>[] => [
-    {
-      key: "id",
-      label: "আইডি",
-      className: "font-medium",
-    },
-    {
-      key: "date",
-      label: "তারিখ",
-      render: (deposit) => formatDate(deposit.date),
-    },
+function formatDate(iso: string): string {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleDateString("bn-BD", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return iso;
+  }
+}
+
+export interface DepositColumnsOptions {
+  formatDate?: (dateString: string) => string;
+  onApprove?: (deposit: Deposit) => void;
+  isSupport?: boolean;
+}
+
+export const getDepositColumns = (
+  options: DepositColumnsOptions = {}
+): TableColumn<Deposit>[] => {
+  const {
+    formatDate: formatDateProp,
+    onApprove,
+    isSupport,
+  } = options;
+  const format = formatDateProp ?? formatDate;
+
+  return [
+    { key: "id", label: "আইডি", className: "font-medium" },
     {
       key: "amount",
       label: "পরিমাণ",
       render: (deposit) => (
         <span className="font-semibold">
-          ৳ {deposit.amount.toLocaleString("bn-BD")}
+          ৳ {parseFloat(deposit.amount || "0").toLocaleString("bn-BD")}
         </span>
       ),
     },
     {
-      key: "method",
-      label: "পদ্ধতি",
-      className: "text-gray-600",
-    },
-    {
-      key: "transactionId",
-      label: "ট্রান্সাকশন আইডি",
+      key: "created_at",
+      label: "তারিখ",
       render: (deposit) => (
-        <span className="font-mono text-gray-600">{deposit.transactionId}</span>
+        <span className="text-gray-600">{format(deposit.created_at)}</span>
       ),
     },
     {
@@ -46,20 +70,37 @@ export const getDepositColumns = ({
       label: "স্ট্যাটাস",
       render: (deposit) => (
         <span
-          className={`px-3 py-1 text-xs font-semibold rounded-full ${deposit.status === "অনুমোদিত"
-            ? "bg-green-100 text-green-800"
-            : "bg-yellow-100 text-yellow-800"
-            }`}
+          className={cn(
+            "px-3 py-1 text-xs font-semibold rounded-full",
+            statusBadgeClass(deposit?.status ?? "")
+          )}
         >
-          {deposit.status}
+          {deposit.status_display}
         </span>
       ),
     },
-    {
-      key: "description",
-      label: "বিবরণ",
-      render: (deposit) => (
-        <span className="text-gray-600">{deposit.description || "-"}</span>
-      ),
-    },
+    ...(isSupport && onApprove
+      ? [
+        {
+          key: "action",
+          label: "কার্যকর",
+          render: (deposit: Deposit) =>
+            deposit.status === "PENDING" ? (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onApprove(deposit);
+                }}
+                className="px-4 py-2 text-sm font-semibold rounded-lg shadow-sm border border-green-600 bg-green-600 text-white hover:bg-green-700 transition-colors"
+              >
+                অনুমোদন
+              </button>
+            ) : (
+              <span className="text-gray-400 text-sm">—</span>
+            ),
+        } as TableColumn<Deposit>,
+      ]
+      : []),
   ];
+};

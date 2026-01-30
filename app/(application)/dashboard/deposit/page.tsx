@@ -1,89 +1,151 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import BottomNavigation from "../_components/BottomNavigation";
-import { ArrowDownCircle, Search, Plus, X } from "lucide-react";
-import { MOCK_DEPOSITS } from "@/constants/dashboard";
-import type { Deposit } from "@/constants/dashboard";
+import { ArrowDownCircle, Search, Plus, X, Upload } from "lucide-react";
 import Table from "@/components/Table";
 import { getDepositColumns } from "@/columns/dashboard/deposit";
+import {
+  createDepositRequest,
+  getDeposits,
+  approveDeposit,
+} from "@/api/dashboard/deposit.api";
+import type { Deposit } from "@/api/dashboard/types/dashboard.api";
+import { useAuth } from "@/contexts/AuthContext";
 
-export default function DepositPage() {
-  const [showDepositModal, setShowDepositModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterMethod, setFilterMethod] = useState<string>("all");
-  const [filterStatus, setFilterStatus] = useState<string>("all");
-  const [deposits, setDeposits] = useState<Deposit[]>(MOCK_DEPOSITS);
+type StatusFilter = "" | "PENDING" | "APPROVED" | "REJECTED";
 
-  // Form state
-  const [formData, setFormData] = useState({
-    amount: "",
-    method: "ব্যাংক",
-    transactionId: "",
-    description: "",
-  });
+const STATUS_OPTIONS: { value: StatusFilter; label: string }[] = [
+  { value: "", label: "সব" },
+  { value: "PENDING", label: "বিবেচনাধীন" },
+  { value: "APPROVED", label: "অনুমোদিত" },
+  { value: "REJECTED", label: "প্রত্যাখ্যান" },
+];
 
-  // Filter deposits based on search and filters
-  const filteredDeposits = useMemo(() => {
-    return deposits.filter((deposit) => {
-      const matchesSearch =
-        searchQuery === "" ||
-        deposit.transactionId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        deposit.amount.toString().includes(searchQuery) ||
-        deposit.date.includes(searchQuery) ||
-        (deposit.description && deposit.description.toLowerCase().includes(searchQuery.toLowerCase()));
-
-      const matchesMethod = filterMethod === "all" || deposit.method === filterMethod;
-      const matchesStatus = filterStatus === "all" || deposit.status === filterStatus;
-
-      return matchesSearch && matchesMethod && matchesStatus;
-    });
-  }, [deposits, searchQuery, filterMethod, filterStatus]);
-
-  // Get unique methods and statuses for filter dropdowns
-  const methods = useMemo(() => {
-    return Array.from(new Set(deposits.map((dep) => dep.method)));
-  }, [deposits]);
-
-  const statuses = useMemo(() => {
-    return Array.from(new Set(deposits.map((dep) => dep.status)));
-  }, [deposits]);
-
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("bn-BD", {
+function formatDateDisplay(dateString: string): string {
+  try {
+    const d = new Date(dateString);
+    return d.toLocaleDateString("bn-BD", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-  };
+  } catch {
+    return dateString;
+  }
+}
 
-  // Table columns
-  const columns = getDepositColumns({ formatDate });
+export default function DepositPage() {
+  const { profile } = useAuth();
+  const isSupport =
+    profile &&
+    (profile.role === "SUPPORT" || String(profile.role).toLowerCase() === "support");
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.amount || !formData.transactionId) {
-      return;
+  const [deposits, setDeposits] = useState<Deposit[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showDepositModal, setShowDepositModal] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+
+  const [formData, setFormData] = useState({
+    amount: "",
+    proof_document: null as File | null,
+  });
+
+  const fetchList = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await getDeposits(
+        statusFilter ? { status: statusFilter } : undefined
+      );
+      setDeposits(res.results ?? []);
+    } catch {
+      setError("তালিকা লোড করতে সমস্যা হয়েছে।");
+      setDeposits([]);
+    } finally {
+      setLoading(false);
     }
-
-    const newDeposit: Deposit = {
-      id: deposits.length + 1,
-      date: new Date().toISOString().split("T")[0],
-      amount: Number(formData.amount),
-      method: formData.method,
-      transactionId: formData.transactionId,
-      status: "বিবেচনাধীন",
-      description: formData.description,
-    };
-
-    setDeposits([newDeposit, ...deposits]);
-    setFormData({ amount: "", method: "ব্যাংক", transactionId: "", description: "" });
-    setShowDepositModal(false);
   };
+
+  useEffect(() => {
+    fetchList();
+  }, [statusFilter]);
+
+  const filteredDeposits = useMemo(() => {
+    if (!searchQuery.trim()) return deposits;
+    const q = searchQuery.trim().toLowerCase();
+    return deposits.filter(
+      (d) =>
+        d.user?.toLowerCase().includes(q) ||
+        (d.amount && d.amount.toLowerCase().includes(q))
+    );
+  }, [deposits, searchQuery]);
+
+  const totalAmount = useMemo(
+    () =>
+      filteredDeposits
+        .filter((d) => d.status === "APPROVED")
+        .reduce((sum, d) => sum + parseFloat(d.amount || "0"), 0),
+    [filteredDeposits]
+  );
+
+  const approvedCount = useMemo(
+    () => filteredDeposits.filter((d) => d.status === "APPROVED").length,
+    [filteredDeposits]
+  );
+
+  const rejectedCount = useMemo(
+    () => filteredDeposits.filter((d) => d.status === "REJECTED").length,
+    [filteredDeposits]
+  );
+
+  const pendingCount = useMemo(
+    () => filteredDeposits.filter((d) => d.status === "PENDING").length,
+    [filteredDeposits]
+  );
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const amount = formData.amount.trim();
+    const file = formData.proof_document;
+    if (!amount || !file) return;
+    setSubmitLoading(true);
+    setError(null);
+    try {
+      await createDepositRequest(amount, file);
+      setFormData({ amount: "", proof_document: null });
+      setShowDepositModal(false);
+      await fetchList();
+    } catch {
+      setError("জমা অনুরোধ জমা দিতে সমস্যা হয়েছে।");
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  const handleApprove = async (deposit: Deposit) => {
+    setActionLoading(true);
+    setError(null);
+    try {
+      await approveDeposit(deposit.id);
+      await fetchList();
+    } catch {
+      setError("অনুমোদন করতে সমস্যা হয়েছে।");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const columns = getDepositColumns({
+    formatDate: formatDateDisplay,
+    onApprove: handleApprove,
+    isSupport: !!isSupport,
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
@@ -97,9 +159,12 @@ export default function DepositPage() {
           <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
             <div className="flex items-center gap-3">
               <ArrowDownCircle className="w-8 h-8 text-primary-600" />
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">জমা</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                জমা
+              </h1>
             </div>
             <motion.button
+              type="button"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowDepositModal(true)}
@@ -110,60 +175,74 @@ export default function DepositPage() {
             </motion.button>
           </div>
 
-          {/* Search and Filter Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {/* Search Bar */}
+          {/* Status filter */}
+          <div className="mb-4 flex flex-wrap gap-2">
+            {STATUS_OPTIONS.map((opt) => (
+              <button
+                key={opt.value || "all"}
+                type="button"
+                onClick={() => setStatusFilter(opt.value)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === opt.value
+                  ? "bg-primary-600 text-white"
+                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                  }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Search */}
+          <div className="mb-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="অনুসন্ধান করুন..."
+                placeholder="ব্যবহারকারী বা পরিমাণ দিয়ে অনুসন্ধান করুন..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
-
-            {/* Method Filter */}
-            <select
-              value={filterMethod}
-              onChange={(e) => setFilterMethod(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            >
-              <option value="all">সব পদ্ধতি</option>
-              {methods.map((method) => (
-                <option key={method} value={method}>
-                  {method}
-                </option>
-              ))}
-            </select>
-
-            {/* Status Filter */}
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            >
-              <option value="all">সব স্ট্যাটাস</option>
-              {statuses.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
           </div>
+
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 text-red-800 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
 
           {/* Summary */}
           <div className="flex flex-wrap gap-4">
-            <div className="bg-primary-50 rounded-lg px-4 py-2">
-              <p className="text-sm text-primary-600">মোট জমা</p>
-              <p className="text-xl font-bold text-primary-600">
-                ৳ {filteredDeposits.reduce((sum, dep) => sum + dep.amount, 0).toLocaleString("bn-BD")}
+            <div className="bg-blue-50 rounded-lg px-4 py-2">
+              <p className="text-sm text-blue-600">মোট জমা</p>
+              <p className="text-xl font-bold text-blue-600">
+                ৳ {totalAmount.toLocaleString("bn-BD")}
               </p>
             </div>
-            <div className="bg-blue-50 rounded-lg px-4 py-2">
-              <p className="text-sm text-blue-600">মোট সংখ্যা</p>
-              <p className="text-xl font-bold text-blue-600">{filteredDeposits.length}</p>
+            <div className="bg-cyan-50 rounded-lg px-4 py-2">
+              <p className="text-sm text-cyan-600">মোট সংখ্যা</p>
+              <p className="text-xl font-bold text-cyan-600">
+                {filteredDeposits.length}
+              </p>
+            </div>
+            <div className="bg-green-50 rounded-lg px-4 py-2">
+              <p className="text-sm text-green-600">অনুমোদিত</p>
+              <p className="text-xl font-bold text-green-600">
+                {approvedCount}
+              </p>
+            </div>
+            <div className="bg-red-50 rounded-lg px-4 py-2">
+              <p className="text-sm text-red-600">প্রত্যাখ্যান</p>
+              <p className="text-xl font-bold text-red-600">
+                {rejectedCount}
+              </p>
+            </div>
+            <div className="bg-orange-50 rounded-lg px-4 py-2">
+              <p className="text-sm text-orange-600">পেন্ডিং</p>
+              <p className="text-xl font-bold text-orange-600">
+                {pendingCount}
+              </p>
             </div>
           </div>
         </motion.div>
@@ -175,15 +254,22 @@ export default function DepositPage() {
           transition={{ delay: 0.2 }}
           className="mb-6"
         >
-          <Table
-            data={filteredDeposits}
-            columns={columns}
-            emptyMessage="কোন জমা পাওয়া যায়নি"
-          />
+          {loading ? (
+            <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
+              লোড হচ্ছে...
+            </div>
+          ) : (
+            <Table
+              data={filteredDeposits}
+              columns={columns}
+              emptyMessage="কোন জমা পাওয়া যায়নি"
+              rowKey={(d) => d.id}
+            />
+          )}
         </motion.div>
       </div>
 
-      {/* Deposit Modal */}
+      {/* Deposit Modal - Create request */}
       <AnimatePresence>
         {showDepositModal && (
           <motion.div
@@ -201,10 +287,14 @@ export default function DepositPage() {
               className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-gray-900">নতুন জমা</h3>
+                <h3 className="text-2xl font-bold text-gray-900">
+                  নতুন জমা অনুরোধ
+                </h3>
                 <button
+                  type="button"
                   onClick={() => setShowDepositModal(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+                  aria-label="বন্ধ করুন"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -216,10 +306,13 @@ export default function DepositPage() {
                     পরিমাণ (৳)
                   </label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
                     required
                     value={formData.amount}
-                    onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, amount: e.target.value })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="পরিমাণ লিখুন"
                   />
@@ -227,45 +320,31 @@ export default function DepositPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    পদ্ধতি
+                    প্রুফ ডকুমেন্ট (ছবি/ফাইল)
                   </label>
-                  <select
-                    required
-                    value={formData.method}
-                    onChange={(e) => setFormData({ ...formData, method: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  >
-                    <option value="ব্যাংক">ব্যাংক</option>
-                    <option value="মোবাইল">মোবাইল</option>
-                    <option value="নগদ">নগদ</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ট্রান্সাকশন আইডি
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.transactionId}
-                    onChange={(e) => setFormData({ ...formData, transactionId: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    placeholder="ট্রান্সাকশন আইডি লিখুন"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    বিবরণ (ঐচ্ছিক)
-                  </label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    placeholder="বিবরণ লিখুন"
-                  />
+                  <div className="flex items-center gap-2">
+                    <label className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                      <Upload className="w-5 h-5 text-gray-500" />
+                      <span className="text-sm text-gray-600">
+                        {formData.proof_document
+                          ? formData.proof_document.name
+                          : "ফাইল নির্বাচন করুন"}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*,.pdf"
+                        required
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          setFormData({
+                            ...formData,
+                            proof_document: file ?? null,
+                          });
+                        }}
+                      />
+                    </label>
+                  </div>
                 </div>
 
                 <div className="flex gap-3 pt-4">
@@ -278,9 +357,10 @@ export default function DepositPage() {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+                    disabled={submitLoading}
+                    className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50"
                   >
-                    জমা করুন
+                    {submitLoading ? "জমা হচ্ছে..." : "জমা করুন"}
                   </button>
                 </div>
               </form>
@@ -293,4 +373,3 @@ export default function DepositPage() {
     </div>
   );
 }
-

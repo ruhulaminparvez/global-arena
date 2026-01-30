@@ -25,7 +25,7 @@ function statusBadgeClass(status: string): string {
     case "rejected":
       return "bg-red-100 text-red-800 border border-red-300";
     case "pending":
-      return "bg-yellow-100 text-yellow-800 border border-yellow-300";
+      return "bg-orange-100 text-orange-800 border border-orange-300";
     default:
       return "bg-gray-100 text-gray-700 border border-gray-300";
   }
