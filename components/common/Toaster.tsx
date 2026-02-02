@@ -23,7 +23,7 @@ export default function Toaster() {
           borderRadius: "12px",
           boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
           border: "1px solid #e5e7eb",
-          fontFamily: "var(--font-hind-siliguri), sans-serif",
+          fontFamily: "var(--font-anek-bangla), sans-serif",
           fontSize: "14px",
           fontWeight: "500",
           maxWidth: "400px",

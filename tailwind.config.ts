@@ -36,7 +36,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["var(--font-hind-siliguri)", "sans-serif"],
+        sans: ["var(--font-anek-bangla)", "sans-serif"],
       },
       animation: {
         "fade-in": "fadeIn 0.5s ease-in-out",

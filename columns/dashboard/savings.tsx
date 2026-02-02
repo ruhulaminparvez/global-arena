@@ -25,7 +25,7 @@ export const getSavingsPlanColumns = (): TableColumn<SavingPlan>[] => [
     key: "start_date",
     label: "শুরুর তারিখ",
     render: (row) => (
-      <span className="text-gray-600">{row.start_date}</span>
+      <span className="text-gray-600">{row.start_date ? formatDate(row.start_date) : "—"}</span>
     ),
   },
   {
@@ -86,7 +86,7 @@ export const getSavingsTransactionColumns = (): TableColumn<SavingTransaction>[]
     label: "লেনদেনের তারিখ",
     render: (row) => (
       <span className="text-gray-600">
-        {row.transaction_date ?? "—"}
+        {row.transaction_date ? formatDate(row.transaction_date) : "—"}
       </span>
     ),
   },
