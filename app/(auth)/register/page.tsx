@@ -201,10 +201,10 @@ export default function RegisterPage() {
                 />
 
                 <Input
-                  label="ফোন নম্বর বা ইমেইল"
-                  type="text"
+                  label="ফোন নম্বর"
+                  type="tel"
                   icon={Phone}
-                  placeholder="ফোন নম্বর বা ইমেইল ঠিকানা দিন"
+                  placeholder="০১XXXXXXXXX (১০–১১ সংখ্যা)"
                   {...register("phoneOrEmail")}
                   error={errors.phoneOrEmail?.message}
                   className="md:col-span-2"

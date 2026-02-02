@@ -3,6 +3,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
+  BarChart,
+  Bar,
   LineChart,
   Line,
   XAxis,
@@ -19,6 +21,14 @@ interface ChartDataPoint {
   amount: number;
 }
 
+interface TransactionPoint {
+  date: string;
+  amount: number;
+  type: string;
+  typeLabel: string;
+  sortKey: string;
+}
+
 function groupTransactionsByMonth(
   transactions: WalletTransaction[]
 ): ChartDataPoint[] {
@@ -28,10 +38,6 @@ function groupTransactionsByMonth(
     if (tx.type !== "DEPOSIT") continue;
     const date = new Date(tx.created_at);
     const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-    const monthLabel = date.toLocaleDateString("bn-BD", {
-      month: "short",
-      year: "numeric",
-    });
     const amount = parseFloat(tx.amount || "0");
     byMonth.set(key, (byMonth.get(key) ?? 0) + amount);
   }
@@ -50,6 +56,51 @@ function groupTransactionsByMonth(
 
   return entries.map(({ month, amount }) => ({ month, amount }));
 }
+
+function allTransactionsToLineData(
+  transactions: WalletTransaction[]
+): TransactionPoint[] {
+  return [...transactions]
+    .sort(
+      (a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    )
+    .map((tx) => {
+      const date = new Date(tx.created_at);
+      const dateLabel = date.toLocaleDateString("bn-BD", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+      const typeLabel =
+        tx.type === "DEPOSIT" ? "জমা" : tx.type === "WITHDRAWAL" ? "উত্তোলন" : tx.type;
+      return {
+        date: dateLabel,
+        amount: parseFloat(tx.amount || "0"),
+        type: tx.type,
+        typeLabel,
+        sortKey: tx.created_at,
+      };
+    });
+}
+
+// Shared chart style (matches previous graph design)
+const CHART_STYLE = {
+  grid: { strokeDasharray: "3 3" as const, stroke: "#e5e7eb" },
+  axis: { stroke: "#6b7280", fontSize: "12px" as const },
+  tooltip: {
+    backgroundColor: "#fff",
+    border: "1px solid #e5e7eb",
+    borderRadius: "8px",
+  },
+  line: {
+    stroke: "#10b981",
+    strokeWidth: 3,
+    dot: { fill: "#10b981", r: 5 },
+    activeDot: { r: 8 },
+  },
+  bar: { fill: "#10b981", radius: [4, 4, 0, 0] as [number, number, number, number] },
+};
 
 export default function MonthlySavingsGraph() {
   const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
@@ -73,10 +124,17 @@ export default function MonthlySavingsGraph() {
     };
   }, []);
 
-  const chartData = useMemo(
+  const monthlyBarData = useMemo(
     () => groupTransactionsByMonth(transactions),
     [transactions]
   );
+
+  const allTransactionsLineData = useMemo(
+    () => allTransactionsToLineData(transactions),
+    [transactions]
+  );
+
+  const hasAnyData = monthlyBarData.length > 0 || allTransactionsLineData.length > 0;
 
   return (
     <motion.div
@@ -86,59 +144,121 @@ export default function MonthlySavingsGraph() {
       className="bg-white rounded-2xl shadow-xl p-6 overflow-x-hidden"
     >
       <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
-        মাসিক সঞ্চয় গ্রাফ
+        মাসিক সঞ্চয় ও লেনদেন
       </h3>
-      <div className="h-80 w-full overflow-x-auto">
-        {loading ? (
-          <div className="h-80 flex items-center justify-center text-gray-500">
-            লোড হচ্ছে...
+
+      {loading ? (
+        <div className="h-80 flex items-center justify-center text-gray-500">
+          লোড হচ্ছে...
+        </div>
+      ) : !hasAnyData ? (
+        <div className="h-80 flex items-center justify-center text-gray-500">
+          কোন লেনদেন নেই
+        </div>
+      ) : (
+        <div className="space-y-8">{/* All transactions – Line chart */}
+          <div>
+            <h4 className="text-lg font-semibold text-gray-800 mb-4">
+              সমস্ত লেনদেন (লাইন গ্রাফ)
+            </h4>
+            <div className="h-80 w-full overflow-x-auto">
+              {allTransactionsLineData.length === 0 ? (
+                <div className="h-80 flex items-center justify-center text-gray-400 text-sm">
+                  কোন লেনদেন নেই
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%" minWidth={300}>
+                  <LineChart
+                    data={allTransactionsLineData}
+                    margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid {...CHART_STYLE.grid} />
+                    <XAxis
+                      dataKey="date"
+                      stroke={CHART_STYLE.axis.stroke}
+                      style={{ fontSize: CHART_STYLE.axis.fontSize }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                      interval="preserveStartEnd"
+                    />
+                    <YAxis
+                      stroke={CHART_STYLE.axis.stroke}
+                      style={{ fontSize: CHART_STYLE.axis.fontSize }}
+                      tickFormatter={(value) =>
+                        value >= 1000 ? `${value / 1000}K` : String(value)
+                      }
+                    />
+                    <Tooltip
+                      contentStyle={CHART_STYLE.tooltip}
+                      formatter={(value: number, _name: string, props?: { payload?: TransactionPoint }) => [
+                        `${Number(value).toLocaleString("bn-BD")} ৳`,
+                        props?.payload?.typeLabel ?? "লেনদেন",
+                      ]}
+                      labelFormatter={(label) => label}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="amount"
+                      stroke={CHART_STYLE.line.stroke}
+                      strokeWidth={CHART_STYLE.line.strokeWidth}
+                      dot={CHART_STYLE.line.dot}
+                      activeDot={CHART_STYLE.line.activeDot}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </div>
           </div>
-        ) : chartData.length === 0 ? (
-          <div className="h-80 flex items-center justify-center text-gray-500">
-            কোন লেনদেন নেই
+          {/* Monthly savings – Bar chart */}
+          <div>
+            <h4 className="text-lg font-semibold text-gray-800 mb-4">
+              মাসিক সঞ্চয় (বার গ্রাফ)
+            </h4>
+            <div className="h-80 w-full overflow-x-auto">
+              {monthlyBarData.length === 0 ? (
+                <div className="h-80 flex items-center justify-center text-gray-400 text-sm">
+                  এই মাসে জমা লেনদেন নেই
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%" minWidth={300}>
+                  <BarChart data={monthlyBarData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                    <CartesianGrid {...CHART_STYLE.grid} />
+                    <XAxis
+                      dataKey="month"
+                      stroke={CHART_STYLE.axis.stroke}
+                      style={{ fontSize: CHART_STYLE.axis.fontSize }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                    />
+                    <YAxis
+                      stroke={CHART_STYLE.axis.stroke}
+                      style={{ fontSize: CHART_STYLE.axis.fontSize }}
+                      tickFormatter={(value) =>
+                        value >= 1000 ? `${value / 1000}K` : String(value)
+                      }
+                    />
+                    <Tooltip
+                      contentStyle={CHART_STYLE.tooltip}
+                      formatter={(value: number) => [
+                        `${Number(value).toLocaleString("bn-BD")} ৳`,
+                        "সঞ্চয়",
+                      ]}
+                    />
+                    <Bar
+                      dataKey="amount"
+                      fill={CHART_STYLE.bar.fill}
+                      radius={CHART_STYLE.bar.radius}
+                      name="সঞ্চয়"
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
           </div>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%" minWidth={300}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis
-                dataKey="month"
-                stroke="#6b7280"
-                style={{ fontSize: "12px" }}
-                angle={-45}
-                textAnchor="end"
-                height={80}
-              />
-              <YAxis
-                stroke="#6b7280"
-                style={{ fontSize: "12px" }}
-                tickFormatter={(value) =>
-                  value >= 1000 ? `${value / 1000}K` : String(value)
-                }
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#fff",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                }}
-                formatter={(value: number) => [
-                  `${Number(value).toLocaleString("bn-BD")} ৳`,
-                  "সঞ্চয়",
-                ]}
-              />
-              <Line
-                type="monotone"
-                dataKey="amount"
-                stroke="#10b981"
-                strokeWidth={3}
-                dot={{ fill: "#10b981", r: 5 }}
-                activeDot={{ r: 8 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
-      </div>
+        </div>
+      )}
     </motion.div>
   );
 }

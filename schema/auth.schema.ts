@@ -1,17 +1,16 @@
 import { z } from "zod";
 
-// Phone or Email validation
+// Phone number validation (Bangladesh: 10–11 digits, optional 0 or +880 prefix)
 const phoneOrEmailSchema = z
   .string()
-  .min(1, "ফোন নম্বর বা ইমেইল আবশ্যক")
+  .min(1, "ফোন নম্বর আবশ্যক")
   .refine(
     (value) => {
-      const isEmail = /\S+@\S+\.\S+/.test(value);
-      const isPhone = /^[0-9]{10,11}$/.test(value.replace(/\s+/g, ""));
-      return isEmail || isPhone;
+      const digits = value.replace(/\s+/g, "").replace(/^\+88/, "").replace(/^88/, "").replace(/^0/, "");
+      return /^[0-9]{10,11}$/.test(digits);
     },
     {
-      message: "বৈধ ইমেইল বা ফোন নম্বর দিন",
+      message: "বৈধ ফোন নম্বর দিন (১০–১১ সংখ্যা)",
     }
   );
 
