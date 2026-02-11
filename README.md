@@ -1,4 +1,4 @@
-# Global Arena
+# Return Vetted
 
 A modern saving money platform for working people, built with Next.js, TypeScript, Framer Motion, and Tailwind CSS.
 
