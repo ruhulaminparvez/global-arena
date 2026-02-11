@@ -102,6 +102,54 @@ const CHART_STYLE = {
   bar: { fill: "#10b981", radius: [4, 4, 0, 0] as [number, number, number, number] },
 };
 
+const TOOLTIP_PAYMENT_LINE = "বিকাশ/নগদ: 01622260086";
+
+interface TooltipPayloadItem {
+  name?: string;
+  value?: number;
+  payload?: TransactionPoint | ChartDataPoint;
+}
+
+function ChartTooltipContent({
+  active,
+  payload,
+  label,
+  valueLabel,
+}: {
+  active?: boolean;
+  payload?: readonly TooltipPayloadItem[] | undefined;
+  label?: string | number;
+  valueLabel?: string;
+}) {
+  if (!active || !payload?.length) return null;
+  const value = payload[0].value ?? 0;
+  const name =
+    valueLabel ??
+    (payload[0].payload && "typeLabel" in payload[0].payload
+      ? (payload[0].payload as TransactionPoint).typeLabel
+      : payload[0].name ?? "লেনদেন");
+  return (
+    <div
+      className="px-3 py-2 shadow-md"
+      style={{
+        ...CHART_STYLE.tooltip,
+      }}
+    >
+      {label != null && (
+        <p className="font-medium text-gray-800">
+          {typeof label === "number" ? String(label) : label}
+        </p>
+      )}
+      <p className="text-gray-700">
+        {name}: {Number(value).toLocaleString("bn-BD")} ৳
+      </p>
+      <p className="text-xs text-primary-500 border-t border-gray-100 mt-0.5">
+        {TOOLTIP_PAYMENT_LINE}
+      </p>
+    </div>
+  );
+}
+
 export default function MonthlySavingsGraph() {
   const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -190,12 +238,13 @@ export default function MonthlySavingsGraph() {
                       }
                     />
                     <Tooltip
-                      contentStyle={CHART_STYLE.tooltip}
-                      formatter={(value: number, _name: string, props?: { payload?: TransactionPoint }) => [
-                        `${Number(value).toLocaleString("bn-BD")} ৳`,
-                        props?.payload?.typeLabel ?? "লেনদেন",
-                      ]}
-                      labelFormatter={(label) => label}
+                      content={(props) => (
+                        <ChartTooltipContent
+                          active={props.active}
+                          payload={props.payload}
+                          label={props.label}
+                        />
+                      )}
                     />
                     <Line
                       type="monotone"
@@ -240,11 +289,14 @@ export default function MonthlySavingsGraph() {
                       }
                     />
                     <Tooltip
-                      contentStyle={CHART_STYLE.tooltip}
-                      formatter={(value: number) => [
-                        `${Number(value).toLocaleString("bn-BD")} ৳`,
-                        "সঞ্চয়",
-                      ]}
+                      content={(props) => (
+                        <ChartTooltipContent
+                          active={props.active}
+                          payload={props.payload}
+                          label={props.label}
+                          valueLabel="সঞ্চয়"
+                        />
+                      )}
                     />
                     <Bar
                       dataKey="amount"
