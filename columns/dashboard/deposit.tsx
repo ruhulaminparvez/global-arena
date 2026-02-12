@@ -59,6 +59,16 @@ export const getDepositColumns = (
       ),
     },
     {
+      key: "method",
+      label: "পদ্ধতি",
+      render: () => (
+        <span className="text-gray-600">
+          <span className="font-semibold">নগদ/বিকাশ:</span> {" "}
+          <span className="text-gray-600">01622260086</span>
+        </span>
+      ),
+    },
+    {
       key: "created_at",
       label: "তারিখ",
       render: (deposit) => (
