@@ -84,7 +84,7 @@ export default function UserDetail({ }: UserDetailProps = {}) {
         className="bg-white rounded-2xl shadow-xl p-6 mb-6 relative"
       >
         {/* Top-right action buttons */}
-        <div className="absolute top-4 right-4 flex items-center gap-2">
+        <div className="mb-4 flex justify-end items-center gap-2 md:mb-0 md:absolute md:top-4 md:right-4">
           <motion.button
             type="button"
             whileHover={{ scale: 1.05 }}
