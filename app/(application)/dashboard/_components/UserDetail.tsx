@@ -11,12 +11,14 @@ import {
   TrendingUp,
   Info,
   Lock,
+  Smartphone,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { DEFAULT_USER_PHOTO } from "@/constants/dashboard";
 import { getDisplayName } from "@/helpers/format.helpers";
 import { getMediaUrl } from "@/helpers/media.helpers";
 import { useCounterAnimation } from "@/hooks/useCounterAnimation";
+import { usePWAInstall } from "@/hooks/usePWAInstall";
 import { getMyWallet } from "@/api/dashboard/dashboard.api";
 import type { MyWallet } from "@/api/dashboard/types/dashboard.api";
 import { ProfileDetailModal } from "./ProfileDetailModal";
@@ -41,6 +43,7 @@ export default function UserDetail({ }: UserDetailProps = {}) {
 
   const [isHovered, setIsHovered] = useState(false);
   const [showProfileDetail, setShowProfileDetail] = useState(false);
+  const { isInstallable, isStandalone, installApp } = usePWAInstall();
 
   useEffect(() => {
     let cancelled = false;
@@ -69,6 +72,10 @@ export default function UserDetail({ }: UserDetailProps = {}) {
     router.push("/admin");
   };
 
+  const handleInstallClick = async () => {
+    await installApp();
+  };
+
   return (
     <>
       <motion.div
@@ -76,63 +83,86 @@ export default function UserDetail({ }: UserDetailProps = {}) {
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-2xl shadow-xl p-6 mb-6 relative"
       >
-        {/* Button Container */}
-        {isAdmin && (
-          <div className="absolute top-4 right-4">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={handleAdminClick}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-              className="relative w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-700 text-white rounded-full shadow-lg flex items-center justify-center hover:from-purple-600 hover:to-purple-800 transition-all z-10"
-            >
-              <Shield className="w-5 h-5 flex-shrink-0" />
-            </motion.button>
+        {/* Top-right action buttons */}
+        <div className="absolute top-4 right-4 flex items-center gap-2">
+          <motion.button
+            type="button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleInstallClick}
+            disabled={!isInstallable || isStandalone}
+            title={
+              isStandalone
+                ? "অ্যাপ ইতিমধ্যে ইনস্টল করা আছে"
+                : isInstallable
+                  ? "মোবাইল অ্যাপ ইনস্টল করুন"
+                  : "এই ডিভাইসে এখনই ইনস্টল অপশন নেই"
+            }
+            className="h-12 px-4 bg-gradient-to-br from-primary-500 to-primary-700 text-white rounded-full shadow-lg flex items-center justify-center gap-2 hover:from-primary-600 hover:to-primary-800 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <Smartphone className="w-5 h-5 flex-shrink-0" />
+            <span className="text-sm font-medium">
+              {isStandalone ? "ইনস্টলড" : "অ্যাপ ইনস্টল"}
+            </span>
+          </motion.button>
 
-            {/* Tooltip */}
-            <AnimatePresence>
-              {isHovered && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8, x: 10 }}
-                  animate={{ opacity: 1, scale: 1, x: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, x: 10 }}
-                  transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute right-full mr-3 top-1/2 -translate-y-1/2 z-20 pointer-events-none"
-                >
-                  <div className="relative">
-                    {/* Glow effect */}
-                    <motion.div
-                      animate={{ opacity: [0.3, 0.5, 0.3] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                      className="absolute inset-0 bg-purple-500/30 blur-xl -z-10 rounded-lg"
-                    ></motion.div>
+          {isAdmin && (
+            <div className="relative">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={handleAdminClick}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                className="relative w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-700 text-white rounded-full shadow-lg flex items-center justify-center hover:from-purple-600 hover:to-purple-800 transition-all z-10"
+              >
+                <Shield className="w-5 h-5 flex-shrink-0" />
+              </motion.button>
 
-                    {/* Tooltip content */}
-                    <div className="relative bg-gradient-to-br from-gray-900 to-gray-800 text-white text-sm font-medium px-4 py-2.5 rounded-lg shadow-2xl whitespace-nowrap border border-gray-700/50 backdrop-blur-sm">
-                      <div className="flex items-center gap-2">
-                        <Shield className="w-3.5 h-3.5 text-purple-400" />
-                        <span>অ্যাডমিন প্যানেল</span>
-                      </div>
-
-                      {/* Arrow */}
-                      <div className="absolute left-full top-1/2 -translate-y-1/2 -translate-x-0.5">
-                        <div className="w-2.5 h-2.5 bg-gradient-to-br from-gray-900 to-gray-800 rotate-45 border-r border-b border-gray-700/50"></div>
-                      </div>
-
-                      {/* Shine effect */}
+              {/* Tooltip */}
+              <AnimatePresence>
+                {isHovered && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8, x: 10 }}
+                    animate={{ opacity: 1, scale: 1, x: 0 }}
+                    exit={{ opacity: 0, scale: 0.8, x: 10 }}
+                    transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute right-full mr-3 top-1/2 -translate-y-1/2 z-20 pointer-events-none"
+                  >
+                    <div className="relative">
+                      {/* Glow effect */}
                       <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-lg"
-                        animate={{ x: ["-100%", "200%"] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        animate={{ opacity: [0.3, 0.5, 0.3] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        className="absolute inset-0 bg-purple-500/30 blur-xl -z-10 rounded-lg"
                       ></motion.div>
+
+                      {/* Tooltip content */}
+                      <div className="relative bg-gradient-to-br from-gray-900 to-gray-800 text-white text-sm font-medium px-4 py-2.5 rounded-lg shadow-2xl whitespace-nowrap border border-gray-700/50 backdrop-blur-sm">
+                        <div className="flex items-center gap-2">
+                          <Shield className="w-3.5 h-3.5 text-purple-400" />
+                          <span>অ্যাডমিন প্যানেল</span>
+                        </div>
+
+                        {/* Arrow */}
+                        <div className="absolute left-full top-1/2 -translate-y-1/2 -translate-x-0.5">
+                          <div className="w-2.5 h-2.5 bg-gradient-to-br from-gray-900 to-gray-800 rotate-45 border-r border-b border-gray-700/50"></div>
+                        </div>
+
+                        {/* Shine effect */}
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-lg"
+                          animate={{ x: ["-100%", "200%"] }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        ></motion.div>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+        </div>
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
           {/* User Photo */}
           <motion.div

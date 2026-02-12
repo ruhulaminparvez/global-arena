@@ -303,6 +303,18 @@ export default function DepositPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
+                    বিকাশ/নগদ
+                  </label>
+                  <input
+                    type="text"
+                    value="01622260086"
+                    disabled
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     পরিমাণ (৳)
                   </label>
                   <input
