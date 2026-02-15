@@ -41,7 +41,7 @@ export const loginSchema = z.object({
   password: z
     .string()
     .min(1, "পাসওয়ার্ড আবশ্যক")
-    .min(6, "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে"),
+    .min(6, "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে"),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
@@ -74,7 +74,19 @@ const usernameSchema = z
 const passwordSchema = z
   .string()
   .min(1, "পাসওয়ার্ড আবশ্যক")
-  .min(8, "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে");
+  .min(8, "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে")
+  .refine(
+    (value) => !/^(.)\1+$/.test(value),
+    {
+      message: "পাসওয়ার্ড একই অক্ষর বা সংখ্যা দিয়ে গঠিত হতে পারবে না (যেমন: 111, aaa)",
+    }
+  )
+  .refine(
+    (value) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).*$/.test(value),
+    {
+      message: "পাসওয়ার্ড শক্তিশালী হতে হবে: অন্তত একটি বড় হাতের অক্ষর, একটি ছোট হাতের অক্ষর, একটি সংখ্যা এবং একটি বিশেষ অক্ষর থাকতে হবে",
+    }
+  );
 
 // Registration Schema
 export const registrationSchema = z.object({
