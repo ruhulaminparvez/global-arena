@@ -35,7 +35,7 @@ interface RegistrationFeeGuardProps {
 export default function RegistrationFeeGuard({
   children,
 }: RegistrationFeeGuardProps) {
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, profile } = useAuth();
 
   const [feeChecked, setFeeChecked] = useState(false);
   const [feePaid, setFeePaid] = useState(true); // optimistic: assume paid until checked
@@ -64,10 +64,30 @@ export default function RegistrationFeeGuard({
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated && !authLoading) {
-      checkFee();
+    // Reset fee check state on logout so it re-checks on next login
+    if (!isAuthenticated) {
+      if (feeChecked) {
+        setFeeChecked(false);
+        setFeePaid(true);
+      }
+      return;
     }
-  }, [isAuthenticated, authLoading, checkFee]);
+
+    // Wait until auth loading is complete and profile is available
+    if (authLoading || !profile) return;
+
+    // Already checked for this session
+    if (feeChecked) return;
+
+    // Only check registration fee for USER role
+    if (profile.role !== "USER") {
+      setFeePaid(true);
+      setFeeChecked(true);
+      return;
+    }
+
+    checkFee();
+  }, [isAuthenticated, authLoading, profile, feeChecked, checkFee]);
 
   const handleOpenModal = () => {
     setForm(INITIAL_FORM);
