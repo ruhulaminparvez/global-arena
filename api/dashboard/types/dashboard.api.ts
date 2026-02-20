@@ -197,3 +197,37 @@ export interface CreateWithdrawalPayload {
 export interface ApproveWithdrawalResponse {
   status: string;
 }
+
+/**
+ * Registration fee check (GET /api/accounts/profiles/check_registration_fee/)
+ */
+export interface RegistrationFeeStatus {
+  registration_fee_paid: boolean;
+  registration_fee_amount: string;
+}
+
+/**
+ * Fee payment (POST /api/accounts/fee-payments/)
+ */
+export type FeePaymentMethod = "Bkash" | "Nagad" | "Bank Transfer";
+
+export interface FeePaymentPayload {
+  amount: number;
+  transaction_id: string;
+  payment_method: FeePaymentMethod;
+}
+
+export interface FeePaymentResponse {
+  id: number;
+  user: number;
+  user_name: string;
+  amount: string;
+  transaction_id: string;
+  payment_method: FeePaymentMethod;
+  proof_document: string | null;
+  status: string;
+  status_display: string;
+  admin_notes: string | null;
+  created_at: string;
+  updated_at: string;
+}

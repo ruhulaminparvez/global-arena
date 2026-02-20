@@ -4,6 +4,9 @@ import type {
   TicketAnalyticsItem,
   MyWallet,
   WalletTransaction,
+  RegistrationFeeStatus,
+  FeePaymentPayload,
+  FeePaymentResponse,
 } from "./types/dashboard.api";
 
 /**
@@ -46,5 +49,28 @@ export async function getWalletTransactions(): Promise<WalletTransaction[]> {
     "/api/wallet/wallets/transactions/"
   );
   return Array.isArray(data) ? data : [];
+}
+
+/**
+ * Check if user has paid registration fee - GET /api/accounts/profiles/check_registration_fee/
+ */
+export async function checkRegistrationFee(): Promise<RegistrationFeeStatus> {
+  const { data } = await apiClient.get<RegistrationFeeStatus>(
+    "/api/accounts/profiles/check_registration_fee/"
+  );
+  return data;
+}
+
+/**
+ * Submit registration fee payment - POST /api/accounts/fee-payments/
+ */
+export async function submitFeePayment(
+  payload: FeePaymentPayload
+): Promise<FeePaymentResponse> {
+  const { data } = await apiClient.post<FeePaymentResponse>(
+    "/api/accounts/fee-payments/",
+    payload
+  );
+  return data;
 }
 
