@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import BottomNavigation from "../_components/BottomNavigation";
-import { Wallet, Search, PiggyBank, Receipt } from "lucide-react";
+import { Wallet, Search, PiggyBank, Receipt, Plus } from "lucide-react";
 import Table from "@/components/Table";
+import { Button } from "@/components/button";
+import { CreateSavingPlanModal } from "./_components/CreateSavingPlanModal";
 import {
   getSavingsPlanColumns,
   getSavingsTransactionColumns,
@@ -23,6 +25,7 @@ type TabId = "plans" | "transactions";
 
 export default function SavingsManagementPage() {
   const [activeTab, setActiveTab] = useState<TabId>("plans");
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Plans state
   const [plans, setPlans] = useState<SavingPlan[]>([]);
@@ -98,6 +101,13 @@ export default function SavingsManagementPage() {
                 </p>
               </div>
             </div>
+            <Button
+              icon={Plus}
+              onClick={() => setShowCreateModal(true)}
+              size="sm"
+            >
+              নতুন সঞ্চয় প্ল্যান
+            </Button>
           </div>
         </div>
 
@@ -207,6 +217,16 @@ export default function SavingsManagementPage() {
       </div>
 
       <BottomNavigation />
+
+      {showCreateModal && (
+        <CreateSavingPlanModal
+          onClose={() => setShowCreateModal(false)}
+          onCreated={() => {
+            fetchPlans();
+            fetchTransactions();
+          }}
+        />
+      )}
     </div>
   );
 }
