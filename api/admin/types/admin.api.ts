@@ -272,3 +272,34 @@ export interface ApproveWithdrawalResponse {
 export interface RejectWithdrawalResponse {
   status: string;
 }
+
+/**
+ * Registration fee payment (GET /api/accounts/fee-payments/)
+ */
+export type FeePaymentStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export interface FeePayment {
+  id: number;
+  user: number;
+  user_name: string;
+  amount: string;
+  transaction_id: string;
+  payment_method: string;
+  proof_document: string | null;
+  status: FeePaymentStatus;
+  status_display: string;
+  admin_notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FeePaymentListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: FeePayment[];
+}
+
+export interface FeePaymentActionResponse {
+  status: string;
+}

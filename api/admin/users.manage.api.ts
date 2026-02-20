@@ -5,6 +5,9 @@ import type {
   Profile,
   UpdateProfilePayload,
   CreateSupportUserPayload,
+  FeePaymentListResponse,
+  FeePaymentActionResponse,
+  FeePaymentStatus,
 } from "./types/admin.api";
 
 const ACCOUNTS_BASE = "/api/accounts";
@@ -56,6 +59,39 @@ export async function createSupportUser(
   const { data } = await apiClient.post<User>(
     `${ACCOUNTS_BASE}/users/`,
     payload
+  );
+  return data;
+}
+
+/**
+ * Get all registration fee payments - GET /api/accounts/fee-payments/
+ */
+export async function getFeePayments(params?: {
+  status?: FeePaymentStatus;
+}): Promise<FeePaymentListResponse> {
+  const { data } = await apiClient.get<FeePaymentListResponse>(
+    `${ACCOUNTS_BASE}/fee-payments/`,
+    { params }
+  );
+  return data;
+}
+
+/**
+ * Approve a registration fee payment - POST /api/accounts/fee-payments/:id/approve/
+ */
+export async function approveFeePayment(id: number): Promise<FeePaymentActionResponse> {
+  const { data } = await apiClient.post<FeePaymentActionResponse>(
+    `${ACCOUNTS_BASE}/fee-payments/${id}/approve/`
+  );
+  return data;
+}
+
+/**
+ * Reject a registration fee payment - POST /api/accounts/fee-payments/:id/reject/
+ */
+export async function rejectFeePayment(id: number): Promise<FeePaymentActionResponse> {
+  const { data } = await apiClient.post<FeePaymentActionResponse>(
+    `${ACCOUNTS_BASE}/fee-payments/${id}/reject/`
   );
   return data;
 }
