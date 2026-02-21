@@ -2,6 +2,8 @@ import { apiClient } from "@/lib/api/axios";
 import type {
   TicketSchedule,
   TicketScheduleListResponse,
+  TicketPurchase,
+  TicketPurchaseListResponse,
 } from "./types/dashboard.api";
 
 const SCHEDULES_BASE = "/api/tickets/schedules";
@@ -50,9 +52,9 @@ export async function getAllSchedules(params?: {
 export async function getMyPurchases(params?: {
   search?: string;
   [key: string]: string | number | undefined;
-}): Promise<TicketScheduleListResponse> {
+}): Promise<TicketPurchaseListResponse> {
   const { data } = await apiClient.get<
-    TicketSchedule[] | TicketScheduleListResponse
+    TicketPurchase[] | TicketPurchaseListResponse
   >(`${PURCHASES_BASE}/my_purchases/`, { params });
   if (Array.isArray(data)) {
     return {
