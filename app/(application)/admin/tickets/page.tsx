@@ -6,9 +6,10 @@ import BottomNavigation from "../_components/BottomNavigation";
 import { Ticket, Search, Filter, Plus, Calendar, Activity, Megaphone, ShoppingBag } from "lucide-react";
 import Table from "@/components/Table";
 import { Button } from "@/components/button";
-import { getScheduleColumns } from "@/columns/admin/schedule";
+import { getScheduleColumns, getPurchaseColumns } from "@/columns/admin/schedule";
 import { ScheduleFormModal } from "./_components/ScheduleFormModal";
 import { DeleteScheduleModal } from "./_components/DeleteScheduleModal";
+import { TicketDetailModal } from "./_components/TicketDetailModal";
 import {
   createTicketSchedule,
   getAllTicketSchedules,
@@ -20,6 +21,7 @@ import {
 } from "@/api/admin/tickets.mange.api";
 import type {
   TicketSchedule,
+  TicketPurchase,
   TicketSchedulePayload,
   AgreementType,
 } from "@/api/admin/types/admin.api";
@@ -58,6 +60,7 @@ function filterSchedules(
 export default function TicketManagementPage() {
   const [activeTab, setActiveTab] = useState<TabId>("all");
   const [schedules, setSchedules] = useState<TicketSchedule[]>([]);
+  const [purchases, setPurchases] = useState<TicketPurchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -65,6 +68,10 @@ export default function TicketManagementPage() {
   const [formModal, setFormModal] = useState<"create" | "update" | null>(null);
   const [editingSchedule, setEditingSchedule] = useState<TicketSchedule | null>(null);
   const [deleteSchedule, setDeleteSchedule] = useState<TicketSchedule | null>(null);
+  const [detailItem, setDetailItem] = useState<{
+    item: TicketSchedule | TicketPurchase;
+    type: "schedule" | "purchase";
+  } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
 
@@ -72,28 +79,31 @@ export default function TicketManagementPage() {
     setLoading(true);
     setError(null);
     try {
-      let res;
-      switch (activeTab) {
-        case "all":
-          res = await getAllTicketSchedules();
-          break;
-        case "active":
-          res = await getActiveTicketSchedules();
-          break;
-        case "announced":
-          res = await getAnnouncedTicketSchedules();
-          break;
-        case "purchases":
-          res = await getAllTicketPurchases();
-          break;
-        default:
-          res = await getAllTicketSchedules();
+      if (activeTab === "purchases") {
+        const res = await getAllTicketPurchases();
+        setPurchases(res.results ?? []);
+      } else {
+        let res;
+        switch (activeTab) {
+          case "all":
+            res = await getAllTicketSchedules();
+            break;
+          case "active":
+            res = await getActiveTicketSchedules();
+            break;
+          case "announced":
+            res = await getAnnouncedTicketSchedules();
+            break;
+          default:
+            res = await getAllTicketSchedules();
+        }
+        setSchedules(res.results ?? []);
       }
-      setSchedules(res.results ?? []);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "ডেটা লোড করতে সমস্যা হয়েছে";
       setError(message);
-      setSchedules([]);
+      if (activeTab === "purchases") setPurchases([]);
+      else setSchedules([]);
     } finally {
       setLoading(false);
     }
@@ -108,10 +118,10 @@ export default function TicketManagementPage() {
     [schedules, searchQuery, agreementFilter]
   );
 
-  const columns = useMemo(
+  const scheduleColumns = useMemo(
     () =>
-      getScheduleColumns(
-        activeTab === "all"
+      getScheduleColumns({
+        ...(activeTab === "all"
           ? {
               onEdit: (schedule) => {
                 setEditingSchedule(schedule);
@@ -119,9 +129,20 @@ export default function TicketManagementPage() {
               },
               onDelete: (schedule) => setDeleteSchedule(schedule),
             }
-          : undefined
-      ),
+          : {}),
+        onViewDetail: (schedule) =>
+          setDetailItem({ item: schedule, type: "schedule" }),
+      }),
     [activeTab]
+  );
+
+  const purchaseColumns = useMemo(
+    () =>
+      getPurchaseColumns({
+        onViewDetail: (purchase) =>
+          setDetailItem({ item: purchase, type: "purchase" }),
+      }),
+    []
   );
 
   const handleCreateSchedule = async (payload: TicketSchedulePayload) => {
@@ -288,12 +309,21 @@ export default function TicketManagementPage() {
             <div className="bg-white rounded-xl shadow-lg p-12 text-center text-gray-500">
               লোড হচ্ছে...
             </div>
+          ) : activeTab === "purchases" ? (
+            <Table
+              data={purchases}
+              columns={purchaseColumns}
+              emptyMessage="কোন ক্রয় পাওয়া যায়নি"
+              itemsPerPage={10}
+              onRowClick={(item) => setDetailItem({ item, type: "purchase" })}
+            />
           ) : (
             <Table
               data={filteredSchedules}
-              columns={columns}
+              columns={scheduleColumns}
               emptyMessage="কোন সিডিউল পাওয়া যায়নি"
               itemsPerPage={10}
+              onRowClick={(item) => setDetailItem({ item, type: "schedule" })}
             />
           )}
         </div>
@@ -326,6 +356,17 @@ export default function TicketManagementPage() {
             onClose={() => setDeleteSchedule(null)}
             onConfirm={handleDeleteSchedule}
             isDeleting={isDeleting}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Detail Modal */}
+      <AnimatePresence>
+        {detailItem && (
+          <TicketDetailModal
+            item={detailItem.item}
+            itemType={detailItem.type}
+            onClose={() => setDetailItem(null)}
           />
         )}
       </AnimatePresence>

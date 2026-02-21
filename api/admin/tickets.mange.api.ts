@@ -3,6 +3,7 @@ import type {
   TicketSchedule,
   TicketScheduleListResponse,
   TicketSchedulePayload,
+  TicketPurchaseListResponse,
 } from "./types/admin.api";
 
 const SCHEDULES_BASE = "/api/tickets/schedules";
@@ -114,8 +115,8 @@ export async function getAnnouncedTicketSchedules(params?: {
 export async function getAllTicketPurchases(params?: {
   search?: string;
   [key: string]: string | number | undefined;
-}): Promise<TicketScheduleListResponse> {
-  const { data } = await apiClient.get<TicketScheduleListResponse>(
+}): Promise<TicketPurchaseListResponse> {
+  const { data } = await apiClient.get<TicketPurchaseListResponse>(
     `${PURCHASES_BASE}/`,
     { params },
   );
