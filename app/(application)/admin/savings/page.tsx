@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import toast from "react-hot-toast";
 import BottomNavigation from "../_components/BottomNavigation";
 import { Wallet, Search, PiggyBank, Receipt, Plus } from "lucide-react";
 import Table from "@/components/Table";
@@ -44,7 +45,11 @@ export default function SavingsManagementPage() {
       if (plansSearch.trim()) params.search = plansSearch.trim();
       const res = await getSavingsPlans(params);
       setPlans(res.results ?? []);
-    } catch {
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail ?? "সঞ্চয় প্ল্যান লোড করতে সমস্যা হয়েছে।";
+      toast.error(msg);
       setPlans([]);
     } finally {
       setPlansLoading(false);
@@ -58,7 +63,11 @@ export default function SavingsManagementPage() {
       if (transactionsSearch.trim()) params.search = transactionsSearch.trim();
       const res = await getSavingsTransactions(params);
       setTransactions(res.results ?? []);
-    } catch {
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail ?? "সঞ্চয় লেনদেন লোড করতে সমস্যা হয়েছে।";
+      toast.error(msg);
       setTransactions([]);
     } finally {
       setTransactionsLoading(false);

@@ -69,27 +69,7 @@ export const getSavingsPlanColumns = (): TableColumn<SavingPlan>[] => [
         {row.created_at ? formatDate(row.created_at) : "—"}
       </span>
     ),
-  },
-  {
-    key: "actions",
-    label: "কার্যক্রম",
-    render: () => (
-      <div className="flex gap-2">
-        <button
-          type="button"
-          className="text-primary-600 hover:text-primary-700 text-sm font-medium"
-        >
-          দেখুন
-        </button>
-        <button
-          type="button"
-          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-        >
-          সম্পাদনা
-        </button>
-      </div>
-    ),
-  },
+  }
 ];
 
 export const getSavingsTransactionColumns = (): TableColumn<SavingTransaction>[] => [
@@ -132,21 +112,7 @@ export const getSavingsTransactionColumns = (): TableColumn<SavingTransaction>[]
         {row.created_at ? formatDate(row.created_at) : "—"}
       </span>
     ),
-  },
-  {
-    key: "actions",
-    label: "কার্যক্রম",
-    render: () => (
-      <div className="flex gap-2">
-        <button
-          type="button"
-          className="text-primary-600 hover:text-primary-700 text-sm font-medium"
-        >
-          দেখুন
-        </button>
-      </div>
-    ),
-  },
+  }
 ];
 
 // Legacy: kept for backward compatibility if used elsewhere
@@ -179,25 +145,5 @@ export const getSavingsColumns = (): TableColumn<Saving>[] => [
         {saving.status}
       </span>
     ),
-  },
-  {
-    key: "actions",
-    label: "কার্যক্রম",
-    render: () => (
-      <div className="flex gap-2">
-        <button
-          type="button"
-          className="text-primary-600 hover:text-primary-700 text-sm font-medium"
-        >
-          দেখুন
-        </button>
-        <button
-          type="button"
-          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-        >
-          সম্পাদনা
-        </button>
-      </div>
-    ),
-  },
+  }
 ];

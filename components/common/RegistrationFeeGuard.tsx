@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, X, CreditCard, AlertTriangle, CheckCircle } from "lucide-react";
+import toast from "react-hot-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   checkRegistrationFee,
@@ -117,6 +118,7 @@ export default function RegistrationFeeGuard({
         payment_method: form.payment_method,
       });
       setSubmitSuccess(true);
+      toast.success("পেমেন্ট জমা সফল হয়েছে!");
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { detail?: string; message?: string } } })
@@ -125,6 +127,7 @@ export default function RegistrationFeeGuard({
           ?.message ||
         "পেমেন্ট জমা দিতে সমস্যা হয়েছে। আবার চেষ্টা করুন।";
       setSubmitError(msg);
+      toast.error(msg);
     } finally {
       setSubmitLoading(false);
     }
