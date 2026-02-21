@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import toast from "react-hot-toast";
 import BottomNavigation from "../_components/BottomNavigation";
 import { MessageSquare, Search, MessageCircle, CheckCheck } from "lucide-react";
 import { Button } from "@/components/button";
@@ -24,20 +25,18 @@ function filterRooms(list: ChatRoom[], search: string): ChatRoom[] {
 export default function CommunicationManagementPage() {
   const [rooms, setRooms] = useState<ChatRoom[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
 
   const fetchRooms = useCallback(async () => {
     setLoading(true);
-    setError(null);
     try {
       const res = await getChatRooms();
       setRooms(res.results ?? []);
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "চ্যাট রুম লোড করতে সমস্যা হয়েছে";
-      setError(message);
+      toast.error(message);
       setRooms([]);
     } finally {
       setLoading(false);
@@ -59,7 +58,7 @@ export default function CommunicationManagementPage() {
         await markRoomAsRead(room.id);
         await fetchRooms();
       } catch {
-        setError("পঠিত চিহ্নিত করতে ব্যর্থ");
+        toast.error("পঠিত চিহ্নিত করতে ব্যর্থ");
       }
     },
     [fetchRooms]
@@ -101,11 +100,6 @@ export default function CommunicationManagementPage() {
 
         {/* Chat Room Cards */}
         <div className="mb-6">
-          {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-              {error}
-            </div>
-          )}
           {loading ? (
             <div className="bg-white rounded-xl shadow-lg p-12 text-center text-gray-500">
               লোড হচ্ছে...

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import toast from "react-hot-toast";
 import BottomNavigation from "../_components/BottomNavigation";
 import { ArrowUpCircle, Search, X } from "lucide-react";
 import Table from "@/components/Table";
@@ -98,10 +99,14 @@ export default function WithdrawalManagementPage() {
     setActionLoading(true);
     try {
       await approveWithdrawal(withdrawal.id);
+      toast.success("উত্তোলন সফলভাবে অনুমোদন করা হয়েছে।");
       setSelectedWithdrawal(null);
       await fetchList();
-    } catch {
-      setError("অনুমোদন করতে সমস্যা হয়েছে।");
+    } catch (err) {
+      const msg =
+        (err as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail ?? "অনুমোদন করতে সমস্যা হয়েছে।";
+      toast.error(msg);
     } finally {
       setActionLoading(false);
     }
@@ -119,12 +124,16 @@ export default function WithdrawalManagementPage() {
     setActionLoading(true);
     try {
       await rejectWithdrawal(rejectTarget.id, { reason });
+      toast.success("উত্তোলন সফলভাবে প্রত্যাখ্যান করা হয়েছে।");
       setRejectTarget(null);
       setRejectReason("");
       setSelectedWithdrawal(null);
       await fetchList();
-    } catch {
-      setError("প্রত্যাখ্যান করতে সমস্যা হয়েছে।");
+    } catch (err) {
+      const msg =
+        (err as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail ?? "প্রত্যাখ্যান করতে সমস্যা হয়েছে।";
+      toast.error(msg);
     } finally {
       setActionLoading(false);
     }

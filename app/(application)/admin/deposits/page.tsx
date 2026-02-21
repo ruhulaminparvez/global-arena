@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import toast from "react-hot-toast";
 import BottomNavigation from "../_components/BottomNavigation";
 import {
   ArrowDownCircle,
@@ -101,10 +102,14 @@ export default function DepositManagementPage() {
     setActionLoading(true);
     try {
       await approveDeposit(deposit.id);
+      toast.success("জমা সফলভাবে অনুমোদন করা হয়েছে।");
       setSelectedDeposit(null);
       await fetchList();
-    } catch {
-      setError("অনুমোদন করতে সমস্যা হয়েছে।");
+    } catch (err) {
+      const msg =
+        (err as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail ?? "অনুমোদন করতে সমস্যা হয়েছে।";
+      toast.error(msg);
     } finally {
       setActionLoading(false);
     }
@@ -122,12 +127,16 @@ export default function DepositManagementPage() {
     setActionLoading(true);
     try {
       await rejectDeposit(rejectTarget.id, { reason });
+      toast.success("জমা সফলভাবে প্রত্যাখ্যান করা হয়েছে।");
       setRejectTarget(null);
       setRejectReason("");
       setSelectedDeposit(null);
       await fetchList();
-    } catch {
-      setError("প্রত্যাখ্যান করতে সমস্যা হয়েছে।");
+    } catch (err) {
+      const msg =
+        (err as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail ?? "প্রত্যাখ্যান করতে সমস্যা হয়েছে।";
+      toast.error(msg);
     } finally {
       setActionLoading(false);
     }

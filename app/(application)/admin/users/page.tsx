@@ -16,6 +16,7 @@ import {
   rejectFeePayment,
 } from "@/api/admin/users.manage.api";
 import type { User, FeePayment, FeePaymentStatus } from "@/api/admin/types/admin.api";
+import toast from "react-hot-toast";
 
 type TabId = "users" | "fee-management";
 
@@ -80,6 +81,7 @@ export default function UserManagementPage() {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "ডেটা লোড করতে সমস্যা হয়েছে";
       setError(message);
+      toast.error(message);
       setUsers([]);
     } finally {
       setLoading(false);
@@ -96,6 +98,7 @@ export default function UserManagementPage() {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "ডেটা লোড করতে সমস্যা হয়েছে";
       setFeeError(message);
+      toast.error(message);
       setFeePayments([]);
     } finally {
       setFeeLoading(false);
@@ -116,9 +119,11 @@ export default function UserManagementPage() {
     setActionLoading(id);
     try {
       await approveFeePayment(id);
+      toast.success("পেমেন্ট সফলভাবে অনুমোদন করা হয়েছে");
       await fetchFeePayments();
-    } catch {
-      // silently handle
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "অনুমোদন করতে সমস্যা হয়েছে";
+      toast.error(message);
     } finally {
       setActionLoading(null);
     }
@@ -128,9 +133,11 @@ export default function UserManagementPage() {
     setActionLoading(id);
     try {
       await rejectFeePayment(id);
+      toast.success("পেমেন্ট সফলভাবে প্রত্যাখ্যান করা হয়েছে");
       await fetchFeePayments();
-    } catch {
-      // silently handle
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "প্রত্যাখ্যান করতে সমস্যা হয়েছে";
+      toast.error(message);
     } finally {
       setActionLoading(null);
     }
