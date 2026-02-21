@@ -13,6 +13,22 @@ import {
 } from "@/api/dashboard/withdraw.api";
 import type { Withdrawal } from "@/api/dashboard/types/dashboard.api";
 import { useAuth } from "@/contexts/AuthContext";
+import toast from "react-hot-toast";
+
+function getApiError(err: unknown, fallback: string): string {
+  if (err && typeof err === "object" && "response" in err) {
+    const data = (err as { response?: { data?: unknown } }).response?.data;
+    if (data && typeof data === "object") {
+      const d = data as Record<string, unknown>;
+      if (typeof d.detail === "string") return d.detail;
+      const first = Object.values(d)[0];
+      if (Array.isArray(first) && typeof first[0] === "string") return first[0];
+      if (typeof first === "string") return first;
+    }
+  }
+  if (err instanceof Error) return err.message;
+  return fallback;
+}
 
 type StatusFilter = "" | "PENDING" | "APPROVED" | "REJECTED";
 
@@ -44,7 +60,6 @@ export default function WithdrawalPage() {
 
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("");
   const [searchQuery, setSearchQuery] = useState("");
   const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
@@ -58,14 +73,13 @@ export default function WithdrawalPage() {
 
   const fetchList = async () => {
     setLoading(true);
-    setError(null);
     try {
       const res = await getWithdrawals(
         statusFilter ? { status: statusFilter } : undefined
       );
       setWithdrawals(res.results ?? []);
-    } catch {
-      setError("তালিকা লোড করতে সমস্যা হয়েছে।");
+    } catch (err) {
+      toast.error(getApiError(err, "তালিকা লোড করতে সমস্যা হয়েছে।"));
       setWithdrawals([]);
     } finally {
       setLoading(false);
@@ -116,14 +130,14 @@ export default function WithdrawalPage() {
     const bank_details = formData.bank_details.trim();
     if (Number.isNaN(amount) || amount <= 0 || !bank_details) return;
     setSubmitLoading(true);
-    setError(null);
     try {
       await createWithdrawalRequest({ amount, bank_details });
+      toast.success("উত্তোলন অনুরোধ সফলভাবে জমা হয়েছে।");
       setFormData({ amount: "", bank_details: "" });
       setShowWithdrawalModal(false);
       await fetchList();
-    } catch {
-      setError("উত্তোলন অনুরোধ জমা দিতে সমস্যা হয়েছে।");
+    } catch (err) {
+      toast.error(getApiError(err, "উত্তোলন অনুরোধ জমা দিতে সমস্যা হয়েছে।"));
     } finally {
       setSubmitLoading(false);
     }
@@ -131,12 +145,12 @@ export default function WithdrawalPage() {
 
   const handleApprove = async (withdrawal: Withdrawal) => {
     setActionLoading(true);
-    setError(null);
     try {
       await approveWithdrawal(withdrawal.id);
+      toast.success("উত্তোলন অনুমোদন সফল হয়েছে।");
       await fetchList();
-    } catch {
-      setError("অনুমোদন করতে সমস্যা হয়েছে।");
+    } catch (err) {
+      toast.error(getApiError(err, "অনুমোদন করতে সমস্যা হয়েছে।"));
     } finally {
       setActionLoading(false);
     }
@@ -206,12 +220,6 @@ export default function WithdrawalPage() {
               />
             </div>
           </div>
-
-          {error && (
-            <div className="mb-4 p-4 bg-red-50 text-red-800 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
 
           {/* Summary */}
           <div className="flex flex-wrap gap-4">

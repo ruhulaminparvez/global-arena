@@ -6,6 +6,22 @@ import { X } from "lucide-react";
 import { getRoomMessages } from "@/api/dashboard/chats.api";
 import type { MyChatRoom, ChatMessage } from "@/api/dashboard/types/dashboard.api";
 import { formatDate } from "@/helpers/format.helpers";
+import toast from "react-hot-toast";
+
+function getApiError(err: unknown, fallback: string): string {
+  if (err && typeof err === "object" && "response" in err) {
+    const data = (err as { response?: { data?: unknown } }).response?.data;
+    if (data && typeof data === "object") {
+      const d = data as Record<string, unknown>;
+      if (typeof d.detail === "string") return d.detail;
+      const first = Object.values(d)[0];
+      if (Array.isArray(first) && typeof first[0] === "string") return first[0];
+      if (typeof first === "string") return first;
+    }
+  }
+  if (err instanceof Error) return err.message;
+  return fallback;
+}
 
 function getDisplayName(user: MyChatRoom["user"]): string {
   const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
@@ -20,20 +36,18 @@ export interface ChatRoomMessagesModalProps {
 export function ChatRoomMessagesModal({ room, onClose }: ChatRoomMessagesModalProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!room) return;
     let cancelled = false;
     setLoading(true);
-    setError(null);
     getRoomMessages(room.id)
       .then((data) => {
         if (!cancelled) setMessages(data);
       })
       .catch((err: unknown) => {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "বার্তা লোড করতে ব্যর্থ");
+          toast.error(getApiError(err, "বার্তা লোড করতে ব্যর্থ হয়েছে।"));
         }
       })
       .finally(() => {
@@ -76,11 +90,6 @@ export function ChatRoomMessagesModal({ room, onClose }: ChatRoomMessagesModalPr
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
-          {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-              {error}
-            </div>
-          )}
           {loading && (
             <p className="text-gray-500 text-center py-8">বার্তা লোড হচ্ছে...</p>
           )}

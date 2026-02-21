@@ -13,6 +13,22 @@ import { getMyChatRoom, getChatRooms } from "@/api/dashboard/chats.api";
 import type { MyChatRoom } from "@/api/dashboard/types/dashboard.api";
 import { formatDate } from "@/helpers/format.helpers";
 import { ChatRoomMessagesModal } from "./_components/ChatRoomMessagesModal";
+import toast from "react-hot-toast";
+
+function getApiError(err: unknown, fallback: string): string {
+  if (err && typeof err === "object" && "response" in err) {
+    const data = (err as { response?: { data?: unknown } }).response?.data;
+    if (data && typeof data === "object") {
+      const d = data as Record<string, unknown>;
+      if (typeof d.detail === "string") return d.detail;
+      const first = Object.values(d)[0];
+      if (Array.isArray(first) && typeof first[0] === "string") return first[0];
+      if (typeof first === "string") return first;
+    }
+  }
+  if (err instanceof Error) return err.message;
+  return fallback;
+}
 
 function getRoomDisplayName(room: MyChatRoom): string {
   const u = room.user;
@@ -39,7 +55,8 @@ export default function ContactPage() {
     try {
       const room = await getMyChatRoom();
       setChatRoom(room);
-    } catch {
+    } catch (err) {
+      toast.error(getApiError(err, "চ্যাট রুম লোড করতে সমস্যা হয়েছে।"));
       setChatRoom(null);
     } finally {
       setChatRoomLoading(false);
@@ -52,7 +69,8 @@ export default function ContactPage() {
     try {
       const res = await getChatRooms();
       setAllRooms(res.results ?? []);
-    } catch {
+    } catch (err) {
+      toast.error(getApiError(err, "চ্যাট রুম তালিকা লোড করতে সমস্যা হয়েছে।"));
       setAllRooms([]);
     } finally {
       setAllRoomsLoading(false);
