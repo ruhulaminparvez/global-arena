@@ -13,8 +13,24 @@ import {
 } from "@/api/dashboard/deposit.api";
 import type { Deposit } from "@/api/dashboard/types/dashboard.api";
 import { useAuth } from "@/contexts/AuthContext";
+import toast from "react-hot-toast";
 
 type StatusFilter = "" | "PENDING" | "APPROVED" | "REJECTED";
+
+function getApiError(err: unknown, fallback: string): string {
+  if (err && typeof err === "object" && "response" in err) {
+    const data = (err as { response?: { data?: unknown } }).response?.data;
+    if (data && typeof data === "object") {
+      const d = data as Record<string, unknown>;
+      if (typeof d.detail === "string") return d.detail;
+      const first = Object.values(d)[0];
+      if (Array.isArray(first) && typeof first[0] === "string") return first[0];
+      if (typeof first === "string") return first;
+    }
+  }
+  if (err instanceof Error) return err.message;
+  return fallback;
+}
 
 const STATUS_OPTIONS: { value: StatusFilter; label: string }[] = [
   { value: "", label: "সব" },
@@ -44,7 +60,6 @@ export default function DepositPage() {
 
   const [deposits, setDeposits] = useState<Deposit[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("");
   const [searchQuery, setSearchQuery] = useState("");
   const [showDepositModal, setShowDepositModal] = useState(false);
@@ -58,14 +73,13 @@ export default function DepositPage() {
 
   const fetchList = async () => {
     setLoading(true);
-    setError(null);
     try {
       const res = await getDeposits(
         statusFilter ? { status: statusFilter } : undefined
       );
       setDeposits(res.results ?? []);
-    } catch {
-      setError("তালিকা লোড করতে সমস্যা হয়েছে।");
+    } catch (err) {
+      toast.error(getApiError(err, "তালিকা লোড করতে সমস্যা হয়েছে।"));
       setDeposits([]);
     } finally {
       setLoading(false);
@@ -115,14 +129,14 @@ export default function DepositPage() {
     const file = formData.proof_document;
     if (!amount || !file) return;
     setSubmitLoading(true);
-    setError(null);
     try {
       await createDepositRequest(amount, file);
       setFormData({ amount: "", proof_document: null });
       setShowDepositModal(false);
       await fetchList();
-    } catch {
-      setError("জমা অনুরোধ জমা দিতে সমস্যা হয়েছে।");
+      toast.success("জমা অনুরোধ সফলভাবে জমা হয়েছে।");
+    } catch (err) {
+      toast.error(getApiError(err, "জমা অনুরোধ জমা দিতে সমস্যা হয়েছে।"));
     } finally {
       setSubmitLoading(false);
     }
@@ -130,12 +144,12 @@ export default function DepositPage() {
 
   const handleApprove = async (deposit: Deposit) => {
     setActionLoading(true);
-    setError(null);
     try {
       await approveDeposit(deposit.id);
       await fetchList();
-    } catch {
-      setError("অনুমোদন করতে সমস্যা হয়েছে।");
+      toast.success("জমা অনুমোদন সফল হয়েছে।");
+    } catch (err) {
+      toast.error(getApiError(err, "অনুমোদন করতে সমস্যা হয়েছে।"));
     } finally {
       setActionLoading(false);
     }
@@ -205,12 +219,6 @@ export default function DepositPage() {
               />
             </div>
           </div>
-
-          {error && (
-            <div className="mb-4 p-4 bg-red-50 text-red-800 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
 
           {/* Summary */}
           <div className="flex flex-wrap gap-4">

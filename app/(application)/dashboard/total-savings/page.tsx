@@ -14,6 +14,7 @@ import {
   getPlanTransactions,
 } from "@/api/dashboard/savings.api";
 import type { SavingPlan, SavingTransaction } from "@/api/admin/types/admin.api";
+import toast from "react-hot-toast";
 
 function planMatchesSearch(plan: SavingPlan, q: string): boolean {
   if (!q.trim()) return true;
@@ -51,7 +52,8 @@ export default function TotalSavingsPage() {
     try {
       const data = await getMyPlans();
       setMyPlans(Array.isArray(data) ? data : []);
-    } catch {
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "প্ল্যান লোড করতে ব্যর্থ");
       setMyPlans([]);
     } finally {
       setMyPlansLoading(false);
@@ -63,7 +65,8 @@ export default function TotalSavingsPage() {
     try {
       const data = await getPlanTransactions(planId);
       setTransactions(Array.isArray(data) ? data : []);
-    } catch {
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "লেনদেন লোড করতে ব্যর্থ");
       setTransactions([]);
     } finally {
       setTransactionsLoading(false);

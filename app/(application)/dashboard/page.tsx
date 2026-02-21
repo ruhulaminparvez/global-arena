@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useCounterAnimation } from "@/hooks/useCounterAnimation";
 import { extractNumericValue, formatValue } from "@/helpers/format.helpers";
+import toast from "react-hot-toast";
 
 const ALLOWED_ROLES = ["SUPPORT"];
 
@@ -86,16 +87,14 @@ export default function DashboardPage() {
   const [ticketAnalytics, setTicketAnalytics] = useState<TicketAnalyticsItem[]>([]);
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [ticketsLoading, setTicketsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const fetchSummary = useCallback(async () => {
     setSummaryLoading(true);
-    setError(null);
     try {
       const data = await getDashboardSummary();
       setSummary(data);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "সারসংক্ষেপ লোড করতে ব্যর্থ");
+      toast.error(err instanceof Error ? err.message : "সারসংক্ষেপ লোড করতে ব্যর্থ");
       setSummary(null);
     } finally {
       setSummaryLoading(false);
@@ -104,12 +103,11 @@ export default function DashboardPage() {
 
   const fetchTicketAnalytics = useCallback(async () => {
     setTicketsLoading(true);
-    setError(null);
     try {
       const data = await getTicketAnalytics();
       setTicketAnalytics(data);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "টিকেট ডেটা লোড করতে ব্যর্থ");
+      toast.error(err instanceof Error ? err.message : "টিকেট ডেটা লোড করতে ব্যর্থ");
       setTicketAnalytics([]);
     } finally {
       setTicketsLoading(false);
@@ -139,11 +137,6 @@ export default function DashboardPage() {
                 <BarChart3 className="w-5 h-5 text-primary-600" />
                 সারসংক্ষেপ পরিসংখ্যান
               </h2>
-              {error && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-                  {error}
-                </div>
-              )}
               {summaryLoading ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
