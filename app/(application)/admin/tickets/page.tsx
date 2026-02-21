@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { AnimatePresence } from "framer-motion";
 import BottomNavigation from "../_components/BottomNavigation";
 import { Ticket, Search, Filter, Plus, Calendar, Activity, Megaphone, ShoppingBag } from "lucide-react";
@@ -146,25 +147,52 @@ export default function TicketManagementPage() {
   );
 
   const handleCreateSchedule = async (payload: TicketSchedulePayload) => {
-    await createTicketSchedule(payload);
-    await fetchSchedules();
+    const loadingToast = toast.loading("সিডিউল তৈরি হচ্ছে...");
+    try {
+      await createTicketSchedule(payload);
+      toast.dismiss(loadingToast);
+      toast.success("সিডিউল সফলভাবে তৈরি হয়েছে!");
+      await fetchSchedules();
+    } catch (err: unknown) {
+      toast.dismiss(loadingToast);
+      const message = err instanceof Error ? err.message : "সিডিউল তৈরি করতে সমস্যা হয়েছে";
+      toast.error(message);
+      throw err;
+    }
   };
 
   const handleUpdateSchedule = async (payload: TicketSchedulePayload) => {
     if (!editingSchedule) return;
-    await updateTicketSchedule(editingSchedule.id, payload);
-    setEditingSchedule(null);
-    setFormModal(null);
-    await fetchSchedules();
+    const loadingToast = toast.loading("সিডিউল আপডেট হচ্ছে...");
+    try {
+      await updateTicketSchedule(editingSchedule.id, payload);
+      toast.dismiss(loadingToast);
+      toast.success("সিডিউল সফলভাবে আপডেট হয়েছে!");
+      setEditingSchedule(null);
+      setFormModal(null);
+      await fetchSchedules();
+    } catch (err: unknown) {
+      toast.dismiss(loadingToast);
+      const message = err instanceof Error ? err.message : "সিডিউল আপডেট করতে সমস্যা হয়েছে";
+      toast.error(message);
+      throw err;
+    }
   };
 
   const handleDeleteSchedule = async () => {
     if (!deleteSchedule) return;
     setIsDeleting(true);
+    const loadingToast = toast.loading("সিডিউল মুছে ফেলা হচ্ছে...");
     try {
       await deleteTicketSchedule(deleteSchedule.id);
+      toast.dismiss(loadingToast);
+      toast.success("সিডিউল সফলভাবে মুছে ফেলা হয়েছে!");
       setDeleteSchedule(null);
       await fetchSchedules();
+    } catch (err: unknown) {
+      toast.dismiss(loadingToast);
+      const message = err instanceof Error ? err.message : "সিডিউল মুছে ফেলতে সমস্যা হয়েছে";
+      toast.error(message);
     } finally {
       setIsDeleting(false);
     }
