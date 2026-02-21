@@ -21,9 +21,10 @@ import toast from "react-hot-toast";
 type TabId = "users" | "fee-management";
 
 function filterUsers(list: User[], search: string): User[] {
-  if (!search.trim()) return list;
+  const sorted = [...list].sort((a, b) => b.id - a.id);
+  if (!search.trim()) return sorted;
   const q = search.trim().toLowerCase();
-  return list.filter(
+  return sorted.filter(
     (u) =>
       u.username.toLowerCase().includes(q) ||
       (u.email && u.email.toLowerCase().includes(q)) ||
