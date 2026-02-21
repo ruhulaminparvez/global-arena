@@ -178,6 +178,7 @@ export interface DashboardSummary {
 export interface SavingPlan {
   id: number;
   user: number;
+  username: string;
   monthly_amount: string;
   duration_months: number;
   start_date: string;

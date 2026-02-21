@@ -10,7 +10,7 @@ export const getSavingsPlanColumns = (): TableColumn<SavingPlan>[] => [
     key: "user",
     label: "ব্যবহারকারী",
     render: (row) => (
-      <span className="font-medium">User #{row.user}</span>
+      <span className="font-medium">{row.username}</span>
     ),
   },
   {
