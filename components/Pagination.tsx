@@ -60,19 +60,18 @@ export default function Pagination({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 bg-gray-50 border-t border-gray-200">
-      <div className="text-sm text-gray-600">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 bg-accent-950/50 border-t border-white/10">
+      <div className="text-sm text-slate-400">
         দেখানো হচ্ছে {startItem} থেকে {endItem} এর মধ্যে, মোট {totalItems} টি
       </div>
       <div className="flex items-center gap-2">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className={`px-3 py-2 rounded-lg border transition-colors ${
-            currentPage === 1
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
-              : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
-          }`}
+          className={`px-3 py-2 rounded-lg border transition-all ${currentPage === 1
+              ? "bg-black/20 text-slate-600 cursor-not-allowed border-white/5"
+              : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+            }`}
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -81,7 +80,7 @@ export default function Pagination({
           {getPageNumbers().map((page, index) => {
             if (page === "...") {
               return (
-                <span key={`ellipsis-${index}`} className="px-2 text-gray-400">
+                <span key={`ellipsis-${index}`} className="px-2 text-slate-500">
                   ...
                 </span>
               );
@@ -91,11 +90,10 @@ export default function Pagination({
               <button
                 key={page}
                 onClick={() => onPageChange(page as number)}
-                className={`px-3 py-2 rounded-lg border transition-colors ${
-                  currentPage === page
-                    ? "bg-primary-600 text-white border-primary-600"
-                    : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
-                }`}
+                className={`px-3 py-2 rounded-lg border transition-all ${currentPage === page
+                    ? "bg-gradient-to-r from-primary-600 to-indigo-600 border-transparent text-white shadow-lg shadow-primary-500/25"
+                    : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+                  }`}
               >
                 {page}
               </button>
@@ -106,11 +104,10 @@ export default function Pagination({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className={`px-3 py-2 rounded-lg border transition-colors ${
-            currentPage === totalPages
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
-              : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
-          }`}
+          className={`px-3 py-2 rounded-lg border transition-all ${currentPage === totalPages
+              ? "bg-black/20 text-slate-600 cursor-not-allowed border-white/5"
+              : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+            }`}
         >
           <ChevronRight className="w-4 h-4" />
         </button>

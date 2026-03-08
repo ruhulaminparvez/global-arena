@@ -21,13 +21,13 @@ function statusBadgeClass(status: string): string {
   const normalized = String(status ?? "").toLowerCase().trim();
   switch (normalized) {
     case "approved":
-      return "bg-green-100 text-green-800 border border-green-300";
+      return "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
     case "rejected":
-      return "bg-red-100 text-red-800 border border-red-300";
+      return "bg-rose-500/20 text-rose-400 border border-rose-500/30";
     case "pending":
-      return "bg-orange-100 text-orange-800 border border-orange-300";
+      return "bg-amber-500/20 text-amber-400 border border-amber-500/30";
     default:
-      return "bg-gray-100 text-gray-700 border border-gray-300";
+      return "bg-white/10 text-slate-300 border border-white/20";
   }
 }
 
@@ -43,13 +43,13 @@ export function getDepositsColumns(
   const { onView, onApprove, onReject } = options;
 
   return [
-    { key: "id", label: "আইডি" },
-    { key: "user", label: "ব্যবহারকারী" },
+    { key: "id", label: "আইডি", className: "font-mono text-slate-400" },
+    { key: "user", label: "ব্যবহারকারী", className: "font-medium text-white" },
     {
       key: "amount",
       label: "পরিমাণ",
       render: (deposit) => (
-        <span className="font-semibold">
+        <span className="font-semibold text-white">
           ৳ {parseFloat(deposit.amount || "0").toLocaleString("bn-BD")}
         </span>
       ),
@@ -58,7 +58,7 @@ export function getDepositsColumns(
       key: "created_at",
       label: "তারিখ",
       render: (deposit) => (
-        <span className="text-gray-600">{formatDate(deposit.created_at)}</span>
+        <span className="text-slate-400">{formatDate(deposit.created_at)}</span>
       ),
     },
     {
@@ -86,7 +86,7 @@ export function getDepositsColumns(
               e.stopPropagation();
               onView(deposit);
             }}
-            className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+            className="text-primary-400 hover:text-primary-300 text-sm font-medium transition-colors"
           >
             দেখুন
           </button>
@@ -105,7 +105,7 @@ export function getDepositsColumns(
                   e.stopPropagation();
                   onApprove(deposit);
                 }}
-                className="px-4 py-2 text-sm font-semibold rounded-lg shadow-sm border border-green-600 bg-green-600 text-white hover:bg-green-700 hover:border-green-700 transition-colors"
+                className="px-4 py-2 text-sm font-semibold rounded-xl border border-emerald-500/30 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors"
               >
                 অনুমোদন
               </button>
@@ -117,14 +117,14 @@ export function getDepositsColumns(
                   e.stopPropagation();
                   onReject(deposit);
                 }}
-                className="px-4 py-2 text-sm font-semibold rounded-lg shadow-sm border border-red-600 bg-red-600 text-white hover:bg-red-700 hover:border-red-700 transition-colors"
+                className="px-4 py-2 text-sm font-semibold rounded-xl border border-rose-500/30 bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 transition-colors"
               >
                 প্রত্যাখ্যান
               </button>
             )}
           </div>
         ) : (
-          <span className="text-gray-400 text-sm">—</span>
+          <span className="text-slate-500 text-sm">—</span>
         ),
     },
   ];

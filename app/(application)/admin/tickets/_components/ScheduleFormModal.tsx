@@ -149,14 +149,14 @@ export function ScheduleFormModal({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl bg-white shadow-2xl flex flex-col"
+        className="w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl bg-accent-950 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex flex-col backdrop-blur-xl"
       >
-        <div className="shrink-0 bg-primary-600 px-6 py-4 flex items-center justify-between">
+        <div className="shrink-0 bg-gradient-to-r from-primary-900/50 to-indigo-900/50 px-6 py-4 flex items-center justify-between border-b border-white/10">
           <h3 className="text-lg font-bold text-white">{title}</h3>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-full text-white hover:bg-white/20 transition-colors"
+            className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             aria-label="বন্ধ করুন"
           >
             <X className="w-5 h-5" />
@@ -170,18 +170,19 @@ export function ScheduleFormModal({
               onChange={(e) => update("title", e.target.value)}
               error={errors.title}
               placeholder="উদাহরণ: Hajj 2026 Package"
+              className="bg-black/30 text-white border-white/10"
             />
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">বিবরণ</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">বিবরণ</label>
               <textarea
                 value={form.description}
                 onChange={(e) => update("description", e.target.value)}
                 rows={3}
-                className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/30 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 placeholder="প্যাকেজের বিবরণ"
               />
               {errors.description && (
-                <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+                <p className="mt-1 text-sm text-rose-400">{errors.description}</p>
               )}
             </div>
             <Input
@@ -189,6 +190,7 @@ export function ScheduleFormModal({
               value={form.announcement_text}
               onChange={(e) => update("announcement_text", e.target.value)}
               placeholder="Early bird registration now open!"
+              className="bg-black/30 text-white border-white/10"
             />
             <div className="grid grid-cols-2 gap-4">
               <Input
@@ -199,6 +201,7 @@ export function ScheduleFormModal({
                 value={form.price || ""}
                 onChange={(e) => update("price", parseFloat(e.target.value) || 0)}
                 error={errors.price}
+                className="bg-black/30 text-white border-white/10"
               />
               <Input
                 label="লাভ শতাংশ (%)"
@@ -210,17 +213,18 @@ export function ScheduleFormModal({
                   update("profit_percentage", parseFloat(e.target.value) ?? 0)
                 }
                 error={errors.profit_percentage}
+                className="bg-black/30 text-white border-white/10"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
                   চুক্তির ধরন
                 </label>
                 <select
                   value={form.agreement_type}
                   onChange={(e) => update("agreement_type", e.target.value as AgreementType)}
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/30 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
                 >
                   {AGREEMENT_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -236,11 +240,12 @@ export function ScheduleFormModal({
                 value={form.duration_days || ""}
                 onChange={(e) => update("duration_days", parseInt(e.target.value, 10) || 0)}
                 error={errors.duration_days}
+                className="bg-black/30 text-white border-white/10"
               />
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
                   ঘোষণার তারিখ
                 </label>
                 <input
@@ -249,14 +254,14 @@ export function ScheduleFormModal({
                   onChange={(e) =>
                     update("announcement_date", fromDatetimeLocal(e.target.value))
                   }
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/30 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all style-color-scheme-dark"
                 />
                 {errors.announcement_date && (
-                  <p className="mt-1 text-sm text-red-600">{errors.announcement_date}</p>
+                  <p className="mt-1 text-sm text-rose-400">{errors.announcement_date}</p>
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
                   ড্রপ টাইম
                 </label>
                 <input
@@ -265,14 +270,14 @@ export function ScheduleFormModal({
                   onChange={(e) =>
                     update("drop_time", fromDatetimeLocal(e.target.value))
                   }
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/30 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all style-color-scheme-dark"
                 />
                 {errors.drop_time && (
-                  <p className="mt-1 text-sm text-red-600">{errors.drop_time}</p>
+                  <p className="mt-1 text-sm text-rose-400">{errors.drop_time}</p>
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">
                   ইভেন্ট তারিখ
                 </label>
                 <input
@@ -281,10 +286,10 @@ export function ScheduleFormModal({
                   onChange={(e) =>
                     update("event_date", fromDatetimeLocal(e.target.value))
                   }
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/30 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all style-color-scheme-dark"
                 />
                 {errors.event_date && (
-                  <p className="mt-1 text-sm text-red-600">{errors.event_date}</p>
+                  <p className="mt-1 text-sm text-rose-400">{errors.event_date}</p>
                 )}
               </div>
             </div>
@@ -295,42 +300,43 @@ export function ScheduleFormModal({
               value={form.max_tickets || ""}
               onChange={(e) => update("max_tickets", parseInt(e.target.value, 10) || 0)}
               error={errors.max_tickets}
+              className="bg-black/30 text-white border-white/10"
             />
-            <div className="flex flex-wrap gap-6">
-              <label className="flex items-center gap-2 cursor-pointer">
+            <div className="flex flex-wrap gap-6 pt-2">
+              <label className="flex items-center gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={form.is_active}
                   onChange={(e) => update("is_active", e.target.checked)}
-                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  className="w-5 h-5 rounded border-white/20 bg-black/40 text-primary-500 focus:ring-primary-500/50 transition-all"
                 />
-                <span className="text-sm font-medium text-gray-700">সক্রিয়</span>
+                <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">সক্রিয়</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={form.is_confirmed}
                   onChange={(e) => update("is_confirmed", e.target.checked)}
-                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  className="w-5 h-5 rounded border-white/20 bg-black/40 text-primary-500 focus:ring-primary-500/50 transition-all"
                 />
-                <span className="text-sm font-medium text-gray-700">নিশ্চিত</span>
+                <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">নিশ্চিত</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={form.is_announced}
                   onChange={(e) => update("is_announced", e.target.checked)}
-                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  className="w-5 h-5 rounded border-white/20 bg-black/40 text-primary-500 focus:ring-primary-500/50 transition-all"
                 />
-                <span className="text-sm font-medium text-gray-700">ঘোষিত</span>
+                <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">ঘোষিত</span>
               </label>
             </div>
           </div>
-          <div className="shrink-0 flex justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
-            <Button type="button" variant="outline" onClick={onClose}>
+          <div className="shrink-0 flex justify-end gap-3 p-6 border-t border-white/10 bg-black/20">
+            <Button type="button" variant="outline" onClick={onClose} className="border-white/10 hover:bg-white/5 text-slate-300">
               বাতিল
             </Button>
-            <Button type="submit" isLoading={isSubmitting}>
+            <Button type="submit" isLoading={isSubmitting} className="bg-gradient-to-r from-primary-500 to-primary-600 border-none shadow-lg shadow-primary-500/25">
               {mode === "create" ? "তৈরি করুন" : "আপডেট করুন"}
             </Button>
           </div>

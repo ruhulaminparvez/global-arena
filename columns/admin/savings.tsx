@@ -5,19 +5,19 @@ import type { SavingPlan, SavingTransaction } from "@/api/admin/types/admin.api"
 import { formatDate } from "@/helpers/format.helpers";
 
 export const getSavingsPlanColumns = (): TableColumn<SavingPlan>[] => [
-  { key: "id", label: "আইডি" },
+  { key: "id", label: "আইডি", className: "font-mono text-slate-400" },
   {
     key: "user",
     label: "ব্যবহারকারী",
     render: (row) => (
-      <span className="font-medium">{row.username}</span>
+      <span className="font-medium text-white">{row.username}</span>
     ),
   },
   {
     key: "monthly_amount",
     label: "মাসিক পরিমাণ",
     render: (row) => (
-      <span className="font-semibold">
+      <span className="font-semibold text-white">
         ৳ {parseFloat(row.monthly_amount).toLocaleString("bn-BD")}
       </span>
     ),
@@ -25,20 +25,20 @@ export const getSavingsPlanColumns = (): TableColumn<SavingPlan>[] => [
   {
     key: "duration_months",
     label: "মেয়াদ (মাস)",
-    render: (row) => <span>{row.duration_months}</span>,
+    render: (row) => <span className="text-white">{row.duration_months}</span>,
   },
   {
     key: "start_date",
     label: "শুরুর তারিখ",
     render: (row) => (
-      <span className="text-gray-600">{row.start_date ? formatDate(row.start_date) : "—"}</span>
+      <span className="text-slate-400">{row.start_date ? formatDate(row.start_date) : "—"}</span>
     ),
   },
   {
     key: "total_saved",
     label: "মোট সঞ্চয়",
     render: (row) => (
-      <span className="font-semibold">
+      <span className="font-semibold text-emerald-400">
         ৳ {row.total_saved.toLocaleString("bn-BD")}
       </span>
     ),
@@ -46,16 +46,15 @@ export const getSavingsPlanColumns = (): TableColumn<SavingPlan>[] => [
   {
     key: "months_remaining",
     label: "বাকি মাস",
-    render: (row) => <span>{row.months_remaining}</span>,
+    render: (row) => <span className="text-slate-300">{row.months_remaining}</span>,
   },
   {
     key: "is_completed",
     label: "সম্পন্ন",
     render: (row) => (
       <span
-        className={`px-3 py-1 text-xs font-semibold rounded-full ${
-          row.is_completed ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-700"
-        }`}
+        className={`px-3 py-1 text-xs font-semibold rounded-full border ${row.is_completed ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" : "bg-white/10 text-slate-300 border-white/20"
+          }`}
       >
         {row.is_completed ? "হ্যাঁ" : "না"}
       </span>
@@ -65,7 +64,7 @@ export const getSavingsPlanColumns = (): TableColumn<SavingPlan>[] => [
     key: "created_at",
     label: "তৈরির তারিখ",
     render: (row) => (
-      <span className="text-gray-600 text-sm">
+      <span className="text-slate-400 text-sm">
         {row.created_at ? formatDate(row.created_at) : "—"}
       </span>
     ),
@@ -73,12 +72,12 @@ export const getSavingsPlanColumns = (): TableColumn<SavingPlan>[] => [
 ];
 
 export const getSavingsTransactionColumns = (): TableColumn<SavingTransaction>[] => [
-  { key: "id", label: "আইডি" },
+  { key: "id", label: "আইডি", className: "font-mono text-slate-400" },
   {
     key: "plan",
     label: "প্ল্যান",
     render: (row) => (
-      <span className="font-medium">
+      <span className="font-medium text-white">
         {row.plan != null ? `#${row.plan}` : "—"}
       </span>
     ),
@@ -87,7 +86,7 @@ export const getSavingsTransactionColumns = (): TableColumn<SavingTransaction>[]
     key: "amount",
     label: "পরিমাণ",
     render: (row) => (
-      <span className="font-semibold">
+      <span className="font-semibold text-white">
         ৳{" "}
         {row.amount != null
           ? parseFloat(String(row.amount)).toLocaleString("bn-BD")
@@ -99,7 +98,7 @@ export const getSavingsTransactionColumns = (): TableColumn<SavingTransaction>[]
     key: "transaction_date",
     label: "লেনদেনের তারিখ",
     render: (row) => (
-      <span className="text-gray-600">
+      <span className="text-slate-400">
         {row.transaction_date ?? "—"}
       </span>
     ),
@@ -108,7 +107,7 @@ export const getSavingsTransactionColumns = (): TableColumn<SavingTransaction>[]
     key: "created_at",
     label: "তৈরির তারিখ",
     render: (row) => (
-      <span className="text-gray-600 text-sm">
+      <span className="text-slate-400 text-sm">
         {row.created_at ? formatDate(row.created_at) : "—"}
       </span>
     ),

@@ -86,20 +86,22 @@ function allTransactionsToLineData(
 
 // Shared chart style (matches previous graph design)
 const CHART_STYLE = {
-  grid: { strokeDasharray: "3 3" as const, stroke: "#e5e7eb" },
-  axis: { stroke: "#6b7280", fontSize: "12px" as const },
+  grid: { strokeDasharray: "3 3" as const, stroke: "rgba(255,255,255,0.1)" },
+  axis: { stroke: "#94a3b8", fontSize: "12px" as const },
   tooltip: {
-    backgroundColor: "#fff",
-    border: "1px solid #e5e7eb",
-    borderRadius: "8px",
+    backgroundColor: "rgba(15, 23, 42, 0.9)",
+    border: "1px solid rgba(255,255,255,0.1)",
+    borderRadius: "12px",
+    color: "#fff",
+    backdropFilter: "blur(12px)",
   },
   line: {
-    stroke: "#10b981",
+    stroke: "#38bdf8",
     strokeWidth: 3,
-    dot: { fill: "#10b981", r: 5 },
-    activeDot: { r: 8 },
+    dot: { fill: "#38bdf8", r: 5, stroke: "#0f172a", strokeWidth: 2 },
+    activeDot: { r: 8, stroke: "#fff", strokeWidth: 2 },
   },
-  bar: { fill: "#10b981", radius: [4, 4, 0, 0] as [number, number, number, number] },
+  bar: { fill: "#38bdf8", radius: [6, 6, 0, 0] as [number, number, number, number] },
 };
 
 const TOOLTIP_PAYMENT_LINE = "বিকাশ/নগদ: 01622260086";
@@ -130,20 +132,20 @@ function ChartTooltipContent({
       : payload[0].name ?? "লেনদেন");
   return (
     <div
-      className="px-3 py-2 shadow-md"
+      className="px-4 py-3 shadow-2xl"
       style={{
         ...CHART_STYLE.tooltip,
       }}
     >
       {label != null && (
-        <p className="font-medium text-gray-800">
+        <p className="font-semibold text-white mb-1">
           {typeof label === "number" ? String(label) : label}
         </p>
       )}
-      <p className="text-gray-700">
-        {name}: {Number(value).toLocaleString("bn-BD")} ৳
+      <p className="text-slate-300">
+        <span className="text-white font-medium">{name}:</span> {Number(value).toLocaleString("bn-BD")} ৳
       </p>
-      <p className="text-xs text-primary-500 border-t border-gray-100 mt-0.5">
+      <p className="text-xs text-primary-400 border-t border-white/10 mt-2 pt-2">
         {TOOLTIP_PAYMENT_LINE}
       </p>
     </div>
@@ -189,29 +191,29 @@ export default function MonthlySavingsGraph() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.6 }}
-      className="bg-white rounded-2xl shadow-xl p-6 overflow-x-hidden"
+      className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-6 overflow-x-hidden"
     >
-      <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+      <h3 className="text-2xl sm:text-3xl font-bold text-white mb-6 drop-shadow-md">
         মাসিক সঞ্চয় ও লেনদেন
       </h3>
 
       {loading ? (
-        <div className="h-80 flex items-center justify-center text-gray-500">
+        <div className="h-80 flex items-center justify-center text-slate-400">
           লোড হচ্ছে...
         </div>
       ) : !hasAnyData ? (
-        <div className="h-80 flex items-center justify-center text-gray-500">
+        <div className="h-80 flex items-center justify-center text-slate-400">
           কোন লেনদেন নেই
         </div>
       ) : (
         <div className="space-y-8">{/* All transactions – Line chart */}
           <div>
-            <h4 className="text-lg font-semibold text-gray-800 mb-4">
+            <h4 className="text-lg font-semibold text-primary-300 mb-4">
               সমস্ত লেনদেন (লাইন গ্রাফ)
             </h4>
             <div className="h-80 w-full overflow-x-auto">
               {allTransactionsLineData.length === 0 ? (
-                <div className="h-80 flex items-center justify-center text-gray-400 text-sm">
+                <div className="h-80 flex items-center justify-center text-slate-500 text-sm">
                   কোন লেনদেন নেই
                 </div>
               ) : (
@@ -260,13 +262,13 @@ export default function MonthlySavingsGraph() {
             </div>
           </div>
           {/* Monthly savings – Bar chart */}
-          <div>
-            <h4 className="text-lg font-semibold text-gray-800 mb-4">
+          <div className="mt-12">
+            <h4 className="text-lg font-semibold text-primary-300 mb-4">
               মাসিক সঞ্চয় (বার গ্রাফ)
             </h4>
             <div className="h-80 w-full overflow-x-auto">
               {monthlyBarData.length === 0 ? (
-                <div className="h-80 flex items-center justify-center text-gray-400 text-sm">
+                <div className="h-80 flex items-center justify-center text-slate-500 text-sm">
                   এই মাসে জমা লেনদেন নেই
                 </div>
               ) : (

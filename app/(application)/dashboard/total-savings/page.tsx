@@ -93,24 +93,30 @@ export default function TotalSavingsPage() {
   const transactionColumns = getSavingsTransactionColumns();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <div className="max-w-6xl mx-auto px-4 py-8 pb-[12rem] sm:pb-[7rem] overflow-x-hidden">
+    <div className="min-h-screen bg-accent-950 overflow-x-hidden relative">
+      {/* Premium Background Graphics */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-900/40 mix-blend-screen filter blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-900/30 mix-blend-screen filter blur-[100px] animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 py-8 pb-[12rem] sm:pb-[7rem] overflow-x-hidden">
         {/* Page Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl shadow-lg p-6 mb-6"
+          className="bg-accent-900/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl p-6 mb-6"
         >
           <div className="flex items-center gap-3 mb-6">
             <PiggyBank className="w-8 h-8 text-primary-600" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">
               মোট সঞ্চয়
             </h1>
           </div>
 
           {/* Tab Header */}
-          <div className="flex gap-2 border-b border-gray-200 mb-4">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-t-lg font-medium bg-primary-600 text-white">
+          <div className="flex gap-2 border-b border-white/10 mb-4">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-t-xl font-medium bg-gradient-to-r from-primary-600 to-indigo-600 text-white shadow-lg shadow-primary-500/25">
               <Wallet className="w-4 h-4" />
               আমার প্ল্যান
             </div>
@@ -129,11 +135,11 @@ export default function TotalSavingsPage() {
                 value={myPlansSearch}
                 onChange={(e) => setMyPlansSearch(e.target.value)}
                 placeholder="আইডি, মাসিক পরিমাণ, মেয়াদ বা তারিখ দিয়ে অনুসন্ধান করুন..."
-                className="flex-1 pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="flex-1 pl-10 pr-4 py-3 bg-black/30 border border-white/10 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-slate-500 backdrop-blur-sm transition-all"
               />
             </div>
             {myPlansLoading ? (
-              <div className="py-8 text-center text-gray-500">
+              <div className="py-8 text-center text-slate-400">
                 লোড হচ্ছে...
               </div>
             ) : (
@@ -152,23 +158,23 @@ export default function TotalSavingsPage() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-6 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"
+                className="mt-6 bg-accent-900/60 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-white/10"
               >
-                <div className="p-4 bg-primary-50 border-b border-gray-200 flex items-center gap-2">
-                  <Receipt className="w-5 h-5 text-primary-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">
+                <div className="p-4 bg-gradient-to-r from-primary-900/50 to-indigo-900/50 border-b border-white/10 flex items-center gap-2">
+                  <Receipt className="w-5 h-5 text-primary-400" />
+                  <h3 className="text-lg font-semibold text-white">
                     প্ল্যান #{selectedPlan.id} – লেনদেন তালিকা
                   </h3>
                   <button
                     type="button"
                     onClick={() => setSelectedPlan(null)}
-                    className="ml-auto text-sm text-primary-600 hover:text-primary-700"
+                    className="ml-auto text-sm text-primary-400 hover:text-primary-300 font-medium transition-colors"
                   >
                     বন্ধ করুন
                   </button>
                 </div>
                 {transactionsLoading ? (
-                  <div className="py-8 text-center text-gray-500">
+                  <div className="py-8 text-center text-slate-400">
                     লেনদেন লোড হচ্ছে...
                   </div>
                 ) : (

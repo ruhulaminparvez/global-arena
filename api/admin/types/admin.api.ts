@@ -92,18 +92,35 @@ export interface UserListResponse {
 
 export type UserRole = "SUPPORT" | "ADMIN" | "USER" | string;
 
+export interface ReferredUser {
+  id: number;
+  profile_id: string;
+  username: string;
+  first_name: string;
+  last_name: string;
+  created_at: string;
+}
+
 export interface Profile {
   id: number;
   user: User;
   role?: UserRole;
   mobile?: string;
   nid?: string;
+  reference_username?: string;
+  referred_users?: ReferredUser[];
   [key: string]: unknown;
 }
 
 export interface UpdateProfilePayload {
   role?: UserRole;
   mobile?: string;
+}
+
+export interface AdminUpdateUserPayload {
+  first_name?: string;
+  last_name?: string;
+  password?: string;
 }
 
 export interface CreateSupportUserPayload {

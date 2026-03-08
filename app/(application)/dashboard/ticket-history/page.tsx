@@ -103,14 +103,13 @@ type AnyValue = string | number | boolean | null | undefined | AnyValue[] | { [k
 
 function DetailValue({ value }: { value: AnyValue }) {
   if (value === null || value === undefined) {
-    return <span className="text-gray-400 italic">null</span>;
+    return <span className="text-slate-400 italic">null</span>;
   }
   if (typeof value === "boolean") {
     return (
       <span
-        className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
-          value ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"
-        }`}
+        className={`px-2 py-0.5 text-xs font-semibold rounded-full ${value ? "bg-green-500/20 text-green-400" : "bg-white/5 text-slate-400"
+          }`}
       >
         {value ? "হ্যাঁ" : "না"}
       </span>
@@ -118,10 +117,10 @@ function DetailValue({ value }: { value: AnyValue }) {
   }
   if (typeof value === "object" && !Array.isArray(value)) {
     return (
-      <div className="mt-1 ml-3 border-l-2 border-primary-100 pl-3 space-y-1.5">
+      <div className="mt-1 ml-3 border-l-2 border-primary-500/30 pl-3 space-y-1.5">
         {Object.entries(value).map(([k, v]) => (
           <div key={k} className="flex flex-col sm:flex-row sm:items-start gap-1">
-            <span className="text-xs font-semibold text-primary-600 min-w-[140px] shrink-0">
+            <span className="text-xs font-semibold text-primary-400 min-w-[140px] shrink-0">
               {FIELD_LABELS[k] ?? k}
             </span>
             <DetailValue value={v as AnyValue} />
@@ -131,12 +130,12 @@ function DetailValue({ value }: { value: AnyValue }) {
     );
   }
   if (Array.isArray(value)) {
-    if (value.length === 0) return <span className="text-gray-400 italic">[]</span>;
+    if (value.length === 0) return <span className="text-slate-400 italic">[]</span>;
     return (
       <div className="space-y-1 mt-1">
         {value.map((v, i) => (
           <div key={i} className="flex gap-1 items-start">
-            <span className="text-gray-400 text-xs">[{i}]</span>
+            <span className="text-slate-400 text-xs">[{i}]</span>
             <DetailValue value={v} />
           </div>
         ))}
@@ -156,16 +155,16 @@ function DetailValue({ value }: { value: AnyValue }) {
         minute: "2-digit",
       });
       return (
-        <span className="text-gray-800">
+        <span className="text-white">
           {date}{" "}
-          <span className="text-gray-400 text-xs">({str})</span>
+          <span className="text-slate-400 text-xs">({str})</span>
         </span>
       );
     } catch {
       /* fall through */
     }
   }
-  return <span className="text-gray-800 break-all">{str}</span>;
+  return <span className="text-white break-all">{str}</span>;
 }
 
 function DetailModal({
@@ -182,13 +181,13 @@ function DetailModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
       aria-modal
       role="dialog"
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-transparent"
         onClick={onClose}
       />
       {/* Panel */}
@@ -197,23 +196,23 @@ function DetailModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 16 }}
         transition={{ duration: 0.2 }}
-        className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col"
+        className="relative z-10 bg-accent-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0 bg-gradient-to-r from-primary-50 to-white rounded-t-2xl">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 shrink-0 bg-gradient-to-r from-primary-900/50 to-indigo-900/50 rounded-t-2xl">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center">
-              <ChevronRight className="w-5 h-5 text-primary-600" />
+            <div className="w-8 h-8 rounded-lg bg-primary-500/20 flex items-center justify-center border border-primary-500/30">
+              <ChevronRight className="w-5 h-5 text-primary-400" />
             </div>
             <div>
-              <h2 className="font-bold text-gray-900 text-base truncate">{title}</h2>
-              <p className="text-xs text-gray-500">বিস্তারিত তথ্য</p>
+              <h2 className="font-bold text-white text-base truncate">{title}</h2>
+              <p className="text-xs text-slate-400">বিস্তারিত তথ্য</p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
             aria-label="বন্ধ করুন"
           >
             <X className="w-5 h-5" />
@@ -225,9 +224,9 @@ function DetailModal({
           {Object.entries(row).map(([key, value]) => (
             <div
               key={key}
-              className="flex flex-col sm:flex-row sm:items-start gap-1 py-2.5 border-b border-gray-50 last:border-0"
+              className="flex flex-col sm:flex-row sm:items-start gap-1 py-2.5 border-b border-white/10 last:border-0"
             >
-              <span className="text-sm font-semibold text-primary-700 min-w-[180px] shrink-0">
+              <span className="text-sm font-semibold text-primary-400 min-w-[180px] shrink-0">
                 {FIELD_LABELS[key] ?? key}
               </span>
               <div className="text-sm flex-1">
@@ -238,11 +237,11 @@ function DetailModal({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-gray-100 shrink-0 rounded-b-2xl bg-gray-50">
+        <div className="px-6 py-3 border-t border-white/10 shrink-0 rounded-b-2xl bg-black/20">
           <button
             type="button"
             onClick={onClose}
-            className="w-full py-2 rounded-lg bg-white hover:bg-gray-100 text-gray-700 font-medium text-sm transition-colors border border-gray-200"
+            className="w-full py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white font-medium text-sm transition-colors border border-white/10"
           >
             বন্ধ করুন
           </button>
@@ -350,21 +349,27 @@ export default function TicketHistoryPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <div className="max-w-7xl mx-auto px-4 py-8 pb-[12rem] sm:pb-[7rem] overflow-x-hidden">
+    <div className="min-h-screen bg-accent-950 overflow-x-hidden relative">
+      {/* Premium Background Graphics */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-900/40 mix-blend-screen filter blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-900/30 mix-blend-screen filter blur-[100px] animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 pb-[12rem] sm:pb-[7rem] overflow-x-hidden">
         {/* Page Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl shadow-lg p-6 mb-6"
+          className="bg-accent-900/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl p-6 mb-6"
         >
           <div className="flex items-center gap-3 mb-6">
             <Ticket className="w-8 h-8 text-primary-600" />
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white">
                 টিকেট ইতিহাস
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-slate-400 mt-1">
                 সক্রিয় সিডিউল, সমস্ত টিকেট ও আপনার ক্রয় তালিকা
               </p>
             </div>
@@ -380,11 +385,10 @@ export default function TicketHistoryPage() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-3 rounded-lg font-medium transition-colors ${
-                    isActive
-                      ? "bg-primary-600 text-white shadow-md"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all ${isActive
+                    ? "bg-gradient-to-r from-primary-600 to-indigo-600 border-none text-white shadow-lg shadow-primary-500/25"
+                    : "bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10 hover:text-white"
+                    }`}
                 >
                   <Icon className="w-5 h-5" />
                   {tab.label}
@@ -402,7 +406,7 @@ export default function TicketHistoryPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="শিরোনাম, বিবরণ বা আইডি দিয়ে অনুসন্ধান করুন..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full pl-10 pr-4 py-2 bg-black/30 border border-white/10 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-slate-500 backdrop-blur-sm transition-all"
               />
             </div>
             {activeTab !== "purchases" && (
@@ -410,7 +414,7 @@ export default function TicketHistoryPage() {
                 <button
                   type="button"
                   onClick={() => setFilterDropdownOpen((o) => !o)}
-                  className="w-full sm:w-auto px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg flex items-center gap-2 transition-colors border border-gray-300"
+                  className="w-full sm:w-auto px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-xl flex items-center gap-2 transition-colors border border-white/10 backdrop-blur-sm"
                 >
                   <Filter className="w-4 h-4" />
                   ফিল্টার
@@ -423,18 +427,17 @@ export default function TicketHistoryPage() {
                       aria-hidden
                       onClick={() => setFilterDropdownOpen(false)}
                     />
-                    <div className="absolute right-0 top-full mt-1 z-20 w-48 py-2 bg-white rounded-lg shadow-lg border border-gray-200">
+                    <div className="absolute right-0 top-full mt-2 z-20 w-48 py-2 bg-accent-900 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.5)] border border-white/10 backdrop-blur-xl">
                       <button
                         type="button"
                         onClick={() => {
                           setAgreementFilter("");
                           setFilterDropdownOpen(false);
                         }}
-                        className={`block w-full text-left px-4 py-2 text-sm ${
-                          agreementFilter === ""
-                            ? "bg-primary-50 text-primary-700 font-medium"
-                            : "text-gray-700 hover:bg-gray-50"
-                        }`}
+                        className={`block w-full text-left px-4 py-2 text-sm transition-colors ${agreementFilter === ""
+                          ? "bg-primary-500/20 text-primary-400 font-medium border-l-2 border-primary-500"
+                          : "text-slate-300 hover:bg-white/10"
+                          }`}
                       >
                         সব ধরন
                       </button>
@@ -444,11 +447,10 @@ export default function TicketHistoryPage() {
                           setAgreementFilter("LONG");
                           setFilterDropdownOpen(false);
                         }}
-                        className={`block w-full text-left px-4 py-2 text-sm ${
-                          agreementFilter === "LONG"
-                            ? "bg-primary-50 text-primary-700 font-medium"
-                            : "text-gray-700 hover:bg-gray-50"
-                        }`}
+                        className={`block w-full text-left px-4 py-2 text-sm transition-colors ${agreementFilter === "LONG"
+                          ? "bg-primary-500/20 text-primary-400 font-medium border-l-2 border-primary-500"
+                          : "text-slate-300 hover:bg-white/10"
+                          }`}
                       >
                         Long Term
                       </button>
@@ -458,11 +460,10 @@ export default function TicketHistoryPage() {
                           setAgreementFilter("SHORT");
                           setFilterDropdownOpen(false);
                         }}
-                        className={`block w-full text-left px-4 py-2 text-sm ${
-                          agreementFilter === "SHORT"
-                            ? "bg-primary-50 text-primary-700 font-medium"
-                            : "text-gray-700 hover:bg-gray-50"
-                        }`}
+                        className={`block w-full text-left px-4 py-2 text-sm transition-colors ${agreementFilter === "SHORT"
+                          ? "bg-primary-500/20 text-primary-400 font-medium border-l-2 border-primary-500"
+                          : "text-slate-300 hover:bg-white/10"
+                          }`}
                       >
                         Short Term
                       </button>
@@ -482,12 +483,12 @@ export default function TicketHistoryPage() {
           className="mb-6"
         >
           {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            <div className="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 backdrop-blur-sm">
               {error}
             </div>
           )}
           {loading ? (
-            <div className="bg-white rounded-xl shadow-lg p-12 text-center text-gray-500">
+            <div className="bg-accent-900/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl p-12 text-center text-slate-400">
               লোড হচ্ছে...
             </div>
           ) : activeTab === "purchases" ? (

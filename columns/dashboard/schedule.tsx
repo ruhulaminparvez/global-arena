@@ -21,14 +21,14 @@ export const getDashboardScheduleColumns = (
     {
       key: "id",
       label: "আইডি",
-      className: "font-mono text-gray-600",
+      className: "font-mono text-slate-400",
     },
     {
       key: "title",
       label: "শিরোনাম",
       render: (row) => (
         <span
-          className="font-semibold text-gray-900 max-w-[200px] truncate block"
+          className="font-semibold text-white max-w-[200px] truncate block"
           title={row.title}
         >
           {row.title}
@@ -61,7 +61,7 @@ export const getDashboardScheduleColumns = (
       key: "total_purchases",
       label: "ক্রয়",
       render: (row) => (
-        <span className="text-gray-600">{row.total_purchases}</span>
+        <span className="text-slate-400">{row.total_purchases}</span>
       ),
     },
     {
@@ -75,8 +75,8 @@ export const getDashboardScheduleColumns = (
       render: (row) => (
         <span
           className={`px-2 py-1 text-xs font-semibold rounded-full ${row.can_be_purchased
-              ? "bg-green-100 text-green-800"
-              : "bg-gray-100 text-gray-600"
+            ? "bg-green-500/20 text-green-300"
+            : "bg-white/10 text-slate-300"
             }`}
         >
           {row.can_be_purchased ? "হ্যাঁ" : "না"}
@@ -138,13 +138,13 @@ export const getPurchaseColumns = (
     {
       key: "id",
       label: "ক্রয় আইডি",
-      className: "font-mono text-gray-600",
+      className: "font-mono text-slate-400",
     },
     {
       key: "user_name",
       label: "ব্যবহারকারী",
       render: (row) => (
-        <span className="font-medium text-gray-900">{row.user_name}</span>
+        <span className="font-medium text-white">{row.user_name}</span>
       ),
     },
     {
@@ -152,7 +152,7 @@ export const getPurchaseColumns = (
       label: "টিকেট",
       render: (row) => (
         <span
-          className="font-semibold text-gray-900 max-w-[200px] truncate block"
+          className="font-semibold text-white max-w-[200px] truncate block"
           title={row.ticket.title}
         >
           {row.ticket.title}
@@ -172,7 +172,7 @@ export const getPurchaseColumns = (
       key: "profit_amount",
       label: "লাভের পরিমাণ",
       render: (row) => (
-        <span className="font-medium text-green-700">
+        <span className="font-medium text-green-400">
           ৳ {Number(row.profit_amount).toLocaleString("bn-BD")}
         </span>
       ),
@@ -183,8 +183,8 @@ export const getPurchaseColumns = (
       render: (row) => (
         <span
           className={`px-2 py-1 text-xs font-semibold rounded-full ${row.profit_added
-              ? "bg-green-100 text-green-800"
-              : "bg-yellow-100 text-yellow-800"
+            ? "bg-green-500/20 text-green-300"
+            : "bg-yellow-500/20 text-yellow-300"
             }`}
         >
           {row.profit_added ? "হ্যাঁ" : "না"}
@@ -206,7 +206,7 @@ export const getPurchaseColumns = (
             e.stopPropagation();
             options?.onView?.(row);
           }}
-          className="p-1.5 rounded-lg bg-gray-100 hover:bg-blue-100 text-gray-600 hover:text-blue-700 transition-colors"
+          className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
           title="বিস্তারিত দেখুন"
         >
           <Eye className="w-4 h-4" />

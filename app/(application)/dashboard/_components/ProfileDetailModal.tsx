@@ -43,10 +43,10 @@ export function ProfileDetailModal({ profile, onClose }: ProfileDetailModalProps
         exit={{ scale: 0.95, opacity: 0 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg max-h-[68vh] md:max-h-[80vh] overflow-hidden rounded-2xl bg-white shadow-2xl flex flex-col"
+        className="w-full max-w-lg max-h-[68vh] md:max-h-[80vh] overflow-hidden rounded-2xl bg-accent-900/90 backdrop-blur-xl border border-white/10 shadow-2xl flex flex-col"
       >
         {/* Header */}
-        <div className="shrink-0 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 px-6 py-4 flex items-center justify-between">
+        <div className="shrink-0 bg-gradient-to-r from-primary-900/50 to-indigo-900/50 border-b border-white/10 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <UserCircle className="w-6 h-6 text-white" />
             <h3 className="text-lg font-bold text-white">প্রোফাইল বিস্তারিত</h3>
@@ -66,8 +66,8 @@ export function ProfileDetailModal({ profile, onClose }: ProfileDetailModalProps
         {/* Scrollable body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Photo & name */}
-          <div className="flex flex-col items-center gap-3 pb-4 border-b border-gray-200">
-            <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-primary-100 bg-primary-50 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3 pb-4 border-b border-white/10">
+            <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-primary-500/30 bg-black/20 flex items-center justify-center">
               {profile.photo ? (
                 <img
                   src={getMediaUrl(profile.photo, DEFAULT_USER_PHOTO)}
@@ -75,18 +75,18 @@ export function ProfileDetailModal({ profile, onClose }: ProfileDetailModalProps
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <User className="w-12 h-12 text-primary-600" />
+                <User className="w-12 h-12 text-primary-400" />
               )}
             </div>
             <div className="text-center">
-              <p className="text-xl font-bold text-gray-900">{displayName}</p>
-              <p className="text-sm text-gray-500">@{profile.user?.username}</p>
+              <p className="text-xl font-bold text-white">{displayName}</p>
+              <p className="text-sm text-slate-400">@{profile.user?.username}</p>
             </div>
           </div>
 
           {/* User & account info */}
-          <div className="rounded-xl bg-gray-50 border border-gray-100 p-4">
-            <h4 className="text-sm font-semibold text-primary-700 mb-3 flex items-center gap-2">
+          <div className="rounded-xl bg-black/20 border border-white/10 p-4">
+            <h4 className="text-sm font-semibold text-primary-300 mb-3 flex items-center gap-2">
               <IdCard className="w-4 h-4" />
               অ্যাকাউন্ট তথ্য
             </h4>
@@ -125,8 +125,8 @@ export function ProfileDetailModal({ profile, onClose }: ProfileDetailModalProps
           </div>
 
           {/* Registration fee */}
-          <div className="rounded-xl bg-gray-50 border border-gray-100 p-4">
-            <h4 className="text-sm font-semibold text-primary-700 mb-3 flex items-center gap-2">
+          <div className="rounded-xl bg-black/20 border border-white/10 p-4">
+            <h4 className="text-sm font-semibold text-primary-300 mb-3 flex items-center gap-2">
               <Wallet className="w-4 h-4" />
               নিবন্ধন ফি
             </h4>
@@ -147,8 +147,8 @@ export function ProfileDetailModal({ profile, onClose }: ProfileDetailModalProps
           </div>
 
           {/* Nominee */}
-          <div className="rounded-xl bg-gray-50 border border-gray-100 p-4">
-            <h4 className="text-sm font-semibold text-primary-700 mb-3 flex items-center gap-2">
+          <div className="rounded-xl bg-black/20 border border-white/10 p-4">
+            <h4 className="text-sm font-semibold text-primary-300 mb-3 flex items-center gap-2">
               <UserCircle className="w-4 h-4" />
               নমিনি তথ্য
             </h4>
@@ -164,18 +164,18 @@ export function ProfileDetailModal({ profile, onClose }: ProfileDetailModalProps
                 value={profile.nominee_nid}
               />
               {profile.nominee_photo && (
-                <div className="flex items-start gap-3 py-2.5 border-b border-gray-100 last:border-0">
-                  <div className="p-1.5 rounded-lg bg-primary-50 text-primary-600 shrink-0">
+                <div className="flex items-start gap-3 py-2.5 border-b border-white/10 last:border-0">
+                  <div className="p-1.5 rounded-lg bg-primary-500/10 text-primary-400 shrink-0">
                     <IdCard className="w-4 h-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-1">
                       নমিনির ফটো
                     </p>
                     <img
                       src={getMediaUrl(profile.nominee_photo, DEFAULT_USER_PHOTO)}
                       alt="Nominee"
-                      className="w-20 h-20 rounded-lg object-cover border border-gray-200"
+                      className="w-20 h-20 rounded-lg object-cover border border-white/10"
                     />
                   </div>
                 </div>
@@ -184,8 +184,8 @@ export function ProfileDetailModal({ profile, onClose }: ProfileDetailModalProps
           </div>
 
           {/* Dates */}
-          <div className="rounded-xl bg-gradient-to-br from-primary-50 to-accent-50 border border-primary-100 p-4">
-            <h4 className="text-sm font-semibold text-primary-700 mb-3 flex items-center gap-2">
+          <div className="rounded-xl bg-gradient-to-br from-primary-900/20 to-indigo-900/20 border border-primary-500/20 p-4 backdrop-blur-sm">
+            <h4 className="text-sm font-semibold text-primary-300 mb-3 flex items-center gap-2">
               <Calendar className="w-4 h-4" />
               তারিখ
             </h4>

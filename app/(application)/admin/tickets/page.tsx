@@ -124,12 +124,12 @@ export default function TicketManagementPage() {
       getScheduleColumns({
         ...(activeTab === "all"
           ? {
-              onEdit: (schedule) => {
-                setEditingSchedule(schedule);
-                setFormModal("update");
-              },
-              onDelete: (schedule) => setDeleteSchedule(schedule),
-            }
+            onEdit: (schedule) => {
+              setEditingSchedule(schedule);
+              setFormModal("update");
+            },
+            onDelete: (schedule) => setDeleteSchedule(schedule),
+          }
           : {}),
         onViewDetail: (schedule) =>
           setDetailItem({ item: schedule, type: "schedule" }),
@@ -199,18 +199,28 @@ export default function TicketManagementPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <div className="max-w-7xl mx-auto px-4 py-8 pb-[18rem] sm:pb-[12rem] overflow-x-hidden">
+    <div className="min-h-screen bg-accent-950 overflow-x-hidden relative text-white font-sans">
+      {/* Premium Background Graphics */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary-900/40 mix-blend-screen filter blur-[100px] animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] rounded-full bg-blue-900/30 mix-blend-screen filter blur-[120px] animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
+        <div className="absolute top-[40%] right-[10%] w-[20%] h-[20%] rounded-full bg-cyan-900/20 mix-blend-screen filter blur-[80px] animate-pulse" style={{ animationDuration: '10s', animationDelay: '4s' }} />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 pb-[18rem] sm:pb-[12rem] overflow-x-hidden">
         {/* Page Header */}
-        <div className="mb-8 bg-white rounded-xl shadow-lg p-6">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="mb-8 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-6 relative overflow-hidden">
+          <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-primary-400 to-transparent opacity-50"></div>
+          <div className="flex items-center justify-between flex-wrap gap-4 relative z-10">
             <div className="flex items-center gap-3">
-              <Ticket className="w-8 h-8 text-primary-600" />
+              <div className="p-3 bg-primary-500/20 rounded-2xl border border-primary-500/30">
+                <Ticket className="w-8 h-8 text-primary-400" />
+              </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                   টিকেট সিডিউল ম্যানেজমেন্ট
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-slate-300 mt-1">
                   সিডিউল তৈরি, আপডেট ও পরিচালনা করুন
                 </p>
               </div>
@@ -230,7 +240,7 @@ export default function TicketManagementPage() {
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 bg-white rounded-xl shadow-lg p-2 flex flex-wrap gap-1">
+        <div className="mb-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl overflow-hidden p-1 flex flex-wrap">
           {TABS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -239,37 +249,36 @@ export default function TicketManagementPage() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-3 rounded-lg font-medium transition-colors ${
-                  isActive
-                    ? "bg-primary-600 text-white shadow-md"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-4 font-medium transition-all duration-300 rounded-xl ${isActive
+                    ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg"
+                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
               >
-                <Icon className="w-5 h-5" />
-                {tab.label}
+                <Icon className="w-5 h-5 shrink-0" />
+                <span className="whitespace-nowrap">{tab.label}</span>
               </button>
             );
           })}
         </div>
 
         {/* Search & Filter */}
-        <div className="mb-6 bg-white rounded-xl shadow-lg p-4">
+        <div className="mb-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl p-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="শিরোনাম, বিবরণ বা আইডি দিয়ে অনুসন্ধান করুন..."
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full pl-10 pr-4 py-3 bg-accent-900/50 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
               />
             </div>
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setFilterDropdownOpen((o) => !o)}
-                className="w-full sm:w-auto px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg flex items-center gap-2 transition-colors border border-gray-300"
+                className="w-full sm:w-auto px-4 py-3 bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl flex items-center gap-2 transition-all duration-300 border border-white/10"
               >
                 <Filter className="w-4 h-4" />
                 ফিল্টার
@@ -282,16 +291,15 @@ export default function TicketManagementPage() {
                     aria-hidden
                     onClick={() => setFilterDropdownOpen(false)}
                   />
-                  <div className="absolute right-0 top-full mt-1 z-20 w-48 py-2 bg-white rounded-lg shadow-lg border border-gray-200">
+                  <div className="absolute right-0 top-full mt-2 z-20 w-48 py-2 bg-accent-900 border border-white/10 rounded-xl shadow-2xl backdrop-blur-xl">
                     <button
                       type="button"
                       onClick={() => {
                         setAgreementFilter("");
                         setFilterDropdownOpen(false);
                       }}
-                      className={`block w-full text-left px-4 py-2 text-sm ${
-                        agreementFilter === "" ? "bg-primary-50 text-primary-700 font-medium" : "text-gray-700 hover:bg-gray-50"
-                      }`}
+                      className={`block w-full text-left px-4 py-2 text-sm transition-colors ${agreementFilter === "" ? "bg-primary-500/20 text-primary-400 font-medium" : "text-slate-300 hover:bg-white/5 hover:text-white"
+                        }`}
                     >
                       সব ধরন
                     </button>
@@ -301,9 +309,8 @@ export default function TicketManagementPage() {
                         setAgreementFilter("LONG");
                         setFilterDropdownOpen(false);
                       }}
-                      className={`block w-full text-left px-4 py-2 text-sm ${
-                        agreementFilter === "LONG" ? "bg-primary-50 text-primary-700 font-medium" : "text-gray-700 hover:bg-gray-50"
-                      }`}
+                      className={`block w-full text-left px-4 py-2 text-sm transition-colors ${agreementFilter === "LONG" ? "bg-primary-500/20 text-primary-400 font-medium" : "text-slate-300 hover:bg-white/5 hover:text-white"
+                        }`}
                     >
                       Long Term
                     </button>
@@ -313,9 +320,8 @@ export default function TicketManagementPage() {
                         setAgreementFilter("SHORT");
                         setFilterDropdownOpen(false);
                       }}
-                      className={`block w-full text-left px-4 py-2 text-sm ${
-                        agreementFilter === "SHORT" ? "bg-primary-50 text-primary-700 font-medium" : "text-gray-700 hover:bg-gray-50"
-                      }`}
+                      className={`block w-full text-left px-4 py-2 text-sm transition-colors ${agreementFilter === "SHORT" ? "bg-primary-500/20 text-primary-400 font-medium" : "text-slate-300 hover:bg-white/5 hover:text-white"
+                        }`}
                     >
                       Short Term
                     </button>
@@ -329,12 +335,12 @@ export default function TicketManagementPage() {
         {/* Table */}
         <div className="mb-6">
           {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            <div className="mb-4 p-4 bg-rose-500/20 border border-rose-500/30 text-rose-300 rounded-xl backdrop-blur-sm">
               {error}
             </div>
           )}
           {loading ? (
-            <div className="bg-white rounded-xl shadow-lg p-12 text-center text-gray-500">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl p-12 text-center text-slate-400">
               লোড হচ্ছে...
             </div>
           ) : activeTab === "purchases" ? (

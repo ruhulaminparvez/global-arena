@@ -86,19 +86,25 @@ export default function ContactPage() {
   }, [fetchAllChatRooms]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <div className="max-w-6xl mx-auto px-4 py-8 pb-[12rem] sm:pb-[7rem] overflow-x-hidden">
+    <div className="min-h-screen bg-accent-950 overflow-x-hidden relative">
+      {/* Premium Background Graphics */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-900/40 mix-blend-screen filter blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-900/30 mix-blend-screen filter blur-[100px] animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 py-8 pb-[12rem] sm:pb-[7rem] overflow-x-hidden">
         {/* Page Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl shadow-lg p-6 mb-6"
+          className="bg-accent-900/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl p-6 mb-6"
         >
           <div className="flex items-center gap-3 mb-4">
-            <MessageSquare className="w-8 h-8 text-primary-600" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">যোগাযোগ</h1>
+            <MessageSquare className="w-8 h-8 text-primary-400" />
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">যোগাযোগ</h1>
           </div>
-          <p className="text-gray-600">
+          <p className="text-slate-400">
             আপনার চ্যাট রুম দেখুন এবং বার্তা পাঠান।
           </p>
         </motion.div>
@@ -110,17 +116,17 @@ export default function ContactPage() {
           transition={{ delay: 0.05 }}
           className="mb-6"
         >
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <MessageCircle className="w-5 h-5 text-primary-600" />
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <MessageCircle className="w-5 h-5 text-primary-400" />
             আমার চ্যাট
           </h2>
           {chatRoomLoading && (
-            <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
+            <div className="bg-accent-900/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl p-8 text-center text-slate-400">
               চ্যাট রুম লোড হচ্ছে...
             </div>
           )}
           {!chatRoomLoading && !chatRoom && (
-            <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
+            <div className="bg-accent-900/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl p-8 text-center text-slate-400">
               আপনার কোনো চ্যাট রুম নেই। সাপোর্টের সাথে যোগাযোগ করতে নিচের ফর্ম ব্যবহার করুন।
             </div>
           )}
@@ -130,30 +136,30 @@ export default function ContactPage() {
               onClick={() => setSelectedRoom(chatRoom)}
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
-              className="w-full bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow text-left flex items-center gap-4 border border-gray-100"
+              className="w-full bg-white/5 rounded-2xl shadow-lg p-6 hover:bg-white/10 transition-colors text-left flex items-center gap-4 border border-white/10 backdrop-blur-sm"
             >
-              <div className="w-14 h-14 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
-                <MessageSquare className="w-7 h-7 text-primary-600" />
+              <div className="w-14 h-14 rounded-full bg-primary-500/20 flex items-center justify-center shrink-0 border border-primary-500/30">
+                <MessageSquare className="w-7 h-7 text-primary-400" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2 mb-1">
-                  <span className="font-semibold text-gray-900 truncate">
+                  <span className="font-semibold text-white truncate">
                     {getRoomDisplayName(chatRoom)}
                   </span>
                   {chatRoom.unread_count > 0 && (
-                    <span className="shrink-0 px-2 py-0.5 text-xs font-bold rounded-full bg-primary-600 text-white">
+                    <span className="shrink-0 px-2 py-0.5 text-xs font-bold rounded-full bg-gradient-to-r from-primary-600 to-indigo-600 shadow-lg shadow-primary-500/25 text-white">
                       {chatRoom.unread_count}
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 truncate">
+                <p className="text-sm text-slate-300 truncate">
                   {chatRoom.last_message ?? "কোন বার্তা নেই"}
                 </p>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-slate-400 mt-1">
                   {formatDate(chatRoom.updated_at)}
                 </p>
               </div>
-              <span className="text-primary-600 text-sm font-medium shrink-0">বার্তা দেখুন</span>
+              <span className="text-primary-400 text-sm font-medium shrink-0">বার্তা দেখুন</span>
             </motion.button>
           )}
         </motion.div>
@@ -166,17 +172,17 @@ export default function ContactPage() {
             transition={{ delay: 0.1 }}
             className="mb-6"
           >
-            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Users className="w-5 h-5 text-primary-600" />
+            <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <Users className="w-5 h-5 text-primary-400" />
               সমস্ত চ্যাট রুম
             </h2>
             {allRoomsLoading && (
-              <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
+              <div className="bg-accent-900/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl p-8 text-center text-slate-400">
                 চ্যাট রুম লোড হচ্ছে...
               </div>
             )}
             {!allRoomsLoading && allRooms.length === 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
+              <div className="bg-accent-900/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl p-8 text-center text-slate-400">
                 কোন চ্যাট রুম নেই
               </div>
             )}
@@ -192,30 +198,30 @@ export default function ContactPage() {
                     transition={{ delay: index * 0.03 }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full bg-white rounded-xl shadow-lg p-5 hover:shadow-xl transition-shadow text-left flex items-center gap-4 border border-gray-100"
+                    className="w-full bg-white/5 rounded-2xl shadow-lg p-5 hover:bg-white/10 transition-colors text-left flex items-center gap-4 border border-white/10 backdrop-blur-sm"
                   >
-                    <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
-                      <MessageSquare className="w-6 h-6 text-primary-600" />
+                    <div className="w-12 h-12 rounded-full bg-primary-500/20 flex items-center justify-center shrink-0 border border-primary-500/30">
+                      <MessageSquare className="w-6 h-6 text-primary-400" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2 mb-1">
-                        <span className="font-semibold text-gray-900 truncate">
+                        <span className="font-semibold text-white truncate">
                           {getRoomDisplayName(room)}
                         </span>
                         {room.unread_count > 0 && (
-                          <span className="shrink-0 px-2 py-0.5 text-xs font-bold rounded-full bg-primary-600 text-white">
+                          <span className="shrink-0 px-2 py-0.5 text-xs font-bold rounded-full bg-gradient-to-r from-primary-600 to-indigo-600 shadow-lg shadow-primary-500/25 text-white">
                             {room.unread_count}
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-600 truncate">
+                      <p className="text-sm text-slate-300 truncate">
                         {room.last_message ?? "কোন বার্তা নেই"}
                       </p>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-slate-400 mt-1">
                         {formatDate(room.updated_at)}
                       </p>
                     </div>
-                    <span className="text-primary-600 text-sm font-medium shrink-0">
+                    <span className="text-primary-400 text-sm font-medium shrink-0">
                       বার্তা দেখুন
                     </span>
                   </motion.button>

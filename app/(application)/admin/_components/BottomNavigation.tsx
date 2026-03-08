@@ -52,21 +52,21 @@ export default function AdminBottomNavigation() {
   // Get color classes for each menu item based on ID
   const getItemColorClasses = (itemId: number, isActive: boolean) => {
     if (isActive) {
-      return "bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30";
+      return "bg-gradient-to-br from-primary-600/90 to-indigo-600/90 text-white shadow-[0_0_15px_rgba(56,189,248,0.3)] border border-white/20";
     }
 
     const colorMap: Record<number, string> = {
-      1: "bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-700", // LayoutDashboard - Blue
-      2: "bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700", // Wallet - Green
-      3: "bg-purple-100 text-purple-600 hover:bg-purple-200 hover:text-purple-700", // TrendingUp - Purple
-      4: "bg-orange-100 text-orange-600 hover:bg-orange-200 hover:text-orange-700", // ArrowUpCircle - Orange
-      5: "bg-pink-100 text-pink-600 hover:bg-pink-200 hover:text-pink-700", // Ticket - Pink
-      6: "bg-cyan-100 text-cyan-600 hover:bg-cyan-200 hover:text-cyan-700", // MessageSquare - Cyan
-      7: "bg-indigo-100 text-indigo-600 hover:bg-indigo-200 hover:text-indigo-700", // Users - Indigo
-      8: "bg-emerald-100 text-emerald-600 hover:bg-emerald-200 hover:text-emerald-700", // ArrowDownCircle - Emerald
+      1: "bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 border border-transparent hover:border-blue-500/20", // LayoutDashboard
+      2: "bg-green-500/10 text-green-400 hover:bg-green-500/20 hover:text-green-300 border border-transparent hover:border-green-500/20", // Wallet
+      3: "bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 hover:text-purple-300 border border-transparent hover:border-purple-500/20", // TrendingUp
+      4: "bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 hover:text-orange-300 border border-transparent hover:border-orange-500/20", // ArrowUpCircle
+      5: "bg-pink-500/10 text-pink-400 hover:bg-pink-500/20 hover:text-pink-300 border border-transparent hover:border-pink-500/20", // Ticket
+      6: "bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 hover:text-cyan-300 border border-transparent hover:border-cyan-500/20", // MessageSquare
+      7: "bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 hover:text-indigo-300 border border-transparent hover:border-indigo-500/20", // Users
+      8: "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300 border border-transparent hover:border-emerald-500/20", // ArrowDownCircle
     };
 
-    return colorMap[itemId] || "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700";
+    return colorMap[itemId] || "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-slate-200 border border-transparent hover:border-white/10";
   };
 
   return (
@@ -76,7 +76,7 @@ export default function AdminBottomNavigation() {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-2xl"
+        className="fixed bottom-0 left-0 right-0 z-50 bg-accent-950/80 backdrop-blur-xl border-t border-white/10 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]"
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
       >
         <div className="max-w-7xl mx-auto px-3 py-3">
@@ -121,7 +121,7 @@ export default function AdminBottomNavigation() {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setShowLogoutModal(true)}
-              className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2 py-3 rounded-xl transition-all bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 min-w-[80px]"
+              className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2 py-3 rounded-xl transition-all bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 border border-transparent hover:border-red-500/20 min-w-[80px]"
             >
               <LogOut className="w-5 h-5 sm:w-6 sm:h-6" />
               <span className="text-[10px] sm:text-xs font-semibold text-center leading-tight">লগআউট</span>
@@ -138,7 +138,7 @@ export default function AdminBottomNavigation() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
             onClick={() => !isLoggingOut && setShowLogoutModal(false)}
           >
             <motion.div
@@ -146,28 +146,28 @@ export default function AdminBottomNavigation() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl"
+              className="bg-accent-900 border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-gray-900">লগআউট</h3>
+                <h3 className="text-xl font-bold text-white">লগআউট</h3>
                 {!isLoggingOut && (
                   <button
                     onClick={() => setShowLogoutModal(false)}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    className="text-slate-400 hover:text-white transition-colors"
                     disabled={isLoggingOut}
                   >
                     <X className="w-5 h-5" />
                   </button>
                 )}
               </div>
-              <p className="text-gray-600 mb-6">
+              <p className="text-slate-300 mb-6">
                 আপনি কি নিশ্চিত যে আপনি লগআউট করতে চান?
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowLogoutModal(false)}
                   disabled={isLoggingOut}
-                  className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-white/10 text-white rounded-lg font-medium hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   বাতিল
                 </button>

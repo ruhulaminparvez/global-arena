@@ -164,18 +164,28 @@ export default function UserManagementPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <div className="max-w-7xl mx-auto px-4 py-8 pb-[18rem] sm:pb-[12rem] overflow-x-hidden">
+    <div className="min-h-screen bg-accent-950 overflow-x-hidden relative text-white font-sans">
+      {/* Premium Background Graphics */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary-900/40 mix-blend-screen filter blur-[100px] animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] rounded-full bg-blue-900/30 mix-blend-screen filter blur-[120px] animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
+        <div className="absolute top-[40%] right-[10%] w-[20%] h-[20%] rounded-full bg-cyan-900/20 mix-blend-screen filter blur-[80px] animate-pulse" style={{ animationDuration: '10s', animationDelay: '4s' }} />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 pb-[18rem] sm:pb-[12rem] overflow-x-hidden">
         {/* Page Header */}
-        <div className="mb-8 bg-white rounded-xl shadow-lg p-6">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="mb-8 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-6 relative overflow-hidden">
+          <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-primary-400 to-transparent opacity-50"></div>
+          <div className="flex items-center justify-between flex-wrap gap-4 relative z-10">
             <div className="flex items-center gap-3">
-              <Users className="w-8 h-8 text-primary-600" />
+              <div className="p-3 bg-primary-500/20 rounded-2xl border border-primary-500/30">
+                <Users className="w-8 h-8 text-primary-400" />
+              </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                   ইউজার ম্যানেজমেন্ট
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-slate-300 mt-1">
                   সমস্ত ব্যবহারকারী পরিচালনা করুন
                 </p>
               </div>
@@ -194,42 +204,40 @@ export default function UserManagementPage() {
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 bg-white rounded-xl shadow-lg overflow-hidden">
-          <div className="flex border-b border-gray-200">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-4 font-medium transition-colors ${isActive
-                    ? "bg-primary-600 text-white border-b-2 border-primary-600"
-                    : "bg-gray-50 text-gray-600 hover:bg-gray-100 border-b-2 border-transparent"
-                    }`}
-                >
-                  <Icon className="w-5 h-5 shrink-0" />
-                  <span className="whitespace-nowrap">{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
+        <div className="mb-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl overflow-hidden p-1 flex">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-4 font-medium transition-all duration-300 rounded-xl ${isActive
+                  ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg"
+                  : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+              >
+                <Icon className="w-5 h-5 shrink-0" />
+                <span className="whitespace-nowrap">{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Tab: User Information */}
         {activeTab === "users" && (
           <div className="space-y-6">
             {/* Search Bar */}
-            <div className="bg-white rounded-xl shadow-lg p-4">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl p-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="নাম, ইমেইল বা ইউজারনেম দিয়ে অনুসন্ধান করুন..."
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full pl-10 pr-4 py-3 bg-accent-900/50 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
                 />
               </div>
             </div>
@@ -237,12 +245,12 @@ export default function UserManagementPage() {
             {/* Users Table */}
             <div>
               {error && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                <div className="mb-4 p-4 bg-rose-500/20 border border-rose-500/30 text-rose-300 rounded-xl backdrop-blur-sm">
                   {error}
                 </div>
               )}
               {loading ? (
-                <div className="bg-white rounded-xl shadow-lg p-12 text-center text-gray-500">
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl p-12 text-center text-slate-400">
                   লোড হচ্ছে...
                 </div>
               ) : (
@@ -261,18 +269,18 @@ export default function UserManagementPage() {
         {activeTab === "fee-management" && (
           <div className="space-y-6">
             {/* Status Filter */}
-            <div className="bg-white rounded-xl shadow-lg p-4">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl p-4">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="text-sm font-medium text-gray-700">স্ট্যাটাস ফিল্টার:</span>
+                <span className="text-sm font-medium text-slate-300">স্ট্যাটাস ফিল্টার:</span>
                 <div className="flex flex-wrap gap-2">
                   {STATUS_OPTIONS.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
                       onClick={() => setFeeStatusFilter(opt.value)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${feeStatusFilter === opt.value
-                        ? "bg-primary-600 text-white"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${feeStatusFilter === opt.value
+                        ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg border-transparent"
+                        : "bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 hover:text-white"
                         }`}
                     >
                       {opt.label}
@@ -283,51 +291,51 @@ export default function UserManagementPage() {
             </div>
 
             {/* Fee Payments Table */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl overflow-hidden">
               {feeError && (
-                <div className="m-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                <div className="m-4 p-4 bg-rose-500/20 border border-rose-500/30 text-rose-300 rounded-xl backdrop-blur-sm">
                   {feeError}
                 </div>
               )}
               {feeLoading ? (
-                <div className="p-12 text-center text-gray-500">
+                <div className="p-12 text-center text-slate-400">
                   লোড হচ্ছে...
                 </div>
               ) : feePayments.length === 0 ? (
-                <div className="p-12 text-center text-gray-500">
+                <div className="p-12 text-center text-slate-400">
                   কোন রেজিস্ট্রেশন ফি পেমেন্ট পাওয়া যায়নি
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                  <table className="min-w-full divide-y divide-white/10">
+                    <thead className="bg-black/20">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ইউজার</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">পরিমাণ</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">লেনদেন আইডি</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">পেমেন্ট পদ্ধতি</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">স্ট্যাটাস</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">অ্যাডমিন নোট</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">তারিখ</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">অ্যাকশন</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">#</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">ইউজার</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">পরিমাণ</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">লেনদেন আইডি</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">পেমেন্ট পদ্ধতি</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">স্ট্যাটাস</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">অ্যাডমিন নোট</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">তারিখ</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">অ্যাকশন</th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="divide-y divide-white/5">
                       {feePayments.map((payment) => (
-                        <tr key={payment.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-4 py-4 text-sm text-gray-500">{payment.id}</td>
-                          <td className="px-4 py-4 text-sm font-medium text-gray-900">{payment.user_name}</td>
-                          <td className="px-4 py-4 text-sm text-gray-700">৳{payment.amount}</td>
-                          <td className="px-4 py-4 text-sm text-gray-600 font-mono">{payment.transaction_id}</td>
-                          <td className="px-4 py-4 text-sm text-gray-600">{payment.payment_method}</td>
+                        <tr key={payment.id} className="hover:bg-white/5 transition-colors">
+                          <td className="px-4 py-4 text-sm text-slate-400">{payment.id}</td>
+                          <td className="px-4 py-4 text-sm font-medium text-white">{payment.user_name}</td>
+                          <td className="px-4 py-4 text-sm text-primary-400">৳{payment.amount}</td>
+                          <td className="px-4 py-4 text-sm text-slate-300 font-mono">{payment.transaction_id}</td>
+                          <td className="px-4 py-4 text-sm text-slate-300">{payment.payment_method}</td>
                           <td className="px-4 py-4">
                             <StatusBadge status={payment.status} display={payment.status_display} />
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-500 max-w-[160px] truncate">
+                          <td className="px-4 py-4 text-sm text-slate-400 max-w-[160px] truncate">
                             {payment.admin_notes ?? "—"}
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                          <td className="px-4 py-4 text-sm text-slate-400 whitespace-nowrap">
                             {new Date(payment.created_at).toLocaleDateString("bn-BD")}
                           </td>
                           <td className="px-4 py-4">
@@ -353,7 +361,7 @@ export default function UserManagementPage() {
                                 </button>
                               </div>
                             ) : (
-                              <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+                              <span className="inline-flex items-center gap-1 text-xs text-slate-500">
                                 <Clock className="w-3.5 h-3.5" />
                                 {payment.status_display}
                               </span>

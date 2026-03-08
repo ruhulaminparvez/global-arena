@@ -146,18 +146,28 @@ export default function WithdrawalManagementPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <div className="max-w-7xl mx-auto px-4 py-8 pb-[18rem] sm:pb-[12rem] overflow-x-hidden">
+    <div className="min-h-screen bg-accent-950 overflow-x-hidden relative text-white font-sans">
+      {/* Premium Background Graphics */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary-900/40 mix-blend-screen filter blur-[100px] animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] rounded-full bg-blue-900/30 mix-blend-screen filter blur-[120px] animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
+        <div className="absolute top-[40%] right-[10%] w-[20%] h-[20%] rounded-full bg-cyan-900/20 mix-blend-screen filter blur-[80px] animate-pulse" style={{ animationDuration: '10s', animationDelay: '4s' }} />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 pb-[18rem] sm:pb-[12rem] overflow-x-hidden">
         {/* Page Header */}
-        <div className="mb-8 bg-white rounded-xl shadow-lg p-6">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="mb-8 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-6 relative overflow-hidden">
+          <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-primary-400 to-transparent opacity-50"></div>
+          <div className="flex items-center justify-between flex-wrap gap-4 relative z-10">
             <div className="flex items-center gap-3">
-              <ArrowUpCircle className="w-8 h-8 text-primary-600" />
+              <div className="p-3 bg-primary-500/20 rounded-2xl border border-primary-500/30">
+                <ArrowUpCircle className="w-8 h-8 text-primary-400" />
+              </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                   উত্তোলন ম্যানেজমেন্ট
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-slate-300 mt-1">
                   সমস্ত উত্তোলন লেনদেন পরিচালনা করুন
                 </p>
               </div>
@@ -166,17 +176,16 @@ export default function WithdrawalManagementPage() {
         </div>
 
         {/* Status filter */}
-        <div className="mb-4 flex flex-wrap gap-2">
+        <div className="mb-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl overflow-hidden p-1 flex flex-wrap gap-1">
           {STATUS_OPTIONS.map((opt) => (
             <button
               key={opt.value || "all"}
               type="button"
               onClick={() => setStatusFilter(opt.value)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                statusFilter === opt.value
-                  ? "bg-primary-600 text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-              }`}
+              className={`flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${statusFilter === opt.value
+                  ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg"
+                  : "text-slate-400 hover:text-white hover:bg-white/5"
+                }`}
             >
               {opt.label}
             </button>
@@ -184,22 +193,22 @@ export default function WithdrawalManagementPage() {
         </div>
 
         {/* Search Bar */}
-        <div className="mb-6 bg-white rounded-xl shadow-lg p-4">
+        <div className="mb-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl p-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="ব্যবহারকারী, পরিমাণ বা ব্যাংক বিবরণ দিয়ে অনুসন্ধান করুন..."
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full pl-10 pr-4 py-3 bg-accent-900/50 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
             />
           </div>
         </div>
 
         {/* Error */}
         {error && (
-          <div className="mb-4 p-4 bg-red-50 text-red-800 rounded-lg">
+          <div className="mb-4 p-4 bg-rose-500/20 border border-rose-500/30 text-rose-300 rounded-xl backdrop-blur-sm">
             {error}
           </div>
         )}
@@ -207,7 +216,7 @@ export default function WithdrawalManagementPage() {
         {/* Withdrawals Table */}
         <div className="mb-6">
           {loading ? (
-            <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl p-12 text-center text-slate-400">
               লোড হচ্ছে...
             </div>
           ) : (
@@ -225,84 +234,84 @@ export default function WithdrawalManagementPage() {
 
       {/* Detail modal */}
       {(selectedWithdrawal !== null || detailLoading) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 flex items-center justify-between border-b">
-              <h2 className="text-xl font-bold text-gray-900">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-accent-950 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col backdrop-blur-xl">
+            <div className="shrink-0 bg-gradient-to-r from-primary-900/50 to-indigo-900/50 p-6 flex items-center justify-between border-b border-white/10 rounded-t-2xl">
+              <h2 className="text-xl font-bold text-white">
                 উত্তোলন বিবরণ
               </h2>
               <button
                 type="button"
                 onClick={() => setSelectedWithdrawal(null)}
-                className="p-2 rounded-lg hover:bg-gray-100"
+                className="p-2 rounded-full text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
                 aria-label="বন্ধ করুন"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="p-6 space-y-4 overflow-y-auto">
               {detailLoading ? (
                 <p className="text-gray-500">লোড হচ্ছে...</p>
               ) : selectedWithdrawal ? (
                 <>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <span className="text-gray-600">আইডি</span>
-                    <span className="font-medium">
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <span className="text-slate-400 uppercase tracking-wider text-xs font-bold pt-1">আইডি</span>
+                    <span className="text-white font-medium">
                       {selectedWithdrawal.id}
                     </span>
-                    <span className="text-gray-600">ব্যবহারকারী</span>
-                    <span className="font-medium">
+                    <span className="text-slate-400 uppercase tracking-wider text-xs font-bold pt-1">ব্যবহারকারী</span>
+                    <span className="text-white font-medium">
                       {selectedWithdrawal.user}
                     </span>
-                    <span className="text-gray-600">পরিমাণ</span>
-                    <span className="font-medium">
+                    <span className="text-slate-400 uppercase tracking-wider text-xs font-bold pt-1">পরিমাণ</span>
+                    <span className="text-white font-medium">
                       ৳{" "}
                       {parseFloat(
                         selectedWithdrawal.amount || "0"
                       ).toLocaleString("bn-BD")}
                     </span>
-                    <span className="text-gray-600">স্ট্যাটাস</span>
-                    <span className="font-medium">
+                    <span className="text-slate-400 uppercase tracking-wider text-xs font-bold pt-1">স্ট্যাটাস</span>
+                    <span className="text-white font-medium">
                       {selectedWithdrawal.status_display}
                     </span>
-                    <span className="text-gray-600">তৈরির তারিখ</span>
-                    <span className="font-medium">
+                    <span className="text-slate-400 uppercase tracking-wider text-xs font-bold pt-1">তৈরির তারিখ</span>
+                    <span className="text-white font-medium">
                       {formatDate(selectedWithdrawal.created_at)}
                     </span>
-                    <span className="text-gray-600">আপডেট তারিখ</span>
-                    <span className="font-medium">
+                    <span className="text-slate-400 uppercase tracking-wider text-xs font-bold pt-1">আপডেট তারিখ</span>
+                    <span className="text-white font-medium">
                       {formatDate(selectedWithdrawal.updated_at)}
                     </span>
                   </div>
                   {selectedWithdrawal.bank_details && (
-                    <div>
-                      <span className="text-gray-600 text-sm">
+                    <div className="pt-2">
+                      <span className="text-slate-300 font-medium text-sm">
                         ব্যাংক বিবরণ
                       </span>
-                      <pre className="mt-1 p-2 bg-gray-50 rounded-lg text-sm whitespace-pre-wrap font-sans">
+                      <pre className="mt-2 p-3 bg-black/30 border border-white/10 rounded-xl text-slate-300 text-sm whitespace-pre-wrap font-sans">
                         {selectedWithdrawal.bank_details}
                       </pre>
                     </div>
                   )}
                   {selectedWithdrawal.admin_notes && (
-                    <div>
-                      <span className="text-gray-600 text-sm">
+                    <div className="pt-2">
+                      <span className="text-slate-300 font-medium text-sm">
                         অ্যাডমিন নোট
                       </span>
-                      <p className="mt-1 p-2 bg-gray-50 rounded-lg text-sm">
+                      <p className="mt-2 p-3 bg-black/30 border border-white/10 rounded-xl text-slate-300 text-sm">
                         {selectedWithdrawal.admin_notes}
                       </p>
                     </div>
                   )}
                   {selectedWithdrawal.status === "PENDING" && (
-                    <div className="flex gap-2 pt-4 border-t">
+                    <div className="flex gap-3 pt-6 border-t border-white/10">
                       <button
                         type="button"
                         disabled={actionLoading}
                         onClick={() =>
                           handleApprove(selectedWithdrawal)
                         }
-                        className="flex-1 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-lg font-medium"
+                        className="flex-1 py-3 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30 disabled:opacity-50 rounded-xl font-medium transition-all"
                       >
                         অনুমোদন
                       </button>
@@ -312,7 +321,7 @@ export default function WithdrawalManagementPage() {
                         onClick={() =>
                           handleRejectClick(selectedWithdrawal)
                         }
-                        className="flex-1 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white rounded-lg font-medium"
+                        className="flex-1 py-3 bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 border border-rose-500/30 disabled:opacity-50 rounded-xl font-medium transition-all"
                       >
                         প্রত্যাখ্যান
                       </button>
@@ -327,12 +336,12 @@ export default function WithdrawalManagementPage() {
 
       {/* Reject reason modal */}
       {rejectTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-accent-950 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] rounded-2xl max-w-md w-full p-6 backdrop-blur-xl">
+            <h2 className="text-xl font-bold text-white mb-2">
               প্রত্যাখ্যানের কারণ
             </h2>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-slate-300 mb-6">
               আইডি {rejectTarget.id} – ৳{" "}
               {parseFloat(rejectTarget.amount || "0").toLocaleString(
                 "bn-BD"
@@ -343,16 +352,16 @@ export default function WithdrawalManagementPage() {
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="কারণ লিখুন (বাধ্যতামূলক)"
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all font-sans"
             />
-            <div className="flex gap-2 mt-4">
+            <div className="flex justify-end gap-3 mt-6">
               <button
                 type="button"
                 onClick={() => {
                   setRejectTarget(null);
                   setRejectReason("");
                 }}
-                className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium"
+                className="px-6 py-2.5 border border-white/10 hover:bg-white/5 text-slate-300 rounded-xl font-medium transition-colors"
               >
                 বাতিল
               </button>
@@ -360,7 +369,7 @@ export default function WithdrawalManagementPage() {
                 type="button"
                 disabled={actionLoading || !rejectReason.trim()}
                 onClick={handleRejectSubmit}
-                className="flex-1 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white rounded-lg font-medium"
+                className="px-6 py-2.5 bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 border border-rose-500/30 disabled:opacity-50 rounded-xl font-medium transition-all"
               >
                 প্রত্যাখ্যান
               </button>

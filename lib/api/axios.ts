@@ -148,8 +148,36 @@ apiClient.interceptors.response.use(
       }
     }
 
-    // Handle other errors without page reload
-    // Errors are handled in the component/callback
-    return Promise.reject(error);
+    // Attempt to extract a more friendly error message
+    let errorMessage = "দুঃখিত, কোনো একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।";
+
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      if (error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+        errorMessage = (error.response.data as any).message;
+      } else if (error.response.status === 400 || error.response.status === 401) {
+        errorMessage = "ভুল ইউজারনেম বা পাসওয়ার্ড।";
+      } else if (error.response.status >= 500) {
+        errorMessage = "সার্ভারে সমস্যা হচ্ছে, একটু পর আবার চেষ্টা করুন।";
+      }
+    } else if (error.request) {
+      // The request was made but no response was received
+      // In development, this could be because the backend is not running or CORS
+      if (error.message === "Network Error") {
+        errorMessage = "সার্ভারের সাথে সংযোগ করা সম্ভব হয়নি। আপনার ইন্টারনেট কানেকশন বা সার্ভার চেক করুন।";
+      } else {
+        errorMessage = "নেটওয়ার্ক সমস্যা, কানেকশন চেক করুন।";
+      }
+    }
+
+    // Instead of throwing the raw AxiosError, throw a new Error with the friendly message
+    // while keeping the original error attached for debugging if needed
+    const customError = new Error(errorMessage) as any;
+    customError.originalError = error;
+    customError.status = error.response?.status;
+    customError.data = error.response?.data;
+
+    return Promise.reject(customError);
   },
 );

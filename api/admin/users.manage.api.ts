@@ -4,6 +4,7 @@ import type {
   UserListResponse,
   Profile,
   UpdateProfilePayload,
+  AdminUpdateUserPayload,
   CreateSupportUserPayload,
   FeePaymentListResponse,
   FeePaymentActionResponse,
@@ -45,6 +46,20 @@ export async function updateUserProfile(
 ): Promise<Profile> {
   const { data } = await apiClient.patch<Profile>(
     `${ACCOUNTS_BASE}/profiles/${id}/`,
+    payload
+  );
+  return data;
+}
+
+/**
+ * Admin update user details - PATCH /api/accounts/users/:id/admin_update/
+ */
+export async function adminUpdateUser(
+  id: number,
+  payload: AdminUpdateUserPayload
+): Promise<User> {
+  const { data } = await apiClient.patch<User>(
+    `${ACCOUNTS_BASE}/users/${id}/admin_update/`,
     payload
   );
   return data;

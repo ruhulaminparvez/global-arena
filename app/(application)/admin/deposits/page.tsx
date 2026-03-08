@@ -149,18 +149,28 @@ export default function DepositManagementPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <div className="max-w-7xl mx-auto px-4 py-8 pb-[18rem] sm:pb-[12rem] overflow-x-hidden">
+    <div className="min-h-screen bg-accent-950 overflow-x-hidden relative text-white font-sans">
+      {/* Premium Background Graphics */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary-900/40 mix-blend-screen filter blur-[100px] animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] rounded-full bg-blue-900/30 mix-blend-screen filter blur-[120px] animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
+        <div className="absolute top-[40%] right-[10%] w-[20%] h-[20%] rounded-full bg-cyan-900/20 mix-blend-screen filter blur-[80px] animate-pulse" style={{ animationDuration: '10s', animationDelay: '4s' }} />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 pb-[18rem] sm:pb-[12rem] overflow-x-hidden">
         {/* Page Header */}
-        <div className="mb-8 bg-white rounded-xl shadow-lg p-6">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="mb-8 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-6 relative overflow-hidden">
+          <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-primary-400 to-transparent opacity-50"></div>
+          <div className="flex items-center justify-between flex-wrap gap-4 relative z-10">
             <div className="flex items-center gap-3">
-              <ArrowDownCircle className="w-8 h-8 text-primary-600" />
+              <div className="p-3 bg-primary-500/20 rounded-2xl border border-primary-500/30">
+                <ArrowDownCircle className="w-8 h-8 text-primary-400" />
+              </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                   জমা ম্যানেজমেন্ট
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-slate-300 mt-1">
                   সমস্ত জমা লেনদেন পরিচালনা করুন
                 </p>
               </div>
@@ -175,9 +185,9 @@ export default function DepositManagementPage() {
               key={opt.value || "all"}
               type="button"
               onClick={() => setStatusFilter(opt.value)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === opt.value
-                ? "bg-primary-600 text-white"
-                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${statusFilter === opt.value
+                ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg border-transparent"
+                : "bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 hover:text-white"
                 }`}
             >
               {opt.label}
@@ -186,22 +196,22 @@ export default function DepositManagementPage() {
         </div>
 
         {/* Search Bar */}
-        <div className="mb-6 bg-white rounded-xl shadow-lg p-4">
+        <div className="mb-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl p-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="ব্যবহারকারী বা পরিমাণ দিয়ে অনুসন্ধান করুন..."
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full pl-10 pr-4 py-3 bg-accent-900/50 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
             />
           </div>
         </div>
 
         {/* Error */}
         {error && (
-          <div className="mb-4 p-4 bg-red-50 text-red-800 rounded-lg">
+          <div className="mb-4 p-4 bg-rose-500/20 border border-rose-500/30 text-rose-300 rounded-xl backdrop-blur-sm">
             {error}
           </div>
         )}
@@ -209,7 +219,7 @@ export default function DepositManagementPage() {
         {/* Deposits Table */}
         <div className="mb-6">
           {loading ? (
-            <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl p-8 text-center text-slate-400">
               লোড হচ্ছে...
             </div>
           ) : (
@@ -227,14 +237,14 @@ export default function DepositManagementPage() {
 
       {/* Detail modal */}
       {(selectedDeposit !== null || detailLoading) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 flex items-center justify-between border-b">
-              <h2 className="text-xl font-bold text-gray-900">জমা বিবরণ</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-accent-950 border border-white/10 rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 flex items-center justify-between border-b border-white/10 bg-white/5">
+              <h2 className="text-xl font-bold text-white">জমা বিবরণ</h2>
               <button
                 type="button"
                 onClick={() => setSelectedDeposit(null)}
-                className="p-2 rounded-lg hover:bg-gray-100"
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
                 aria-label="বন্ধ করুন"
               >
                 <X className="w-5 h-5" />
@@ -242,42 +252,42 @@ export default function DepositManagementPage() {
             </div>
             <div className="p-6 space-y-4">
               {detailLoading ? (
-                <p className="text-gray-500">লোড হচ্ছে...</p>
+                <p className="text-slate-400">লোড হচ্ছে...</p>
               ) : selectedDeposit ? (
                 <>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <span className="text-gray-600">আইডি</span>
-                    <span className="font-medium">{selectedDeposit.id}</span>
-                    <span className="text-gray-600">ব্যবহারকারী</span>
-                    <span className="font-medium">{selectedDeposit.user}</span>
-                    <span className="text-gray-600">পরিমাণ</span>
-                    <span className="font-medium">
+                  <div className="grid grid-cols-2 gap-4 text-sm bg-black/20 p-4 rounded-2xl border border-white/5">
+                    <span className="text-slate-400">আইডি</span>
+                    <span className="font-medium text-white">{selectedDeposit.id}</span>
+                    <span className="text-slate-400">ব্যবহারকারী</span>
+                    <span className="font-medium text-white">{selectedDeposit.user}</span>
+                    <span className="text-slate-400">পরিমাণ</span>
+                    <span className="font-medium text-primary-400">
                       ৳ {parseFloat(selectedDeposit.amount || "0").toLocaleString("bn-BD")}
                     </span>
-                    <span className="text-gray-600">স্ট্যাটাস</span>
-                    <span className="font-medium">
+                    <span className="text-slate-400">স্ট্যাটাস</span>
+                    <span className="font-medium text-white">
                       {selectedDeposit.status_display}
                     </span>
-                    <span className="text-gray-600">তৈরির তারিখ</span>
-                    <span className="font-medium">
+                    <span className="text-slate-400">তৈরির তারিখ</span>
+                    <span className="font-medium text-white">
                       {formatDate(selectedDeposit.created_at)}
                     </span>
-                    <span className="text-gray-600">আপডেট তারিখ</span>
-                    <span className="font-medium">
+                    <span className="text-slate-400">আপডেট তারিখ</span>
+                    <span className="font-medium text-white">
                       {formatDate(selectedDeposit.updated_at)}
                     </span>
                   </div>
                   {selectedDeposit.admin_notes && (
-                    <div>
-                      <span className="text-gray-600 text-sm">অ্যাডমিন নোট</span>
-                      <p className="mt-1 p-2 bg-gray-50 rounded-lg text-sm">
+                    <div className="bg-white/5 p-4 rounded-2xl border border-white/10">
+                      <span className="text-slate-400 text-sm">অ্যাডমিন নোট</span>
+                      <p className="mt-1 text-white text-sm">
                         {selectedDeposit.admin_notes}
                       </p>
                     </div>
                   )}
                   {selectedDeposit.proof_document && (
-                    <div>
-                      <span className="text-gray-600 text-sm flex items-center gap-1">
+                    <div className="bg-white/5 p-4 rounded-2xl border border-white/10">
+                      <span className="text-slate-400 text-sm flex items-center gap-1 mb-2">
                         <FileImage className="w-4 h-4" />
                         প্রুফ ডকুমেন্ট
                       </span>
@@ -285,24 +295,24 @@ export default function DepositManagementPage() {
                         href={selectedDeposit.proof_document}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-1 block text-primary-600 hover:underline text-sm"
+                        className="text-primary-400 hover:text-primary-300 hover:underline text-sm inline-block mb-3"
                       >
                         ছবি দেখুন
                       </a>
                       <img
                         src={selectedDeposit.proof_document}
                         alt="Proof"
-                        className="mt-2 rounded-lg border max-h-48 object-contain"
+                        className="rounded-xl border border-white/10 max-h-48 object-contain bg-black/40"
                       />
                     </div>
                   )}
                   {selectedDeposit.status === "PENDING" && (
-                    <div className="flex gap-2 pt-4 border-t">
+                    <div className="flex gap-3 pt-4 border-t border-white/10">
                       <button
                         type="button"
                         disabled={actionLoading}
                         onClick={() => handleApprove(selectedDeposit)}
-                        className="flex-1 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-lg font-medium"
+                        className="flex-1 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 disabled:opacity-50 text-white rounded-xl font-medium shadow-lg shadow-emerald-500/20 transition-all"
                       >
                         অনুমোদন
                       </button>
@@ -310,7 +320,7 @@ export default function DepositManagementPage() {
                         type="button"
                         disabled={actionLoading}
                         onClick={() => handleRejectClick(selectedDeposit)}
-                        className="flex-1 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white rounded-lg font-medium"
+                        className="flex-1 py-3 bg-white/5 hover:bg-rose-500/20 hover:text-rose-400 border border-white/10 hover:border-rose-500/30 disabled:opacity-50 text-white rounded-xl font-medium transition-all"
                       >
                         প্রত্যাখ্যান
                       </button>
@@ -325,30 +335,29 @@ export default function DepositManagementPage() {
 
       {/* Reject reason modal */}
       {rejectTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-accent-950 border border-white/10 rounded-3xl shadow-2xl max-w-md w-full p-6">
+            <h2 className="text-xl font-bold text-white mb-2">
               প্রত্যাখ্যানের কারণ
             </h2>
-            <p className="text-sm text-gray-600 mb-4">
-              আইডি {rejectTarget.id} – ৳{" "}
-              {parseFloat(rejectTarget.amount || "0").toLocaleString("bn-BD")}
+            <p className="text-sm text-slate-400 mb-6">
+              আইডি {rejectTarget.id} – <span className="text-primary-400">৳ {parseFloat(rejectTarget.amount || "0").toLocaleString("bn-BD")}</span>
             </p>
             <textarea
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="কারণ লিখুন (বাধ্যতামূলক)"
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-3 bg-accent-900/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all resize-none"
             />
-            <div className="flex gap-2 mt-4">
+            <div className="flex gap-3 mt-6">
               <button
                 type="button"
                 onClick={() => {
                   setRejectTarget(null);
                   setRejectReason("");
                 }}
-                className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium"
+                className="flex-1 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl font-medium transition-all"
               >
                 বাতিল
               </button>
@@ -356,7 +365,7 @@ export default function DepositManagementPage() {
                 type="button"
                 disabled={actionLoading || !rejectReason.trim()}
                 onClick={handleRejectSubmit}
-                className="flex-1 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white rounded-lg font-medium"
+                className="flex-1 py-3 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-400 hover:to-rose-500 shadow-lg shadow-rose-500/20 disabled:opacity-50 text-white rounded-xl font-medium transition-all"
               >
                 প্রত্যাখ্যান
               </button>

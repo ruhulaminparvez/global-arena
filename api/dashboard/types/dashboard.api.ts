@@ -43,6 +43,7 @@ export interface TicketPurchase {
   ticket: TicketSchedule;
   purchase_price: string;
   profit_amount: string;
+  profit_added_so_far: string;
   profit_added: boolean;
   created_at: string;
 }

@@ -23,28 +23,33 @@ function AdminStatCard({ label, value, icon: Icon, color, index }: AdminStatCard
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow group"
+      className="relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl hover:bg-white/10 transition-all duration-300 group hover:-translate-y-1"
     >
-      <motion.div
-        whileHover={{ scale: 1.1, rotate: 5 }}
-        transition={{ duration: 0.3 }}
-        className={`w-12 h-12 rounded-lg bg-gradient-to-br ${color} flex items-center justify-center mb-4`}
-      >
-        <Icon className="w-6 h-6 text-white" />
-      </motion.div>
-      <h3 className="text-gray-600 text-sm mb-2">{label}</h3>
-      <motion.p
-        key={animatedValue}
-        initial={{ scale: 0.98, opacity: 0.8 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{
-          duration: 0.2,
-          ease: "easeOut",
-        }}
-        className="text-2xl font-bold text-gray-900"
-      >
-        {formatValue(value, animatedValue)}
-      </motion.p>
+      <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-gradient-to-br from-white/40 to-white/0 rounded-full blur-2xl z-0 pointer-events-none" />
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-4">
+          <motion.div
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            transition={{ duration: 0.3 }}
+            className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg shadow-${color.split('-')[1]}-500/20`}
+          >
+            <Icon className="w-6 h-6 text-white" />
+          </motion.div>
+        </div>
+        <h3 className="text-slate-400 font-medium text-sm mb-1">{label}</h3>
+        <motion.p
+          key={animatedValue}
+          initial={{ scale: 0.98, opacity: 0.8 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{
+            duration: 0.2,
+            ease: "easeOut",
+          }}
+          className="text-3xl font-bold text-white tracking-tight"
+        >
+          {formatValue(value, animatedValue)}
+        </motion.p>
+      </div>
     </motion.div>
   );
 }
@@ -60,7 +65,7 @@ interface AdminStatsCardsProps {
 
 export default function AdminStatsCards({ stats }: AdminStatsCardsProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
       {stats.map((stat, index) => (
         <AdminStatCard
           key={index}

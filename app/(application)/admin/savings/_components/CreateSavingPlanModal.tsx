@@ -97,10 +97,10 @@ export function CreateSavingPlanModal({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md max-h-[90vh] overflow-hidden rounded-2xl bg-white shadow-2xl flex flex-col"
+        className="w-full max-w-md max-h-[90vh] overflow-hidden rounded-2xl bg-accent-950 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex flex-col backdrop-blur-xl"
       >
         {/* Header */}
-        <div className="shrink-0 bg-primary-600 px-6 py-4 flex items-center justify-between">
+        <div className="shrink-0 bg-gradient-to-r from-primary-900/50 to-indigo-900/50 px-6 py-4 flex items-center justify-between border-b border-white/10">
           <div className="flex items-center gap-2">
             <PiggyBank className="w-5 h-5 text-white" />
             <h3 className="text-lg font-bold text-white">নতুন সঞ্চয় প্ল্যান</h3>
@@ -108,7 +108,7 @@ export function CreateSavingPlanModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-full text-white hover:bg-white/20 transition-colors"
+            className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             aria-label="বন্ধ করুন"
           >
             <X className="w-5 h-5" />
@@ -123,15 +123,15 @@ export function CreateSavingPlanModal({
           <div className="flex-1 overflow-y-auto p-6 space-y-5">
             {/* User dropdown */}
             <div className="w-full">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-300 mb-2">
                 ব্যবহারকারী *
               </label>
               <select
                 {...register("user_id")}
                 disabled={usersLoading}
-                className={`w-full px-4 py-3 rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed ${errors.user_id
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:border-primary-500"
+                className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-black/30 text-white disabled:bg-white/5 disabled:text-slate-500 disabled:cursor-not-allowed ${errors.user_id
+                  ? "border-rose-500 focus:ring-rose-500"
+                  : "border-white/10 focus:border-primary-500 hover:border-white/20"
                   }`}
               >
                 <option value="">
@@ -152,7 +152,7 @@ export function CreateSavingPlanModal({
                 <motion.p
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-1 text-sm text-red-600"
+                  className="mt-1 text-sm text-rose-400"
                 >
                   {errors.user_id.message}
                 </motion.p>
@@ -166,6 +166,7 @@ export function CreateSavingPlanModal({
               placeholder="ন্যূনতম ১০০"
               error={errors.monthly_amount?.message}
               {...register("monthly_amount")}
+              className="bg-black/30 border-white/10 text-white"
             />
 
             {/* Duration months */}
@@ -175,16 +176,17 @@ export function CreateSavingPlanModal({
               placeholder="ন্যূনতম ৩৬"
               error={errors.duration_months?.message}
               {...register("duration_months")}
+              className="bg-black/30 border-white/10 text-white"
             />
 
           </div>
 
           {/* Footer */}
-          <div className="shrink-0 flex justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
-            <Button type="button" variant="outline" onClick={onClose}>
+          <div className="shrink-0 flex justify-end gap-3 p-6 border-t border-white/10 bg-black/20">
+            <Button type="button" variant="outline" onClick={onClose} className="border-white/10 hover:bg-white/5 text-slate-300">
               বাতিল
             </Button>
-            <Button type="submit" isLoading={isSubmitting}>
+            <Button type="submit" isLoading={isSubmitting} className="bg-gradient-to-r from-primary-500 to-primary-600 border-none shadow-lg shadow-primary-500/25">
               প্ল্যান তৈরি করুন
             </Button>
           </div>

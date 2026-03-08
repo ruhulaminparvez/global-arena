@@ -89,14 +89,14 @@ export function CreateSupportUserModal({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg max-h-[90vh] overflow-hidden rounded-2xl bg-white shadow-2xl flex flex-col"
+        className="w-full max-w-lg max-h-[90vh] overflow-hidden rounded-2xl bg-accent-950 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex flex-col backdrop-blur-xl"
       >
-        <div className="shrink-0 bg-primary-600 px-6 py-4 flex items-center justify-between">
+        <div className="shrink-0 bg-gradient-to-r from-primary-900/50 to-indigo-900/50 px-6 py-4 flex items-center justify-between border-b border-white/10">
           <h3 className="text-lg font-bold text-white">নতুন সাপোর্ট ব্যবহারকারী</h3>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-full text-white hover:bg-white/20 transition-colors"
+            className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             aria-label="বন্ধ করুন"
           >
             <X className="w-5 h-5" />
@@ -104,13 +104,14 @@ export function CreateSupportUserModal({
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-hide">
             <Input
               label="ব্যবহারকারীর নাম *"
               value={form.username}
               onChange={(e) => update("username", e.target.value)}
               error={errors.username}
               placeholder="support1"
+              className="bg-black/30 border-white/10 text-white"
             />
             <Input
               label="ইমেইল *"
@@ -119,6 +120,7 @@ export function CreateSupportUserModal({
               onChange={(e) => update("email", e.target.value)}
               error={errors.email}
               placeholder="support1@example.com"
+              className="bg-black/30 border-white/10 text-white"
             />
             <div className="grid grid-cols-2 gap-4">
               <Input
@@ -127,6 +129,7 @@ export function CreateSupportUserModal({
                 onChange={(e) => update("first_name", e.target.value)}
                 error={errors.first_name}
                 placeholder="Support"
+                className="bg-black/30 border-white/10 text-white"
               />
               <Input
                 label="শেষ নাম *"
@@ -134,6 +137,7 @@ export function CreateSupportUserModal({
                 onChange={(e) => update("last_name", e.target.value)}
                 error={errors.last_name}
                 placeholder="Staff"
+                className="bg-black/30 border-white/10 text-white"
               />
             </div>
             <Input
@@ -143,6 +147,7 @@ export function CreateSupportUserModal({
               onChange={(e) => update("password", e.target.value)}
               error={errors.password}
               placeholder="অন্তত ৮ অক্ষর"
+              className="bg-black/30 border-white/10 text-white"
             />
             <Input
               label="পাসওয়ার্ড নিশ্চিতকরণ *"
@@ -151,6 +156,7 @@ export function CreateSupportUserModal({
               onChange={(e) => update("password2", e.target.value)}
               error={errors.password2}
               placeholder="পাসওয়ার্ড আবার লিখুন"
+              className="bg-black/30 border-white/10 text-white"
             />
             <Input
               label="এনআইডি *"
@@ -158,6 +164,7 @@ export function CreateSupportUserModal({
               onChange={(e) => update("nid", e.target.value)}
               error={errors.nid}
               placeholder="9876543210"
+              className="bg-black/30 border-white/10 text-white"
             />
             <Input
               label="মোবাইল *"
@@ -165,6 +172,7 @@ export function CreateSupportUserModal({
               onChange={(e) => update("mobile", e.target.value)}
               error={errors.mobile}
               placeholder="+8801812345678"
+              className="bg-black/30 border-white/10 text-white"
             />
             <Input
               label="রেফারেন্স ইউজারনেম *"
@@ -172,13 +180,15 @@ export function CreateSupportUserModal({
               onChange={(e) => update("reference_username", e.target.value)}
               error={errors.reference_username}
               placeholder="admin"
+              className="bg-black/30 border-white/10 text-white disabled:opacity-50"
+              disabled
             />
           </div>
-          <div className="shrink-0 flex justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
-            <Button type="button" variant="outline" onClick={onClose}>
+          <div className="shrink-0 flex justify-end gap-3 p-6 border-t border-white/10 bg-black/20">
+            <Button type="button" variant="outline" onClick={onClose} className="border-white/10 hover:bg-white/5 text-slate-300">
               বাতিল
             </Button>
-            <Button type="submit" isLoading={isSubmitting}>
+            <Button type="submit" isLoading={isSubmitting} className="bg-gradient-to-r from-primary-500 to-primary-600 border-none shadow-lg shadow-primary-500/25">
               তৈরি করুন
             </Button>
           </div>

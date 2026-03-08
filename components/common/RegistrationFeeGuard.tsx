@@ -24,7 +24,7 @@ interface PaymentFormState {
 }
 
 const INITIAL_FORM: PaymentFormState = {
-  amount: "",
+  amount: "120",
   transaction_id: "",
   payment_method: "Bkash",
 };
@@ -122,9 +122,9 @@ export default function RegistrationFeeGuard({
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { detail?: string; message?: string } } })
+          ?.response?.data?.message ||
+        (err as { response?: { data?: { detail?: string; message?: string } } })
           ?.response?.data?.detail ||
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ||
         "পেমেন্ট জমা দিতে সমস্যা হয়েছে। আবার চেষ্টা করুন।";
       setSubmitError(msg);
       toast.error(msg);
@@ -136,10 +136,10 @@ export default function RegistrationFeeGuard({
   // While auth or fee check is in progress, show a neutral loader
   if (authLoading || (isAuthenticated && !feeChecked) || checkLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-accent-50">
+      <div className="min-h-screen flex items-center justify-center bg-accent-950">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4" />
-          <p className="text-gray-600">লোড হচ্ছে...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4" />
+          <p className="text-slate-400">লোড হচ্ছে...</p>
         </div>
       </div>
     );
@@ -170,10 +170,10 @@ export default function RegistrationFeeGuard({
                 exit={{ scale: 0.9, opacity: 0, y: 20 }}
                 transition={{ type: "spring", stiffness: 300, damping: 25 }}
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+                className="bg-accent-900/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-white/10"
               >
                 {/* Modal Header */}
-                <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-5 flex items-center justify-between">
+                <div className="bg-gradient-to-r from-primary-600 to-indigo-600 px-6 py-5 flex items-center justify-between border-b border-white/10">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
                       <CreditCard className="w-5 h-5 text-white" />
@@ -182,7 +182,7 @@ export default function RegistrationFeeGuard({
                       <h3 className="text-lg font-bold text-white">
                         রেজিস্ট্রেশন ফি পরিশোধ
                       </h3>
-                      <p className="text-primary-100 text-xs">
+                      <p className="text-primary-200 text-xs">
                         পেমেন্ট তথ্য পূরণ করুন
                       </p>
                     </div>
@@ -207,7 +207,7 @@ export default function RegistrationFeeGuard({
                     <form onSubmit={handleSubmit} className="space-y-4">
                       {/* Amount */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        <label className="block text-primary-300 font-medium tracking-wide uppercase text-xs mb-1.5">
                           পরিমাণ (৳){" "}
                           <span className="text-red-500">*</span>
                         </label>
@@ -217,18 +217,18 @@ export default function RegistrationFeeGuard({
                           min="1"
                           step="0.01"
                           required
+                          readOnly
                           value={form.amount}
                           onChange={(e) =>
                             setForm({ ...form, amount: e.target.value })
                           }
-                          placeholder="যেমন: 500.00"
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                          className="w-full px-4 py-2.5 rounded-lg bg-black/40 border border-white/10 text-white/50 cursor-not-allowed focus:outline-none transition-all"
                         />
                       </div>
 
                       {/* Transaction ID */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        <label className="block text-primary-300 font-medium tracking-wide uppercase text-xs mb-1.5">
                           ট্রানজেকশন আইডি{" "}
                           <span className="text-red-500">*</span>
                         </label>
@@ -243,13 +243,13 @@ export default function RegistrationFeeGuard({
                             })
                           }
                           placeholder="যেমন: txn_123456"
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                          className="w-full px-4 py-2.5 border border-white/10 rounded-lg bg-black/20 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all backdrop-blur-sm"
                         />
                       </div>
 
                       {/* Payment Method */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        <label className="block text-primary-300 font-medium tracking-wide uppercase text-xs mb-1.5">
                           পেমেন্ট পদ্ধতি{" "}
                           <span className="text-red-500">*</span>
                         </label>
@@ -262,10 +262,10 @@ export default function RegistrationFeeGuard({
                                 .value as FeePaymentMethod,
                             })
                           }
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all bg-white"
+                          className="w-full px-4 py-2.5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all bg-black/30 text-white backdrop-blur-sm"
                         >
                           {PAYMENT_METHODS.map((m) => (
-                            <option key={m.value} value={m.value}>
+                            <option key={m.value} value={m.value} className="bg-accent-900 border-none">
                               {m.label}
                             </option>
                           ))}
@@ -274,14 +274,14 @@ export default function RegistrationFeeGuard({
 
                       {/* Send To Number */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        <label className="block text-primary-300 font-medium tracking-wide uppercase text-xs mb-1.5">
                           পাঠানোর নম্বর
                         </label>
                         <input
                           type="text"
                           disabled
                           value="01622260086"
-                          className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+                          className="w-full px-4 py-2.5 rounded-lg bg-black/40 border border-white/10 text-white/50 cursor-not-allowed focus:outline-none transition-all"
                         />
                       </div>
 
@@ -292,7 +292,7 @@ export default function RegistrationFeeGuard({
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-start gap-2"
+                            className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm flex items-start gap-2"
                           >
                             <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                             {submitError}
@@ -306,14 +306,14 @@ export default function RegistrationFeeGuard({
                           type="button"
                           onClick={() => setShowPayModal(false)}
                           disabled={submitLoading}
-                          className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50"
+                          className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 text-white rounded-lg font-medium hover:bg-white/10 transition-colors disabled:opacity-50"
                         >
                           বাতিল
                         </button>
                         <button
                           type="submit"
                           disabled={submitLoading}
-                          className="flex-1 px-4 py-2.5 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                          className="flex-1 px-4 py-2.5 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 shadow-lg shadow-primary-500/25 border-none text-white rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                         >
                           {submitLoading ? (
                             <>
@@ -351,24 +351,25 @@ function LockScreen({
   onPayClick: () => void;
 }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 flex items-center justify-center p-4 overflow-hidden relative">
-      {/* Decorative blobs */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
-      <div className="absolute top-0 right-0 w-72 h-72 bg-accent-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-72 h-72 bg-primary-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000" />
+    <div className="min-h-screen bg-accent-950 flex items-center justify-center p-4 overflow-hidden relative">
+      {/* Premium Background Graphics */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-900/40 mix-blend-screen filter blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-900/30 mix-blend-screen filter blur-[100px] animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 20 }}
-        className="relative z-10 bg-white rounded-3xl shadow-2xl p-8 sm:p-10 max-w-md w-full text-center"
+        className="relative z-10 bg-accent-900/60 backdrop-blur-2xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/10 p-8 sm:p-10 max-w-md w-full text-center"
       >
         {/* Lock icon */}
         <motion.div
           initial={{ scale: 0, rotate: -20 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ delay: 0.2, type: "spring", stiffness: 260, damping: 20 }}
-          className="mx-auto mb-6 w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-300/50"
+          className="mx-auto mb-6 w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-primary-500/25"
         >
           <motion.div
             animate={{ rotate: [0, -5, 5, 0] }}
@@ -383,7 +384,7 @@ function LockScreen({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3"
+          className="text-2xl sm:text-3xl font-bold text-white mb-3"
         >
           অ্যাকাউন্ট লক করা আছে
         </motion.h1>
@@ -393,7 +394,7 @@ function LockScreen({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="text-gray-500 text-sm sm:text-base leading-relaxed mb-6"
+          className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6"
         >
           আপনার রেজিস্ট্রেশন ফি এখনো প্রদান করা হয়নি।
           অ্যাকাউন্ট সক্রিয় করতে অনুগ্রহ করে রেজিস্ট্রেশন ফি পরিশোধ করুন।
@@ -405,7 +406,7 @@ function LockScreen({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5 }}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary-50 border border-primary-200 text-primary-700 font-semibold text-lg mb-6"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary-900/30 border border-primary-500/30 text-primary-300 font-semibold text-lg mb-6 backdrop-blur-sm"
           >
             <span>ফি পরিমাণ:</span>
             <span>৳ {parseFloat(feeAmount).toLocaleString("bn-BD")}</span>
@@ -413,7 +414,7 @@ function LockScreen({
         )}
 
         {/* Divider */}
-        <div className="h-px bg-gray-100 mb-6" />
+        <div className="h-px bg-white/10 mb-6" />
 
         {/* CTA button */}
         <motion.button
@@ -424,7 +425,7 @@ function LockScreen({
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           onClick={onPayClick}
-          className="w-full py-3.5 px-6 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white rounded-xl font-semibold text-base shadow-lg shadow-primary-300/40 transition-all flex items-center justify-center gap-2"
+          className="w-full py-3.5 px-6 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white rounded-xl font-semibold text-base shadow-lg shadow-primary-500/25 transition-all flex items-center justify-center gap-2 border-none"
         >
           <CreditCard className="w-5 h-5" />
           রেজিস্ট্রেশন ফি পরিশোধ করুন
@@ -435,7 +436,7 @@ function LockScreen({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
-          className="mt-4 text-xs text-gray-400"
+          className="mt-4 text-xs text-slate-400"
         >
           পেমেন্ট জমা দেওয়ার পর অ্যাডমিন অনুমোদন করলে অ্যাকাউন্ট সক্রিয় হবে।
         </motion.p>
@@ -454,20 +455,20 @@ function SuccessView({ onClose }: { onClose: () => void }) {
       animate={{ opacity: 1, scale: 1 }}
       className="text-center py-4"
     >
-      <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-        <CheckCircle className="w-8 h-8 text-green-600" />
+      <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center">
+        <CheckCircle className="w-8 h-8 text-green-400" />
       </div>
-      <h4 className="text-xl font-bold text-gray-900 mb-2">
+      <h4 className="text-xl font-bold text-white mb-2">
         পেমেন্ট জমা সফল হয়েছে!
       </h4>
-      <p className="text-gray-500 text-sm mb-6">
+      <p className="text-slate-300 text-sm mb-6">
         আপনার পেমেন্ট তথ্য গ্রহণ করা হয়েছে। অ্যাডমিন অনুমোদনের পর আপনার
         অ্যাকাউন্ট সক্রিয় হবে।
       </p>
       <button
         type="button"
         onClick={onClose}
-        className="px-8 py-2.5 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+        className="px-8 py-2.5 bg-gradient-to-r from-primary-600 to-indigo-600 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-colors border-none"
       >
         ঠিক আছে
       </button>

@@ -8,8 +8,8 @@ import type { TicketSchedule, TicketPurchase } from "@/api/admin/types/admin.api
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</span>
-      <div className="text-sm text-gray-900 break-words">{value ?? "—"}</div>
+      <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">{label}</span>
+      <div className="text-sm text-white break-words">{value ?? "—"}</div>
     </div>
   );
 }
@@ -17,9 +17,8 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
 function Badge({ value }: { value: boolean }) {
   return (
     <span
-      className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${
-        value ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"
-      }`}
+      className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${value ? "bg-emerald-500/20 text-emerald-400" : "bg-slate-500/20 text-slate-400"
+        }`}
     >
       {value ? "হ্যাঁ" : "না"}
     </span>
@@ -80,20 +79,20 @@ export function TicketDetailModal({ item, itemType, onClose }: Props) {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl bg-white shadow-2xl overflow-hidden"
+        className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl bg-accent-950 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] overflow-hidden backdrop-blur-xl"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 shrink-0">
-          <div className="flex items-center gap-2 text-primary-700">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 shrink-0 bg-gradient-to-r from-primary-900/50 to-indigo-900/50">
+          <div className="flex items-center gap-2 text-primary-400">
             <Eye className="w-5 h-5" />
-            <h3 className="text-lg font-bold">
+            <h3 className="text-lg font-bold text-white">
               {isPurchase ? "ক্রয়ের বিবরণ" : "সিডিউলের বিবরণ"}
             </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+            className="p-2 rounded-full text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
             aria-label="বন্ধ করুন"
           >
             <X className="w-5 h-5" />
@@ -105,7 +104,7 @@ export function TicketDetailModal({ item, itemType, onClose }: Props) {
           {purchase && (
             <>
               <div>
-                <h4 className="text-sm font-bold text-gray-700 mb-3 pb-1 border-b border-gray-100">
+                <h4 className="text-sm font-bold text-slate-300 mb-3 pb-1 border-b border-white/10">
                   ক্রয়ের তথ্য
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -125,7 +124,7 @@ export function TicketDetailModal({ item, itemType, onClose }: Props) {
                 </div>
               </div>
               <div>
-                <h4 className="text-sm font-bold text-gray-700 mb-3 pb-1 border-b border-gray-100">
+                <h4 className="text-sm font-bold text-slate-300 mb-3 pb-1 border-b border-white/10">
                   টিকেটের তথ্য
                 </h4>
                 <ScheduleDetailFields s={purchase.ticket} />

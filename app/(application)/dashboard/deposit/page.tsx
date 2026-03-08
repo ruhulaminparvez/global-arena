@@ -162,18 +162,24 @@ export default function DepositPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 overflow-x-hidden">
-      <div className="max-w-6xl mx-auto px-4 py-8 pb-[12rem] sm:pb-[7rem] overflow-x-hidden">
+    <div className="min-h-screen bg-accent-950 overflow-x-hidden relative">
+      {/* Premium Background Graphics */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-900/40 mix-blend-screen filter blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-900/30 mix-blend-screen filter blur-[100px] animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 py-8 pb-[12rem] sm:pb-[7rem] overflow-x-hidden">
         {/* Page Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl shadow-lg p-6 mb-6"
+          className="bg-accent-900/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl p-6 mb-6"
         >
           <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
             <div className="flex items-center gap-3">
-              <ArrowDownCircle className="w-8 h-8 text-primary-600" />
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              <ArrowDownCircle className="w-8 h-8 text-primary-400" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-white">
                 জমা
               </h1>
             </div>
@@ -182,7 +188,7 @@ export default function DepositPage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowDepositModal(true)}
-              className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg flex items-center gap-2 transition-colors font-medium"
+              className="px-4 py-2 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-primary-500/25 border-none font-medium"
             >
               <Plus className="w-5 h-5" />
               নতুন জমা
@@ -196,9 +202,9 @@ export default function DepositPage() {
                 key={opt.value || "all"}
                 type="button"
                 onClick={() => setStatusFilter(opt.value)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === opt.value
-                  ? "bg-primary-600 text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${statusFilter === opt.value
+                  ? "bg-gradient-to-r from-primary-600 to-indigo-600 text-white shadow-lg shadow-primary-500/25 border-none"
+                  : "bg-white/5 border border-white/10 text-slate-400 hover:bg-white/10 hover:text-white"
                   }`}
               >
                 {opt.label}
@@ -215,40 +221,40 @@ export default function DepositPage() {
                 placeholder="ব্যবহারকারী বা পরিমাণ দিয়ে অনুসন্ধান করুন..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full pl-10 pr-4 py-2 bg-black/30 border border-white/10 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-slate-500 backdrop-blur-sm transition-all"
               />
             </div>
           </div>
 
           {/* Summary */}
           <div className="flex flex-wrap gap-4">
-            <div className="bg-blue-50 rounded-lg px-4 py-2">
-              <p className="text-sm text-blue-600">মোট জমা</p>
-              <p className="text-xl font-bold text-blue-600">
+            <div className="bg-blue-500/10 border border-blue-500/20 backdrop-blur-sm rounded-xl px-4 py-2">
+              <p className="text-sm text-blue-400">মোট জমা</p>
+              <p className="text-xl font-bold text-blue-300">
                 ৳ {totalAmount.toLocaleString("bn-BD")}
               </p>
             </div>
-            <div className="bg-cyan-50 rounded-lg px-4 py-2">
-              <p className="text-sm text-cyan-600">মোট সংখ্যা</p>
-              <p className="text-xl font-bold text-cyan-600">
+            <div className="bg-cyan-500/10 border border-cyan-500/20 backdrop-blur-sm rounded-xl px-4 py-2">
+              <p className="text-sm text-cyan-400">মোট সংখ্যা</p>
+              <p className="text-xl font-bold text-cyan-300">
                 {filteredDeposits.length}
               </p>
             </div>
-            <div className="bg-green-50 rounded-lg px-4 py-2">
-              <p className="text-sm text-green-600">অনুমোদিত</p>
-              <p className="text-xl font-bold text-green-600">
+            <div className="bg-green-500/10 border border-green-500/20 backdrop-blur-sm rounded-xl px-4 py-2">
+              <p className="text-sm text-green-400">অনুমোদিত</p>
+              <p className="text-xl font-bold text-green-300">
                 {approvedCount}
               </p>
             </div>
-            <div className="bg-red-50 rounded-lg px-4 py-2">
-              <p className="text-sm text-red-600">প্রত্যাখ্যান</p>
-              <p className="text-xl font-bold text-red-600">
+            <div className="bg-red-500/10 border border-red-500/20 backdrop-blur-sm rounded-xl px-4 py-2">
+              <p className="text-sm text-red-400">প্রত্যাখ্যান</p>
+              <p className="text-xl font-bold text-red-300">
                 {rejectedCount}
               </p>
             </div>
-            <div className="bg-orange-50 rounded-lg px-4 py-2">
-              <p className="text-sm text-orange-600">পেন্ডিং</p>
-              <p className="text-xl font-bold text-orange-600">
+            <div className="bg-orange-500/10 border border-orange-500/20 backdrop-blur-sm rounded-xl px-4 py-2">
+              <p className="text-sm text-orange-400">পেন্ডিং</p>
+              <p className="text-xl font-bold text-orange-300">
                 {pendingCount}
               </p>
             </div>
@@ -263,7 +269,7 @@ export default function DepositPage() {
           className="mb-6"
         >
           {loading ? (
-            <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
+            <div className="bg-accent-900/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl p-8 text-center text-slate-400">
               লোড হচ্ছে...
             </div>
           ) : (
@@ -292,16 +298,16 @@ export default function DepositPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl"
+              className="bg-accent-900 border border-white/10 rounded-3xl p-6 max-w-md w-full shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl"
             >
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-gray-900">
+                <h3 className="text-2xl font-bold text-white">
                   নতুন জমা অনুরোধ
                 </h3>
                 <button
                   type="button"
                   onClick={() => setShowDepositModal(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+                  className="text-slate-400 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
                   aria-label="বন্ধ করুন"
                 >
                   <X className="w-5 h-5" />
@@ -310,19 +316,19 @@ export default function DepositPage() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     বিকাশ/নগদ
                   </label>
                   <input
                     type="text"
                     value="01622260086"
                     disabled
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                    className="w-full px-4 py-2 border border-white/10 rounded-xl bg-black/40 text-slate-500 cursor-not-allowed"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     পরিমাণ (৳)
                   </label>
                   <input
@@ -333,19 +339,19 @@ export default function DepositPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, amount: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-4 py-2 bg-black/20 border border-white/10 text-white placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                     placeholder="পরিমাণ লিখুন"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     প্রুফ ডকুমেন্ট (ছবি/ফাইল)
                   </label>
                   <div className="flex items-center gap-2">
-                    <label className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                      <Upload className="w-5 h-5 text-gray-500" />
-                      <span className="text-sm text-gray-600">
+                    <label className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-white/10 border-dashed rounded-xl cursor-pointer hover:bg-white/5 bg-black/20 transition-all group">
+                      <Upload className="w-5 h-5 text-slate-400 group-hover:text-primary-400 transition-colors" />
+                      <span className="text-sm text-slate-300 group-hover:text-white transition-colors">
                         {formData.proof_document
                           ? formData.proof_document.name
                           : "ফাইল নির্বাচন করুন"}
@@ -367,18 +373,18 @@ export default function DepositPage() {
                   </div>
                 </div>
 
-                <div className="flex gap-3 pt-4">
+                <div className="flex gap-3 pt-4 border-t border-white/10">
                   <button
                     type="button"
                     onClick={() => setShowDepositModal(false)}
-                    className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                    className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 text-white rounded-xl font-medium hover:bg-white/10 transition-colors"
                   >
                     বাতিল
                   </button>
                   <button
                     type="submit"
                     disabled={submitLoading}
-                    className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50"
+                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-primary-600 to-indigo-600 text-white rounded-xl font-medium hover:from-primary-500 hover:to-indigo-500 shadow-lg shadow-primary-500/25 transition-all disabled:opacity-50 border-none"
                   >
                     {submitLoading ? "জমা হচ্ছে..." : "জমা করুন"}
                   </button>

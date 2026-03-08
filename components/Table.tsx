@@ -54,10 +54,10 @@ export default function Table<T extends Record<string, any>>({
   };
 
   return (
-    <div className={cn("bg-white rounded-xl shadow-lg overflow-hidden", className)}>
+    <div className={cn("bg-accent-900/60 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden", className)}>
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-primary-600 text-white">
+          <thead className="bg-gradient-to-r from-primary-900/50 to-indigo-900/50 border-b border-white/10 text-white">
             <tr>
               {columns.map((column) => (
                 <th
@@ -72,14 +72,14 @@ export default function Table<T extends Record<string, any>>({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-white/5">
             {paginatedData.length > 0 ? (
               paginatedData.map((item, index) => (
                 <tr
                   key={getRowKey(item, index)}
                   onClick={() => onRowClick?.(item)}
                   className={cn(
-                    "hover:bg-gray-50 transition-colors",
+                    "hover:bg-white/5 transition-colors",
                     onRowClick && "cursor-pointer"
                   )}
                 >
@@ -88,7 +88,7 @@ export default function Table<T extends Record<string, any>>({
                       key={column.key}
                       className={cn(
                         "px-6 py-4 text-sm",
-                        column.className ?? "text-gray-900"
+                        column.className ?? "text-slate-300"
                       )}
                     >
                       {column.render
@@ -102,7 +102,7 @@ export default function Table<T extends Record<string, any>>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-6 py-12 text-center text-gray-500"
+                  className="px-6 py-12 text-center text-slate-400"
                 >
                   {emptyMessage}
                 </td>

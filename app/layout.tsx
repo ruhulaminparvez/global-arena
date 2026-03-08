@@ -22,7 +22,8 @@ export const metadata: Metadata = {
     title: "ReturnVetted",
   },
   icons: {
-    apple: "/icons/icon-192.png",
+    icon: "/favicon.ico",
+    apple: "/apple-icon.png",
   },
 };
 
