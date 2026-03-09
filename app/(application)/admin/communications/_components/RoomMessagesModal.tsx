@@ -6,7 +6,7 @@ import { X, CheckCheck, Send } from "lucide-react";
 import { Button } from "@/components/button";
 import { getRoomMessages, markRoomAsRead, sendMessage } from "@/api/admin/chats.manage.api";
 import type { ChatRoom, ChatMessage } from "@/api/admin/types/admin.api";
-import { formatDate } from "@/helpers/format.helpers";
+import { formatDate, getDisplayName } from "@/helpers/format.helpers";
 import toast from "react-hot-toast";
 
 export interface RoomMessagesModalProps {
@@ -184,7 +184,7 @@ export function RoomMessagesModal({
                 >
                   <div className="flex justify-between items-start gap-2 mb-2">
                     <span className="text-sm font-medium text-slate-300">
-                      {msg.sender_username ?? msg.sender ?? "অজানা"}
+                      {msg.sender_username ?? (typeof msg.sender === 'object' ? getDisplayName(msg.sender as any) : msg.sender) ?? "অজানা"}
                     </span>
                     <span className="text-xs text-slate-500">
                       {msg.created_at ? formatDate(msg.created_at) : "—"}
