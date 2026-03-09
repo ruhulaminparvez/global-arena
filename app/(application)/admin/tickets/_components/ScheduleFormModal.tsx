@@ -254,10 +254,11 @@ export function ScheduleFormModal({
                   onChange={(e) =>
                     update("announcement_date", fromDatetimeLocal(e.target.value))
                   }
-                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/30 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all style-color-scheme-dark"
+                  style={{ colorScheme: "dark" }}
+                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/30 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all cursor-text text-base"
                 />
                 {errors.announcement_date && (
-                  <p className="mt-1 text-sm text-rose-400">{errors.announcement_date}</p>
+                  <p className="mt-1.5 text-sm text-red-400 font-medium">{errors.announcement_date}</p>
                 )}
               </div>
               <div>
@@ -270,10 +271,11 @@ export function ScheduleFormModal({
                   onChange={(e) =>
                     update("drop_time", fromDatetimeLocal(e.target.value))
                   }
-                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/30 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all style-color-scheme-dark"
+                  style={{ colorScheme: "dark" }}
+                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/30 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all cursor-text text-base"
                 />
                 {errors.drop_time && (
-                  <p className="mt-1 text-sm text-rose-400">{errors.drop_time}</p>
+                  <p className="mt-1.5 text-sm text-red-400 font-medium">{errors.drop_time}</p>
                 )}
               </div>
               <div>
@@ -286,10 +288,11 @@ export function ScheduleFormModal({
                   onChange={(e) =>
                     update("event_date", fromDatetimeLocal(e.target.value))
                   }
-                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/30 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all style-color-scheme-dark"
+                  style={{ colorScheme: "dark" }}
+                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/30 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all cursor-text text-base"
                 />
                 {errors.event_date && (
-                  <p className="mt-1 text-sm text-rose-400">{errors.event_date}</p>
+                  <p className="mt-1.5 text-sm text-red-400 font-medium">{errors.event_date}</p>
                 )}
               </div>
             </div>
