@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import UserDetail from "./_components/UserDetail";
-import MonthlySavingsGraph from "./_components/MonthlySavingsGraph";
+import DashboardTransactionTables from "./_components/DashboardTransactionTables";
 import BottomNavigation from "./_components/BottomNavigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { getDashboardSummary, getTicketAnalytics } from "@/api/dashboard/dashboard.api";
@@ -244,7 +244,7 @@ export default function DashboardPage() {
         )}
 
         <div className="mb-6">
-          <MonthlySavingsGraph />
+          <DashboardTransactionTables />
         </div>
       </div>
 

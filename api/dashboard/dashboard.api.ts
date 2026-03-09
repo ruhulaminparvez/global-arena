@@ -4,6 +4,8 @@ import type {
   TicketAnalyticsItem,
   MyWallet,
   WalletTransaction,
+  WalletTransactionListResponse,
+  SavingTransactionListResponse,
   RegistrationFeeStatus,
   FeePaymentPayload,
   FeePaymentResponse,
@@ -44,11 +46,21 @@ export async function getMyWallet(): Promise<MyWallet> {
 /**
  * Get wallet transactions - GET /api/wallet/wallets/transactions/
  */
-export async function getWalletTransactions(): Promise<WalletTransaction[]> {
-  const { data } = await apiClient.get<WalletTransaction[]>(
-    "/api/wallet/wallets/transactions/"
+export async function getWalletTransactions(page: number = 1): Promise<WalletTransactionListResponse> {
+  const { data } = await apiClient.get<WalletTransactionListResponse>(
+    `/api/wallet/wallets/transactions/?page=${page}`
   );
-  return Array.isArray(data) ? data : [];
+  return data;
+}
+
+/**
+ * Get saving transactions - GET /api/savings/transactions/
+ */
+export async function getSavingTransactions(page: number = 1): Promise<SavingTransactionListResponse> {
+  const { data } = await apiClient.get<SavingTransactionListResponse>(
+    `/api/savings/transactions/?page=${page}`
+  );
+  return data;
 }
 
 /**

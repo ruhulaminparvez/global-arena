@@ -154,6 +154,30 @@ export interface WalletTransaction {
   created_at: string;
 }
 
+export interface WalletTransactionListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: WalletTransaction[];
+}
+
+/**
+ * Saving transactions (GET /api/savings/transactions/)
+ */
+export interface SavingTransaction {
+  id: number;
+  plan: number;
+  amount: string;
+  created_at: string;
+}
+
+export interface SavingTransactionListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: SavingTransaction[];
+}
+
 /**
  * Deposit request (GET/POST /api/wallet/deposits/)
  */
