@@ -3,11 +3,10 @@
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { X, Send } from "lucide-react";
-import { getRoomMessages } from "@/api/dashboard/chats.api";
+import { getRoomMessages, sendMessage } from "@/api/dashboard/chats.api";
 import type { MyChatRoom, ChatMessage } from "@/api/dashboard/types/dashboard.api";
 import { formatDate } from "@/helpers/format.helpers";
 import toast from "react-hot-toast";
-import { cookieHelpers } from "@/helpers/cookie.helpers";
 import { Button } from "@/components/button";
 
 function getApiError(err: unknown, fallback: string): string {
@@ -38,8 +37,8 @@ export interface ChatRoomMessagesModalProps {
 export function ChatRoomMessagesModal({ room, onClose }: ChatRoomMessagesModalProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState("");
-  const wsRef = useRef<WebSocket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -50,110 +49,72 @@ export function ChatRoomMessagesModal({ room, onClose }: ChatRoomMessagesModalPr
     scrollToBottom();
   }, [messages]);
 
+  const fetchMessages = async () => {
+    if (!room) return;
+    try {
+      const data = await getRoomMessages(room.id);
+      setMessages(data);
+    } catch (err: unknown) {
+      console.error("Failed to fetch messages", err);
+    }
+  };
+
   useEffect(() => {
     if (!room) return;
     let cancelled = false;
     setLoading(true);
+    setError(null);
     getRoomMessages(room.id)
       .then((data) => {
         if (!cancelled) setMessages(data);
       })
       .catch((err: unknown) => {
         if (!cancelled) {
+          setError(getApiError(err, "বার্তা লোড করতে ব্যর্থ হয়েছে।"));
           toast.error(getApiError(err, "বার্তা লোড করতে ব্যর্থ হয়েছে।"));
         }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
+
+    // Polling interval for new messages
+    const interval = setInterval(() => {
+      fetchMessages();
+    }, 5000);
+
     return () => {
       cancelled = true;
+      clearInterval(interval);
     };
   }, [room?.id]);
 
-  useEffect(() => {
-    if (!room) return;
-    const token = cookieHelpers.getAccessToken();
-    if (!token) return;
-
-    // For dashboard user, connecting to their own user ID
-    // room.user.id specifies the target ID
-    const targetUserId = room.user.id ?? room.id;
-
-    const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000"
-      }/ws/chat/${targetUserId}/?token=${token}`;
-
-    const ws = new WebSocket(wsUrl);
-    wsRef.current = ws;
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.message) {
-          let parsedContent = "";
-          let parsedSender = data.sender || "Admin";
-          let parsedId = Date.now();
-          let parsedDate = new Date().toISOString();
-          let parsedIsRead = true;
-
-          // Handle if the backend sends a full message object inside data.message
-          if (typeof data.message === "object" && data.message !== null) {
-            const msgObj = data.message as any;
-            parsedContent = msgObj.content || msgObj.message || "—";
-            parsedSender = msgObj.sender_username || (typeof msgObj.sender === "string" ? msgObj.sender : "Admin");
-            if (msgObj.id) parsedId = msgObj.id;
-            if (msgObj.created_at) parsedDate = msgObj.created_at;
-            if (msgObj.is_read !== undefined) parsedIsRead = msgObj.is_read;
-          } else {
-            // It's a normal string
-            parsedContent = String(data.message);
-          }
-
-          setMessages((prev) => [...prev, {
-            id: parsedId,
-            content: parsedContent,
-            sender_username: parsedSender,
-            created_at: parsedDate,
-            is_read: parsedIsRead,
-          }]);
-        }
-      } catch (err) {
-        console.error("Failed to parse websocket message", err);
-      }
-    };
-
-    ws.onerror = () => {
-      console.error("Chat WebSocket error");
-    };
-
-    return () => {
-      ws.close();
-      wsRef.current = null;
-    };
-  }, [room]);
-
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !wsRef.current) return;
+    if (!newMessage.trim() || !room) return;
 
-    wsRef.current.send(
-      JSON.stringify({
-        message: newMessage,
-      })
-    );
+    try {
+      const msgText = newMessage;
+      setNewMessage("");
 
-    // Optimistically add message
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        content: newMessage,
-        sender_username: "You",
-        created_at: new Date().toISOString(),
-        is_read: true,
-      },
-    ]);
-    setNewMessage("");
+      // Optimistically add message
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          content: msgText,
+          sender_username: "You",
+          created_at: new Date().toISOString(),
+          is_read: true,
+        },
+      ]);
+
+      await sendMessage(room.id, msgText);
+      await fetchMessages();
+    } catch (err: unknown) {
+      toast.error(getApiError(err, "বার্তা পাঠাতে ব্যর্থ হয়েছে"));
+      setNewMessage(newMessage); // Restore if failed
+    }
   };
 
   if (!room) return null;
@@ -188,6 +149,11 @@ export function ChatRoomMessagesModal({ room, onClose }: ChatRoomMessagesModalPr
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
+          {error && (
+            <div className="mb-4 p-4 bg-rose-500/20 border border-rose-500/30 rounded-xl text-rose-300 text-sm backdrop-blur-sm">
+              {error}
+            </div>
+          )}
           {loading && (
             <p className="text-slate-400 text-center py-8">বার্তা লোড হচ্ছে...</p>
           )}
@@ -236,7 +202,7 @@ export function ChatRoomMessagesModal({ room, onClose }: ChatRoomMessagesModalPr
             />
             <Button
               type="submit"
-              disabled={!newMessage.trim() || !wsRef.current}
+              disabled={!newMessage.trim()}
               icon={Send}
               className="rounded-xl shadow-lg shadow-primary-500/25 border-none"
             >
