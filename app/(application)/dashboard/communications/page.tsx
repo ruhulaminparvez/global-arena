@@ -15,6 +15,12 @@ import { formatDate } from "@/helpers/format.helpers";
 import { ChatRoomMessagesModal } from "./_components/ChatRoomMessagesModal";
 import toast from "react-hot-toast";
 
+function getLastMessageText(room: MyChatRoom): string {
+  if (!room.last_message) return "";
+  if (typeof room.last_message === "string") return room.last_message;
+  return (room.last_message as any).content ?? (room.last_message as any).message ?? "";
+}
+
 function getApiError(err: unknown, fallback: string): string {
   if (err && typeof err === "object" && "response" in err) {
     const data = (err as { response?: { data?: unknown } }).response?.data;
@@ -153,7 +159,7 @@ export default function ContactPage() {
                   )}
                 </div>
                 <p className="text-sm text-slate-300 truncate">
-                  {chatRoom.last_message ?? "কোন বার্তা নেই"}
+                  {getLastMessageText(chatRoom) || "কোন বার্তা নেই"}
                 </p>
                 <p className="text-xs text-slate-400 mt-1">
                   {formatDate(chatRoom.updated_at)}
@@ -215,7 +221,7 @@ export default function ContactPage() {
                         )}
                       </div>
                       <p className="text-sm text-slate-300 truncate">
-                        {room.last_message ?? "কোন বার্তা নেই"}
+                        {getLastMessageText(room) || "কোন বার্তা নেই"}
                       </p>
                       <p className="text-xs text-slate-400 mt-1">
                         {formatDate(room.updated_at)}

@@ -12,6 +12,12 @@ import { getUsers } from "@/api/admin/users.manage.api";
 import type { ChatRoom } from "@/api/admin/types/admin.api";
 import { formatDate } from "@/helpers/format.helpers";
 
+function getLastMessageText(room: ChatRoom): string {
+  if (!room.last_message) return "";
+  if (typeof room.last_message === "string") return room.last_message;
+  return (room.last_message as any).content ?? (room.last_message as any).message ?? "";
+}
+
 function filterRooms(list: ChatRoom[], search: string): ChatRoom[] {
   if (!search.trim()) return list;
   const q = search.trim().toLowerCase();
@@ -19,7 +25,7 @@ function filterRooms(list: ChatRoom[], search: string): ChatRoom[] {
     (r) =>
       String(r.id).includes(q) ||
       (r.name && r.name.toLowerCase().includes(q)) ||
-      (r.last_message && r.last_message.toLowerCase().includes(q))
+      getLastMessageText(r).toLowerCase().includes(q)
   );
 }
 
@@ -194,7 +200,7 @@ export default function CommunicationManagementPage() {
                       </div>
                     </div>
                     <p className="text-sm text-slate-300 line-clamp-2">
-                      {room.last_message ?? "—"}
+                      {getLastMessageText(room) || "—"}
                     </p>
                   </button>
                   <div className="p-4 pt-0 flex gap-2 flex-wrap">
