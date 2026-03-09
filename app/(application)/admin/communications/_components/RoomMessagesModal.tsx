@@ -4,10 +4,10 @@ import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { X, CheckCheck, Send } from "lucide-react";
 import { Button } from "@/components/button";
-import { getRoomMessages, markRoomAsRead } from "@/api/admin/chats.manage.api";
+import { getRoomMessages, markRoomAsRead, sendMessage } from "@/api/admin/chats.manage.api";
 import type { ChatRoom, ChatMessage } from "@/api/admin/types/admin.api";
 import { formatDate } from "@/helpers/format.helpers";
-import { cookieHelpers } from "@/helpers/cookie.helpers";
+import toast from "react-hot-toast";
 
 export interface RoomMessagesModalProps {
   room: ChatRoom | null;
@@ -36,6 +36,16 @@ export function RoomMessagesModal({
     scrollToBottom();
   }, [messages]);
 
+  const fetchMessages = async () => {
+    if (!room) return;
+    try {
+      const data = await getRoomMessages(room.id);
+      setMessages(data);
+    } catch (err: unknown) {
+      console.error("Failed to fetch messages", err);
+    }
+  };
+
   useEffect(() => {
     if (!room) return;
     let cancelled = false;
@@ -53,93 +63,44 @@ export function RoomMessagesModal({
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
+
+    // Polling interval for new messages
+    const interval = setInterval(() => {
+      fetchMessages();
+    }, 5000);
+
     return () => {
       cancelled = true;
+      clearInterval(interval);
     };
   }, [room?.id]);
 
-  useEffect(() => {
-    if (!room) return;
-    const token = cookieHelpers.getAccessToken();
-    if (!token) return;
-
-    // Parse the room name to extract user ID commonly formatted in backend if the name carries it
-    // Often Django Channels routes using standard ID pattern: /ws/chat/<user_id>/
-    const targetUserId = room.name ?? room.id;
-
-    const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000"
-      }/ws/chat/${targetUserId}/?token=${token}`;
-
-    const ws = new WebSocket(wsUrl);
-    wsRef.current = ws;
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.message) {
-          let parsedContent = "";
-          let parsedSender = data.sender || "User";
-          let parsedId = Date.now();
-          let parsedDate = new Date().toISOString();
-          let parsedIsRead = true;
-
-          // Handle if the backend sends a full message object inside data.message
-          if (typeof data.message === "object" && data.message !== null) {
-            const msgObj = data.message as any;
-            parsedContent = msgObj.content || msgObj.message || "—";
-            parsedSender = msgObj.sender_username || (typeof msgObj.sender === "string" ? msgObj.sender : "User");
-            if (msgObj.id) parsedId = msgObj.id;
-            if (msgObj.created_at) parsedDate = msgObj.created_at;
-            if (msgObj.is_read !== undefined) parsedIsRead = msgObj.is_read;
-          } else {
-            parsedContent = String(data.message);
-          }
-
-          setMessages((prev) => [...prev, {
-            id: parsedId,
-            content: parsedContent,
-            sender_username: parsedSender,
-            created_at: parsedDate,
-            is_read: parsedIsRead,
-          }]);
-        }
-      } catch (err) {
-        console.error("Failed to parse websocket message", err);
-      }
-    };
-
-    ws.onerror = () => {
-      console.error("Chat WebSocket error");
-    };
-
-    return () => {
-      ws.close();
-      wsRef.current = null;
-    };
-  }, [room]);
-
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !wsRef.current) return;
+    if (!newMessage.trim() || !room) return;
 
-    wsRef.current.send(
-      JSON.stringify({
-        message: newMessage,
-      })
-    );
+    try {
+      const msgText = newMessage;
+      setNewMessage("");
 
-    // Optimistically add message
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        content: newMessage,
-        sender_username: "Admin (You)",
-        created_at: new Date().toISOString(),
-        is_read: true,
-      },
-    ]);
-    setNewMessage("");
+      // Optimistically add message
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          content: msgText,
+          sender_username: "Admin (You)",
+          created_at: new Date().toISOString(),
+          is_read: true,
+        },
+      ]);
+
+      await sendMessage(room.id, msgText);
+      await fetchMessages();
+    } catch (err: unknown) {
+      toast.error("বার্তা পাঠাতে ব্যর্থ হয়েছে");
+      setNewMessage(newMessage); // Restore if failed
+    }
   };
 
   const handleMarkAsRead = async () => {
@@ -258,7 +219,7 @@ export function RoomMessagesModal({
             />
             <Button
               type="submit"
-              disabled={!newMessage.trim() || !wsRef.current}
+              disabled={!newMessage.trim()}
               icon={Send}
               className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg transition-all"
             >

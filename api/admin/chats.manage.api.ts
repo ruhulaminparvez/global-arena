@@ -38,3 +38,25 @@ export async function getRoomMessages(roomId: number): Promise<ChatMessage[]> {
 export async function markRoomAsRead(roomId: number): Promise<void> {
   await apiClient.post(`${CHAT_BASE}/${roomId}/mark_read`);
 }
+
+/**
+ * Send a message via REST - POST /api/chat/rooms/:id/send_message/
+ */
+export async function sendMessage(roomId: number, message: string): Promise<ChatMessage> {
+  const { data } = await apiClient.post<ChatMessage>(
+    `${CHAT_BASE}/${roomId}/send_message/`,
+    { message }
+  );
+  return data;
+}
+
+/**
+ * Admin: Get or Create Room for a specific user - POST /api/chat/rooms/admin_get_or_create/
+ */
+export async function getOrCreateRoomForUser(userId: number): Promise<ChatRoom> {
+  const { data } = await apiClient.post<ChatRoom>(
+    `${CHAT_BASE}/admin_get_or_create/`,
+    { user_id: userId }
+  );
+  return data;
+}
