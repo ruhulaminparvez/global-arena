@@ -172,18 +172,20 @@ export function ChatRoomMessagesModal({ room, onClose }: ChatRoomMessagesModalPr
                 >
                   <div className="flex justify-between items-start gap-2 mb-2">
                     <span className="text-sm font-medium text-slate-300">
-                      {msg.sender_username ?? (typeof msg.sender === 'object' ? getDisplayName(msg.sender as any) : msg.sender) ?? "—"}
+                      {String(msg.sender_username ??
+                        (typeof msg.sender === 'object' && msg.sender !== null ? getDisplayName(msg.sender as any) : msg.sender) ??
+                        "—")}
                     </span>
                     <span className="text-xs text-slate-400">
                       {msg.created_at ? formatDate(msg.created_at) : "—"}
                     </span>
                   </div>
-                  <p className="text-white text-sm whitespace-pre-wrap">
+                  <pre className="text-white text-sm whitespace-pre-wrap font-sans">
                     {typeof msg.content === 'object' && msg.content !== null ? JSON.stringify(msg.content, null, 2) :
                       (typeof msg.content === 'string' ? msg.content :
                         (typeof (msg as any).message === 'object' && (msg as any).message !== null ? JSON.stringify((msg as any).message, null, 2) :
-                          (typeof (msg as any).message === 'string' ? (msg as any).message : JSON.stringify(msg))))}
-                  </p>
+                          (typeof (msg as any).message === 'string' ? (msg as any).message : String(msg.content ?? (msg as any).message ?? ""))))}
+                  </pre>
                 </li>
               ))}
               <div ref={messagesEndRef} />
