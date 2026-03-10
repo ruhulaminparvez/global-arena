@@ -175,7 +175,8 @@ export interface DashboardSummary {
   users: { total: number };
   wallet: {
     total_balance: number;
-    total_locked: number;
+    withdrawal_locked: number;
+    savings_locked: number;
     available_pool: number;
   };
   pending_requests: {

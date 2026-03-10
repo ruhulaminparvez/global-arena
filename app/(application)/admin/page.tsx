@@ -23,7 +23,8 @@ function buildStatsFromSummary(summary: DashboardSummary) {
   return [
     { label: "মোট ব্যবহারকারী", value: String(users.total), icon: Users, color: "from-blue-500 to-indigo-600" },
     { label: "মোট ব্যালেন্স", value: `৳ ${wallet.total_balance}`, icon: Wallet, color: "from-emerald-400 to-emerald-600" },
-    { label: "মোট লকড", value: `৳ ${wallet.total_locked}`, icon: Lock, color: "from-slate-400 to-slate-600" },
+    { label: "লকড (উইথড্রল)", value: `৳ ${wallet.withdrawal_locked}`, icon: Lock, color: "from-slate-400 to-slate-600" },
+    { label: "লকড (সেভিংস)", value: `৳ ${wallet.savings_locked}`, icon: PiggyBank, color: "from-fuchsia-400 to-fuchsia-600" },
     { label: "অ্যাভেইলেবল পুল", value: `৳ ${wallet.available_pool}`, icon: PiggyBank, color: "from-teal-400 to-teal-600" },
     { label: "পেন্ডিং ডিপোজিট", value: String(pending_requests.deposits), icon: ArrowDownCircle, color: "from-cyan-400 to-cyan-600" },
     { label: "পেন্ডিং উইথড্রল", value: String(pending_requests.withdrawals), icon: ArrowUpCircle, color: "from-rose-400 to-rose-600" },
