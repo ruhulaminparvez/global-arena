@@ -111,6 +111,9 @@ export interface DashboardSummary {
   tickets: {
     active_schedules: number;
     total_purchases: number;
+    total_revenue: number;
+    total_expected_profit: number;
+    total_pending_profit: number;
   };
 }
 

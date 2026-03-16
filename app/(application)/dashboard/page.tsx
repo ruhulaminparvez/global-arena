@@ -42,6 +42,8 @@ function buildSummaryStats(summary: DashboardSummary) {
     { label: "পেন্ডিং মোট", value: String(pending_requests.total), icon: Clock, color: "from-amber-400 to-amber-600" },
     { label: "সক্রিয় টিকেট সিডিউল", value: String(tickets.active_schedules), icon: LayoutDashboard, color: "from-orange-400 to-orange-600" },
     { label: "টিকেট ক্রয় মোট", value: String(tickets.total_purchases), icon: ShoppingCart, color: "from-violet-400 to-violet-600" },
+    { label: "মোট টিকেট বিক্রি", value: `৳ ${tickets.total_revenue || 0}`, icon: Ticket, color: "from-pink-400 to-pink-600" },
+    { label: "প্রদেয় প্রফিট", value: `৳ ${tickets.total_pending_profit || 0}`, icon: BarChart3, color: "from-fuchsia-400 to-fuchsia-600" },
   ];
 }
 
