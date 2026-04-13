@@ -19,6 +19,7 @@ function getTransactionTypeLabel(type: string): string {
         case "WITHDRAW": return "উত্তোলন";
         case "DEDUCT": return "কর্তন";
         case "PROFIT": return "লাভ";
+        case "PRINCIPAL": return "মূলধন ফেরত";
         default: return type;
     }
 }
@@ -27,6 +28,7 @@ function getTransactionTypeColor(type: string): string {
     switch (type) {
         case "DEPOSIT":
         case "PROFIT":
+        case "PRINCIPAL":
             return "text-emerald-400 bg-emerald-400/10 border-emerald-400/20";
         case "WITHDRAW":
         case "DEDUCT":
