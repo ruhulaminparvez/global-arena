@@ -19,6 +19,7 @@ export interface TicketSchedulePayload {
   is_confirmed: boolean;
   is_announced: boolean;
   max_tickets: number;
+  max_tickets_per_user: number;
 }
 
 export interface TicketSchedule {
@@ -39,6 +40,7 @@ export interface TicketSchedule {
   is_announced: boolean;
   is_confirmed: boolean;
   max_tickets: number;
+  max_tickets_per_user: number;
   total_purchases: number;
   is_available: boolean;
   can_be_purchased: boolean;

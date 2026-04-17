@@ -52,6 +52,7 @@ const initialPayload: TicketSchedulePayload = {
   is_confirmed: false,
   is_announced: false,
   max_tickets: 0,
+  max_tickets_per_user: 1,
 };
 
 export function ScheduleFormModal({
@@ -81,6 +82,7 @@ export function ScheduleFormModal({
         is_confirmed: schedule.is_confirmed,
         is_announced: schedule.is_announced,
         max_tickets: schedule.max_tickets,
+        max_tickets_per_user: schedule.max_tickets_per_user ?? 1,
       });
     } else {
       setForm(initialPayload);
@@ -296,15 +298,28 @@ export function ScheduleFormModal({
                 )}
               </div>
             </div>
-            <Input
-              label="সর্বোচ্চ টিকেট"
-              type="number"
-              min={1}
-              value={form.max_tickets || ""}
-              onChange={(e) => update("max_tickets", parseInt(e.target.value, 10) || 0)}
-              error={errors.max_tickets}
-              className="bg-black/30 text-white border-white/10"
-            />
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="সর্বোচ্চ টিকেট (মোট)"
+                type="number"
+                min={1}
+                value={form.max_tickets || ""}
+                onChange={(e) => update("max_tickets", parseInt(e.target.value, 10) || 0)}
+                error={errors.max_tickets}
+                className="bg-black/30 text-white border-white/10"
+                placeholder="যেমন: 100 (ফাঁকা = সীমাহীন)"
+              />
+              <Input
+                label="প্রতি ব্যবহারকারী সর্বোচ্চ"
+                type="number"
+                min={1}
+                value={form.max_tickets_per_user || 1}
+                onChange={(e) => update("max_tickets_per_user", parseInt(e.target.value, 10) || 1)}
+                error={errors.max_tickets_per_user}
+                className="bg-black/30 text-white border-white/10"
+                placeholder="যেমন: 1"
+              />
+            </div>
             <div className="flex flex-wrap gap-6 pt-2">
               <label className="flex items-center gap-3 cursor-pointer group">
                 <input
