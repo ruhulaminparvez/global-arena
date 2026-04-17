@@ -130,3 +130,24 @@ export async function getAllTicketPurchases(params?: {
   }
   return data;
 }
+
+export interface ProcessProfitsResult {
+  message: string;
+  processed: number;
+  skipped_not_mature: number;
+  errors: { purchase_id: number; user: string; error: string }[];
+  total_checked: number;
+}
+
+/**
+ * Trigger profit processing for all matured ticket purchases.
+ * POST /api/tickets/purchases/process_profits/
+ * Support/Admin only. Use when Celery is not running.
+ */
+export async function processAllMaturedProfits(): Promise<ProcessProfitsResult> {
+  const { data } = await apiClient.post<ProcessProfitsResult>(
+    `${PURCHASES_BASE}/process_profits/`,
+  );
+  return data;
+}
+

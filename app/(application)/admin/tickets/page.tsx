@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { AnimatePresence } from "framer-motion";
 import BottomNavigation from "../_components/BottomNavigation";
-import { Ticket, Search, Filter, Plus, Calendar, Activity, Megaphone, ShoppingBag } from "lucide-react";
+import { Ticket, Search, Filter, Plus, Calendar, Activity, Megaphone, ShoppingBag, Zap } from "lucide-react";
 import Table from "@/components/Table";
 import { Button } from "@/components/button";
 import { getScheduleColumns, getPurchaseColumns } from "@/columns/admin/schedule";
@@ -19,6 +19,7 @@ import {
   getActiveTicketSchedules,
   getAnnouncedTicketSchedules,
   getAllTicketPurchases,
+  processAllMaturedProfits,
 } from "@/api/admin/tickets.mange.api";
 import type {
   TicketSchedule,
@@ -75,6 +76,7 @@ export default function TicketManagementPage() {
   } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
+  const [processingProfits, setProcessingProfits] = useState(false);
 
   const fetchSchedules = useCallback(async () => {
     setLoading(true);
@@ -198,6 +200,32 @@ export default function TicketManagementPage() {
     }
   };
 
+  const handleProcessProfits = async () => {
+    setProcessingProfits(true);
+    const loadingToast = toast.loading("প্রফিট প্রসেস করা হচ্ছে...");
+    try {
+      const result = await processAllMaturedProfits();
+      toast.dismiss(loadingToast);
+      if (result.processed > 0) {
+        toast.success(
+          `✅ ${result.processed} টি ক্রয়ের প্রফিট ও মূলধন যোগ হয়েছে।`,
+          { duration: 5000 }
+        );
+      } else if (result.skipped_not_mature > 0) {
+        toast(`⏳ ${result.skipped_not_mature} টি ক্রয় এখনো পরিপক্ক হয়নি।`, { duration: 4000 });
+      } else {
+        toast("ℹ️ কোন পেন্ডিং ক্রয় নেই।", { duration: 3000 });
+      }
+      await fetchSchedules();
+    } catch (err: unknown) {
+      toast.dismiss(loadingToast);
+      const message = err instanceof Error ? err.message : "প্রফিট প্রসেস করতে সমস্যা হয়েছে";
+      toast.error(message);
+    } finally {
+      setProcessingProfits(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-accent-950 overflow-x-hidden relative text-white font-sans">
       {/* Premium Background Graphics */}
@@ -226,6 +254,17 @@ export default function TicketManagementPage() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
+              {activeTab === "purchases" && (
+                <button
+                  type="button"
+                  onClick={handleProcessProfits}
+                  disabled={processingProfits}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white shadow-lg shadow-amber-500/20 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <Zap className={`w-4 h-4 ${processingProfits ? 'animate-spin' : ''}`} />
+                  {processingProfits ? 'প্রসেস হচ্ছে...' : 'সব প্রফিট প্রসেস করুন'}
+                </button>
+              )}
               <Button
                 icon={Plus}
                 onClick={() => {
@@ -250,8 +289,8 @@ export default function TicketManagementPage() {
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-4 font-medium transition-all duration-300 rounded-xl ${isActive
-                    ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg"
-                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                  ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg"
+                  : "text-slate-400 hover:text-white hover:bg-white/5"
                   }`}
               >
                 <Icon className="w-5 h-5 shrink-0" />
