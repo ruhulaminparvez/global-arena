@@ -46,7 +46,7 @@ const FIELD_LABELS: Record<string, string> = {
   duration_days: "মেয়াদ (দিন)",
   announcement_date: "ঘোষণার তারিখ",
   drop_time: "ড্রপ টাইম",
-  event_date: "ইভেন্ট তারিখ",
+  event_date: "ক্রয়ের শেষ সময়",
   is_active: "সক্রিয়",
   is_announced: "ঘোষণা করা হয়েছে",
   is_confirmed: "নিশ্চিত করা হয়েছে",

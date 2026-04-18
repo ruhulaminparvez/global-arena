@@ -104,7 +104,7 @@ export function ScheduleFormModal({
     if (form.duration_days <= 0) next.duration_days = "মেয়াদ (দিন) আবশ্যক";
     if (!form.announcement_date) next.announcement_date = "ঘোষণার তারিখ আবশ্যক";
     if (!form.drop_time) next.drop_time = "ড্রপ টাইম আবশ্যক";
-    if (!form.event_date) next.event_date = "ইভেন্ট তারিখ আবশ্যক";
+    if (!form.event_date) next.event_date = "ক্রয়ের শেষ সময় আবশ্যক";
     if (form.max_tickets <= 0) next.max_tickets = "সর্বোচ্চ টিকেট সংখ্যা আবশ্যক";
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -282,7 +282,7 @@ export function ScheduleFormModal({
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  ইভেন্ট তারিখ
+                  ক্রয়ের শেষ সময়
                 </label>
                 <input
                   type="datetime-local"

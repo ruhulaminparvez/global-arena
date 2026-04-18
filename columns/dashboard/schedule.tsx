@@ -66,7 +66,7 @@ export const getDashboardScheduleColumns = (
     },
     {
       key: "event_date",
-      label: "ইভেন্ট তারিখ",
+      label: "ক্রয়ের শেষ সময়",
       render: (row) => formatDate(row.event_date),
     },
     {

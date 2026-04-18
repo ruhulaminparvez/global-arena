@@ -41,7 +41,7 @@ function ScheduleDetailFields({ s }: { s: TicketSchedule }) {
       <Field label="মোট ক্রয়" value={s.total_purchases} />
       <Field label="ঘোষণার তারিখ" value={formatDate(s.announcement_date)} />
       <Field label="ড্রপ টাইম" value={formatDate(s.drop_time)} />
-      <Field label="ইভেন্ট তারিখ" value={formatDate(s.event_date)} />
+      <Field label="ক্রয়ের শেষ সময়" value={formatDate(s.event_date)} />
       <Field label="সক্রিয়" value={<Badge value={s.is_active} />} />
       <Field label="ঘোষিত" value={<Badge value={s.is_announced} />} />
       <Field label="নিশ্চিত" value={<Badge value={s.is_confirmed} />} />

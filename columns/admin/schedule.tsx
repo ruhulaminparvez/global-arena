@@ -61,7 +61,7 @@ export const getScheduleColumns = (
     },
     {
       key: "event_date",
-      label: "ইভেন্ট তারিখ",
+      label: "ক্রয়ের শেষ সময়",
       render: (row) => <span className="text-slate-400 font-medium">{formatDate(row.event_date)}</span>,
     },
     {
